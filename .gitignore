@@ -1,2 +1,6 @@
 nbconvert_html5.egg-info
 node_modules
+__pycache__
+.doit.db.*
+nbconvert_html5/_version.py
+tests/outputs/*.html
