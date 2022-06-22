@@ -21,7 +21,7 @@
         },
         {
           "name": "upgrade dependencies",
-          "run": "python -m pip install --upgrade pip\npip install -e."
+          "run": "python -m pip install --upgrade pip\npip install -e.[test]"
         },
         {
           "name": "test with pytest",
