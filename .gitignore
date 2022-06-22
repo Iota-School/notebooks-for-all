@@ -1,3 +1,8 @@
+*~
+*#
+.#*
+*.pyc
+.python-version
 nbconvert_html5.egg-info
 node_modules
 __pycache__
