@@ -1,11 +1,28 @@
 {% extends "full.tpl" %}
 
+
+{% block content %}
+<main>
+{{ content }}
+{% endblock content %}
+
+
+{% block codecell %}
+
+<section aria-label="Code cell">
+{{ super() }}
+</section>
+
+{%- endblock codecell %}
+
+
+
 {% block markdowncell -%}
 
-
-## this is a markdown cell
+<section aria-label="Markdown cell">
 {{ super() }}
-## THIS IS THE END
-
+</section>
 
 {% endblock markdowncell %}
+
+
