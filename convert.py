@@ -2,7 +2,7 @@ from nbconvert import  get_exporter
 
 exporter = get_exporter("html5")
 
-out = exporter().from_filename("notebooks/lorenz.ipynb")
+out = exporter().from_filename("tests/notebooks/lorenz.ipynb")
 
 
 
