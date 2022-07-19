@@ -1,10 +1,6 @@
 {%- extends 'display_priority.j2' -%}
 {% from 'celltags.j2' import celltags %}
 
-<h1>Quick test</h1>
-
-
-
 {% block codecell %}
 {%- if not cell.outputs -%}
 {%- set no_output_class="jp-mod-noOutputs" -%}
