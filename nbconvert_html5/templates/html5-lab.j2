@@ -1,28 +1,23 @@
-{% extends "full.tpl" %}
+{% extends "lab/index.html.j2" %}
 
+{%- block header -%}
+{{super()}}
+{%- endblock header -%}
 
 {% block content %}
-<main>
-{{ content }}
+{{ super() }}
 {% endblock content %}
 
 
+{}
 {% block codecell %}
-
-<section aria-label="Code cell">
-{{ super() }}
-</section>
-
+{{ super()}}
 {%- endblock codecell %}
 
 
 
 {% block markdowncell -%}
-
-<section aria-label="Markdown cell">
 {{ super() }}
-</section>
-
 {% endblock markdowncell %}
 
 
