@@ -11,6 +11,9 @@ As part of this initiative, STScI will collaborate with STEM- and accessibility-
 [A Curated List of STScI notebooks](https://github.com/spacetelescope/notebooks)  
 [Accessibility Analysis of Jupyter Notebook HTML Output](https://www.youtube.com/watch?v=KsUF_HjA97U&t=253s)  
 
+## License
+
+Because this repository hosts mixed content types, we have decided to apply different licenses to the content type they are most suited for. All of the repository except the `[user-tests](user-tests)` directory are under a [3-Clause BSD license](LICENSE). All content in the `[user-tests](user-tests)` directory is under a [CC-BY license](https://creativecommons.org/licenses/by/4.0/).
 
 
 
