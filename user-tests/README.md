@@ -2,6 +2,8 @@
 
 User testing on this project was led by [Jenn Kotler](https://github.com/Jenneh) and [Isabela Presedo-Floyd](https://github.com/isabela-pf). Resources in this directory were created collaboratively.
 
+Because this directory holds mostly non-code content, it is licensed under a [CC-BY 4.0 license](LICENSE).
+
 ## Test support
 
 Resources not tied to any single test round.
