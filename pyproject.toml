@@ -1,23 +1,70 @@
-[tool]
+# use the hatch build system for building and developing nbconvert_html5
+# it helps us manage virtual environments and build tasks
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+# we build both sdist and wheel versions of the module
+[tool.hatch.build.targets.sdist]
+[tool.hatch.build.targets.wheel]
+
+[project]
+name = "nbconvert_html5"
+description = "nbconvert templates using modern standards"
+readme = "README.md"
+url = "https://github.com/Iota-School/notebooks-for-all"
+requires-python = ">=3.7"
+license = "BSD-3-Clause"
+keywords = []
+authors = [{ name = "tonyfast", email = "tony.fast@gmail.com" }]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Natural Language :: English",
+    "Programming Language :: Python",
+    "License :: OSI Approved :: BSD License",
+]
+dependencies = ["nbconvert"]
+dynamic = ["version"]
+
+
+[project.entry-points."nbconvert.exporters"]
+html5 = "nbconvert_html5:Html5"
+
+# versioning is automatically synced using scm tools
 [tool.setuptools_scm]
 write_to = "nbconvert_html5/_version.py"
 
+[tool.hatch.build.hooks.vcs]
+version-file = "nbconvert_html5/_version.py"
+
+[tool.hatch.version]
+source = "vcs"
+
+# testing setttings
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--nbval --current-env -pno:importnb"
+testpaths = ["tests"]
+norecursedirs = ["tests/notebooks", "*checkpoints"]
+
+[tool.hatch.envs.test]
+dependencies = [
+    "pytest",
+    "nbval",
+    "matplotlib",
+    "numpy",
+    "ipywidgets",
+    "beautifulsoup4",
+    "scipy",
+]
+
+[tool.hatch.envs.test.scripts]
+run = "pytest "
+
+
+# formatting settings
 [tool.isort]
 profile = "black"
 
 [tool.black]
 line_length = 100
-
-[build-system]
-requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
-build-backend = "setuptools.build_meta"
-
-[tool.pytest.ini_options]
-minversion = "6.0"
-addopts = "--nbval --current-env -pno:importnb"
-testpaths = [
-    "tests"
-]
-norecursedirs = [
-    "tests/outputs/*"
-]
