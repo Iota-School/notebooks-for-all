@@ -43,7 +43,7 @@ source = "vcs"
 # testing setttings
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "--nbval --current-env -pno:importnb"
+addopts = "--nbval --current-env -pno:importnb --rootdir=tests"
 testpaths = ["tests"]
 norecursedirs = ["tests/notebooks", "*checkpoints"]
 
