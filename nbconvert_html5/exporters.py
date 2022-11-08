@@ -54,7 +54,6 @@ class Html5(HTMLExporter):
         return set_code_cell(element)
 
     def set_md_cell(self, element):
-        print(self.set_md_cell, set_md_cell)
         return set_md_cell(element)
 
     def set_main(self, element):
