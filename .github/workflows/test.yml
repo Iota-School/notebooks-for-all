@@ -1,41 +1,24 @@
-{
-  "on": [
-    "push"
-  ],
-  "jobs": {
-    "pypi": {
-      "steps": [
-        {
-          "name": "fetch all history and tags",
-          "uses": "actions/checkout@v2",
-          "with": {
-            "fetch-depth": 0
-          }
-        },
-        {
-          "name": "setup python",
-          "uses": "actions/setup-python@v4",
-          "with": {
-            "python-version": "${{ matrix.python-version}}"
-          }
-        },
-        {
-          "name": "upgrade dependencies",
-          "run": "python -m pip install --upgrade pip\npip install -e.[test]"
-        },
-        {
-          "name": "test with pytest",
-          "run": "pytest"
-        }
-      ],
-      "strategy": {
-        "matrix": {
-          "python-version": [
-            3.9
-          ]
-        }
-      },
-      "runs-on": "ubuntu-latest"
-    }
-  }
-}
+on:
+- push
+jobs:
+  pypi:
+    strategy:
+      matrix:
+        python-version:
+        - 3.9
+    runs-on: ubuntu-latest
+    steps:
+    - name: fetch all history and tags
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: setup python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "${{ matrix.python-version}}"
+    - name: upgrade dependencies
+      run: |-
+        python -m pip install --upgrade pip hatch
+        pip install -e.[test]
+    - name: test with pytest
+      run: hatch run test:run
