@@ -102,7 +102,7 @@ This is a list of the feedback that was most frequently or emphatically given. I
 
 - Requests for a table of contents. This was particularly important to participants not using screen readers.
 - Notebooks need to be edited too, not just read. Participants that gave this feedback were aware of the scope of these tests and they wanted to emphasize that accessibility fixes also needed to happen for editable states.
-- Notebook cells were of varying importance. How people want to understand and navigate the notebooks seemed to depend most on their expectations. Some participants talked in terms of cells or noted that they couldn't find non-visual cell sections (this was more common of participants who author notebooks, but not exclusive to them). Some participants talked in terms of content headings from the notebook cells. Some didn't mention either. This test did not allow us time to dive into why different participants had different mental models, but it was worth noting.
+- Notebook cells were of varying importance. How people want to understand and navigate the notebooks seemed to depend most on their expectations. Some participants talked in terms of cells or noted that they couldn't find non-visual cell sections (this was more common of participants who author notebooks, but not exclusive to them). Some participants talked in terms of content headings from the notebook cells. Some didn't mention either. This test did not allow us time to dive into why different participants had different mental models.
 
 ## Issues
 
