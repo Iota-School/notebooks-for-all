@@ -11,3 +11,4 @@ nbconvert_html5/_version.py
 tests/outputs/*.html
 build/*
 tests/out.html
+*-checkpoint*
