@@ -68,3 +68,25 @@ profile = "black"
 
 [tool.black]
 line_length = 100
+
+# doit tasks
+[tool.hatch.envs.task.scripts]
+list = "doit list"
+export = "doit export_html"
+run = "doit run"
+
+[tool.hatch.envs.task]
+dependencies = ["doit", "tomli"]
+
+
+[tools.doit.commands.list]
+status = true
+subtasks = true
+backend = "json"
+
+[tool.doit.tasks.render]
+notebooks = [
+    "user-tests/1-navigation/stsci_example_notebook.ipynb",
+    "tests/notebooks/lorenz.ipynb",
+    "tests/notebooks/lorenz-executed.ipynb",
+]

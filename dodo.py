@@ -1,5 +1,6 @@
+from doit import task_params
 from pathlib import Path
-
+import warnings
 
 HERE = Path(__file__).parent
 REL = HERE.absolute().as_uri()
@@ -18,19 +19,24 @@ UTESTS = Path("user-tests")
 TESTS = Path("tests")
 
 
-def task_render(notebooks: list[Path] = [
-    UTESTS / "1-navigation/stsci_example_notebook.ipynb",
-    TESTS / "notebooks/lorenz.ipynb",
-    TESTS / "notebooks/lorenz-executed.ipynb"
-]):
+@task_params([dict(name="notebooks", default=[TESTS / "notebooks/lorenz.ipynb"], type=list)])
+def task_export_html(notebooks):
+    """export html versions of notebooks"""
     rel = []
     for format in ("html", "html5"):
-        for notebook in notebooks:
+        for notebook in map(Path, notebooks):
             target = notebook.with_suffix(f".{format}.html")
             output = DOCS / target
             cmd = f"jupyter nbconvert --to={format} --output={target.name} --output-dir={output.parent} {notebook}"
-            yield dict(name=f"render:{format}:{notebook}", actions=[cmd])
-            rel.append(
-                output.absolute().as_uri()[len(DOCS.absolute().as_uri()):]
-            )
-    print(rel)
+            yield dict(name=f"export_html:{format}:{notebook}", actions=[cmd], targets=[target], file_dep=[notebook])
+            rel.append(output)
+
+    INDEX = DOCS / "index.md"
+    body = "# sample converted notebooks\n\n"
+    for id in rel:
+        body += "* "
+        body += str(id)
+        body += "\n"
+    yield dict(name=F"export_html:{INDEX}", targets=[INDEX], actions=[
+        (lambda x: INDEX.write_text(x) and None, [body])
+    ])
