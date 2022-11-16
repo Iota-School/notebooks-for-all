@@ -84,7 +84,7 @@ status = true
 subtasks = true
 backend = "json"
 
-[tool.doit.tasks.render]
+[tool.doit.tasks.export_html]
 notebooks = [
     "user-tests/1-navigation/stsci_example_notebook.ipynb",
     "tests/notebooks/lorenz.ipynb",
