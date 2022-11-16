@@ -33,7 +33,7 @@ class Html5(HTMLExporter):
     def from_notebook_node(self, nb, **kw):
         result, meta = super().from_notebook_node(nb, **kw)
         result = self.post_process(result, **kw)
-        return result, meta
+        return str(result), meta
 
     def _template_file_default(self):
         return "html5-lab.j2"
