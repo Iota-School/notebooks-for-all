@@ -35,6 +35,8 @@ def task_export_html(notebooks):
     body = "# sample converted notebooks\n\n"
     for id in rel:
         body += "* "
+        body += "[notebook](https://github.com/Iota-School/notebooks-for-all/blob/main/{id}) "
+        body += "[html](/notebooks-for-all/{id.relative_to('docs')}) "
         body += str(id)
         body += "\n"
     yield dict(name=F"export_html:{INDEX}", targets=[INDEX], actions=[
