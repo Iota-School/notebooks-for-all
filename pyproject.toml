@@ -72,12 +72,12 @@ line_length = 100
 # doit tasks
 [tool.hatch.envs.task.scripts]
 list = "doit list"
-export = "doit export_html"
+export = "doit export"
 run = "doit run"
 
 [tool.hatch.envs.task]
 dependencies = ["doit", "tomli", "requests", "requests_cache", "playwright"]
-post-install-commands = ["playwright install chrome-beta || echo 0"]
+post-install-commands = ["- python -m playwright install chrome-beta"]
 
 
 [tools.doit.commands.list]
