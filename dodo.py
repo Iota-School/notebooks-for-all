@@ -1,5 +1,6 @@
 from doit import task_params
 from pathlib import Path
+from functools import partial
 import warnings
 
 HERE = Path(__file__).parent
@@ -19,8 +20,13 @@ UTESTS = Path("user-tests")
 TESTS = Path("tests")
 
 
-@task_params([dict(name="notebooks", default=[TESTS / "notebooks/lorenz.ipynb"], type=list)])
-def task_export_html(notebooks):
+@task_params(
+    [
+        dict(name="notebooks", default=[TESTS / "notebooks/lorenz.ipynb"], type=list),
+        dict(name="audit", default=True, type=bool),
+    ]
+)
+def task_export(notebooks, audit):
     """export html versions of notebooks"""
     rel = []
     for format in ("html", "html5"):
@@ -29,12 +35,23 @@ def task_export_html(notebooks):
             output = DOCS / target
             cmd = f"jupyter nbconvert --to={format} --output={target.name} --output-dir={output.parent} {notebook}"
             yield dict(
-                name=f"export_html:{format}:{notebook}",
+                name=f"html:{format}:{notebook}",
                 actions=[cmd],
-                targets=[target],
+                targets=[output],
                 file_dep=[notebook],
             )
             rel.append(output)
+
+        rel_targets = [x.parent / "data" / ("axe-" + x.name + ".json") for x in rel]
+    if audit:
+        from nbconvert_html5.audit import main
+
+        yield dict(
+            name=f"audit",
+            actions=[partial(main, id=rel)],
+            targets=rel_targets,
+            file_dep=rel,
+        )
 
     INDEX = DOCS / "index.md"
     body = "# sample converted notebooks\n\n"

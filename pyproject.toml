@@ -76,15 +76,20 @@ export = "doit export_html"
 run = "doit run"
 
 [tool.hatch.envs.task]
-dependencies = ["doit", "tomli"]
+dependencies = ["doit", "tomli", "requests", "requests_cache", "playwright"]
+post-install-commands = ["playwright install chrome-beta || echo 0"]
 
 
 [tools.doit.commands.list]
 status = true
 subtasks = true
-backend = "json"
 
-[tool.doit.tasks.export_html]
+[tools.doit]
+backend = "json"
+verbosity = 2
+
+[tool.doit.tasks.export]
+# these are the notebooks that we build different html versions of
 notebooks = [
     "user-tests/1-navigation/stsci_example_notebook.ipynb",
     "tests/notebooks/lorenz.ipynb",
