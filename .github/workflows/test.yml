@@ -23,9 +23,13 @@ jobs:
         python -m pip install --upgrade pip hatch
         pip install -e.[test]
     - name: test with pytest
-      run: hatch run test:run
+      run: |
+        hatch run test:run
     - name: export notebooks
-      run: hatch run task:export
+      run: |
+        hatch -v run task
+        hatch -e task run playwright install-deps chrome-beta
+        hatch -v run task:export
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@v4
       with:

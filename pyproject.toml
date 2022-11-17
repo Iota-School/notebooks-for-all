@@ -77,7 +77,6 @@ run = "doit run"
 
 [tool.hatch.envs.task]
 dependencies = ["doit", "tomli", "requests", "requests_cache", "playwright"]
-post-install-commands = ["- python -m playwright install chrome-beta"]
 
 
 [tools.doit.commands.list]
