@@ -35,7 +35,7 @@ async def test_axe(browser, page, output, **config):
     data = output / target.name
     data.parent.mkdir(exist_ok=True, parents=True)
     data = data.with_suffix(data.suffix + ".json")
-    data.write_text(dumps(axe["violations"]))
+    data.write_text(dumps(axe["violations"], sort_keys=True, indent=4))
 
 
 def main(id: List[str]=["tests/notebooks/lorenz.ipynb"], output_dir: Path=Path("docs/data")):
