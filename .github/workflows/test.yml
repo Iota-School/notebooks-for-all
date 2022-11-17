@@ -27,7 +27,6 @@ jobs:
         hatch run test:run
     - name: export notebooks
       run: |
-        hatch -v run task
         hatch -e task run playwright install-deps chrome-beta
         hatch -v run task:export
     - name: Deploy 🚀
