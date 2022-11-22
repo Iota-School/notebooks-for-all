@@ -96,9 +96,10 @@ backend = "json"
 verbosity = 2
 
 [tool.doit.tasks.export]
-# these are the notebooks that we build different html versions of
 notebooks = [
     "user-tests/1-navigation/stsci_example_notebook.ipynb",
+    "user-tests/2-imnotsurewhat/Imaging_Sky_Background_Estimation.html",
     "tests/notebooks/lorenz.ipynb",
     "tests/notebooks/lorenz-executed.ipynb",
-]
+]u
+# these are the notebooks that we build different html versions ou

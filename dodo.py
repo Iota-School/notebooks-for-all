@@ -4,20 +4,17 @@ from functools import partial
 import warnings
 
 HERE = Path(__file__).parent
-REL = HERE.absolute().as_uri()
-TESTS = HERE / "tests"
-NOTEBOOKS = TESTS / "notebooks"
-
-
-def test_pally():
-    yield dict(name="install", actions=["npm install"])
-    for file in NOTEBOOKS.glob("*.ipynb"):
-        yield dict(name="run", actions=["pally "])
-
 
 DOCS = Path("docs")
 UTESTS = Path("user-tests")
 TESTS = Path("tests")
+
+
+def fix_html(path, to):
+    from nbconvert_html5.modifiers import set_notebook
+
+    to.parent.mkdir(exist_ok=True, parents=True)
+    to.write_text(str(set_notebook(path.read_text())))
 
 
 @task_params(
@@ -31,15 +28,23 @@ def task_export(notebooks, audit):
     rel = []
     for format in ("html", "html5"):
         for notebook in map(Path, notebooks):
-            target = notebook.with_suffix(f".{format}.html")
+            target = notebook.with_suffix(notebook.suffix + f".{format}.html")
             output = DOCS / target
-            cmd = f"jupyter nbconvert --to={format} --output={target.name} --output-dir={output.parent} {notebook}"
-            yield dict(
-                name=f"html:{format}:{notebook}",
-                actions=[cmd],
-                targets=[output],
-                file_dep=[notebook],
-            )
+            if notebook.suffix in {".html"}:
+                yield dict(
+                    name=f"html:{format}:{notebook}",
+                    actions=[(fix_html, (notebook, output))],
+                    targets=[output],
+                    file_dep=[notebook],
+                )
+            else:
+                cmd = f"jupyter nbconvert --to={format} --output={target.name} --output-dir={output.parent} {notebook}"
+                yield dict(
+                    name=f"html:{format}:{notebook}",
+                    actions=[cmd],
+                    targets=[output],
+                    file_dep=[notebook],
+                )
             rel.append(output)
 
         rel_targets = [x.parent / "data" / ("axe-" + x.name + ".json") for x in rel]
@@ -58,7 +63,7 @@ def task_export(notebooks, audit):
     for id in rel:
         id = id.relative_to("docs")
         body += "* "
-        body += f"[notebook](https://github.com/Iota-School/notebooks-for-all/blob/main/{id}) "
+        body += f"[original](https://github.com/Iota-School/notebooks-for-all/blob/main/{id}) "
         body += f"[html](/notebooks-for-all/{id}) "
         body += str(id)
         body += "\n"
