@@ -7,5 +7,5 @@ out = exporter().from_filename("tests/notebooks/lorenz.ipynb")
 
 
 with open('tests/out.html', 'w') as out_file:
-    out_file.write(out[0])
+    out_file.write(str(out[0]))
 
