@@ -101,5 +101,5 @@ notebooks = [
     "user-tests/2-imnotsurewhat/Imaging_Sky_Background_Estimation.html",
     "tests/notebooks/lorenz.ipynb",
     "tests/notebooks/lorenz-executed.ipynb",
-]u
+]
 # these are the notebooks that we build different html versions ou
