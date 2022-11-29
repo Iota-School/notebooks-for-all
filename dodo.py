@@ -10,11 +10,27 @@ UTESTS = Path("user-tests")
 TESTS = Path("tests")
 
 
+def modify_header(soup):
+    """indicate an alternative name for differentiation"""
+    import nbconvert_html5
+
+    node = soup.select_one("h1") # there is only one h1 right?
+    node.insert_after(
+        nbconvert_html5.modifiers.soup(lambda x: None)("<aside><i>Modified version</i></aside>")
+    )
+    return soup
+
+
 def fix_html(path, to):
     from nbconvert_html5.modifiers import set_notebook
 
     to.parent.mkdir(exist_ok=True, parents=True)
-    to.write_text(str(set_notebook(path.read_text())))
+    nb = set_notebook(path.read_text())
+
+    nb = set_notebook(path.read_text())
+    if path.stem in {"Imaging_Sky_Background_Estimation"}:
+        modify_header(nb)
+    to.write_text(str(nb))
 
 
 @task_params(
