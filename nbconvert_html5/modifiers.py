@@ -1,7 +1,6 @@
 from functools import partial, wraps
 from subprocess import call
 from bs4 import BeautifulSoup, Tag
-from numpy import isin
 from .selectors import MAIN, CODE, MD, OUT, PROMPT
 
 Soup = partial(BeautifulSoup, features="html.parser")

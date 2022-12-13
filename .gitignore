@@ -12,3 +12,6 @@ tests/outputs/*.html
 build/*
 tests/out.html
 *-checkpoint*
+docs/**/*.html
+docs/**/*.json
+settings.json

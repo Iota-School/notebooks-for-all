@@ -26,6 +26,17 @@ classifiers = [
 dependencies = ["nbconvert"]
 dynamic = ["version"]
 
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "nbval",
+    "matplotlib",
+    "numpy",
+    "ipywidgets",
+    "beautifulsoup4",
+    "scipy",
+]
+audit = ["doit", "tomli", "requests", "requests_cache", "playwright"]
 
 [project.entry-points."nbconvert.exporters"]
 html5 = "nbconvert_html5:Html5"
@@ -48,15 +59,7 @@ testpaths = ["tests"]
 norecursedirs = ["tests/notebooks", "*checkpoints"]
 
 [tool.hatch.envs.test]
-dependencies = [
-    "pytest",
-    "nbval",
-    "matplotlib",
-    "numpy",
-    "ipywidgets",
-    "beautifulsoup4",
-    "scipy",
-]
+features = ["test"]
 
 [tool.hatch.envs.test.scripts]
 run = "pytest "
@@ -68,3 +71,35 @@ profile = "black"
 
 [tool.black]
 line_length = 100
+
+# doit tasks
+[tool.hatch.envs.task.scripts]
+list = "doit list"
+export = "doit export"
+run = "doit run"
+
+[tool.hatch.envs.task]
+features = ["audit"]
+post-install-commands = ["- python -m playwright install chrome-beta"]
+
+[tool.hatch.envs.task.overrides]
+env.CI.post-install-commands = [
+    "python -m playwright install --with-deps chrome-beta",
+]
+
+[tool.doit.commands.list]
+status = true
+subtasks = true
+
+[tool.doit]
+backend = "json"
+verbosity = 2
+
+[tool.doit.tasks.export]
+notebooks = [
+    "user-tests/1-navigation/stsci_example_notebook.ipynb",
+    "user-tests/2-content/Imaging_Sky_Background_Estimation.html",
+    "tests/notebooks/lorenz.ipynb",
+    "tests/notebooks/lorenz-executed.ipynb",
+]
+# these are the notebooks that we build different html versions ou
