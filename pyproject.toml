@@ -98,7 +98,7 @@ verbosity = 2
 [tool.doit.tasks.export]
 notebooks = [
     "user-tests/1-navigation/stsci_example_notebook.ipynb",
-    "user-tests/2-imnotsurewhat/Imaging_Sky_Background_Estimation.html",
+    "user-tests/2-content/Imaging_Sky_Background_Estimation.html",
     "tests/notebooks/lorenz.ipynb",
     "tests/notebooks/lorenz-executed.ipynb",
 ]
