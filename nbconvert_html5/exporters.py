@@ -160,7 +160,7 @@ class Html5(PostProcessExporter):
     @classmethod
     def generate_config(cls):
         s = """c.NbConvertApp.export_format = "html5"
-        c.CSSHTMLHeaderPreprocessor.style = "default"
+c.CSSHTMLHeaderPreprocessor.style = "default"
 """
         for k, v in vars(cls).items():
             if isinstance(v, TraitType):
