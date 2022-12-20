@@ -1,6 +1,5 @@
 c.NbConvertApp.export_format = "html5"
-c.CSSHTMLHeaderPreprocessor.style = "default"
-c.Html5.preprocessors = traitlets.Undefined # 
+c.CSSHTMLHeaderPreprocessor.style = "a11y-light"
 c.Html5.notebook_is_main = True # transform notebook div to main
 c.Html5.notebook_cell_is_article = True # transform cell div to article
 c.Html5.cell_output_is_section = True # transform output div to section

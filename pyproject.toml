@@ -23,7 +23,7 @@ classifiers = [
     "Programming Language :: Python",
     "License :: OSI Approved :: BSD License",
 ]
-dependencies = ["nbconvert"]
+dependencies = ["nbconvert", "accessible-pygments"]
 dynamic = ["version"]
 
 [project.optional-dependencies]
