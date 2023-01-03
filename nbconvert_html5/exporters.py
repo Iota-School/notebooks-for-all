@@ -50,9 +50,9 @@ from traitlets import Bool, CUnicode
 
 
 class Html5(PostProcessExporter):
-    preprocessors = List([
-        CSSHTMLHeaderPreprocessor()
-    ])
+    # preprocessors = List([
+    #     CSSHTMLHeaderPreprocessor()
+    # ])
     def from_notebook_node(self, nb, **kw):
         result, meta = super().from_notebook_node(nb, **kw)
         result = self.post_process_html(result)
@@ -67,6 +67,13 @@ class Html5(PostProcessExporter):
     )
     cell_label = Bool(True, help="add aria-label to cell").tag(config=True)
     cell_display_label = Bool(True, help="add aria-label to cell").tag(config=True)
+    # contenteditable cells make a tag interactive.
+    cell_contenteditable = Bool(False, help="make cell code inputs contenteditable").tag(
+        config=True
+    )
+    cell_contenteditable_label = Bool(False, help="aria-label on contenteditable cells").tag(
+        config=True
+    )
     prompt_is_label = Bool(True, help="add the cell input number to the aria label").tag(
         config=True
     )
@@ -125,6 +132,12 @@ class Html5(PostProcessExporter):
                 if m and cell.prompt_is_label:
                     cell.attrs["aria-label"] += " input {}".format(m.group("n"))
 
+        if self.cell_contenteditable:
+            input = cell.select_one("code")
+            input.attrs["contenteditable"] = "false"
+            if self.cell_contenteditable_label:
+                input.attrs["aria-label"] += " input {}".format(m.group("n"))
+
         self.post_process_displays(cell)
 
     def post_process_displays(self, cell):
@@ -167,13 +180,12 @@ c.CSSHTMLHeaderPreprocessor.style = "default"
                 s += f"c.{cls.__name__}.{k} = {v.default_value} # {v.help}\n"
         return s
 
-
     @classmethod
     def write_config(cls, dir=Path.cwd(), file="jupyter_nbconvert_config.py"):
-        
+
         target = Path(dir, file)
         if target.exists():
             raise FileExistsError(target)
 
-        print(F"writing config to {target}")
+        print(f"writing config to {target}")
         target.write_text(cls.generate_config())
