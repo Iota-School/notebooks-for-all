@@ -30,7 +30,7 @@ class PostProcessExporter(HTMLExporter):
     extra_template_paths = List([(DIR / "templates").absolute().__str__()])
     post_processor = Callable(lambda x: x).tag(config=True)
 
-    def set_cell_label(self, cell, label=None):
+    def code_set_cell_label(self, cell, label=None):
         pass
 
     def post_process_cell(self, cell):
@@ -50,23 +50,29 @@ from traitlets import Bool, CUnicode
 
 
 class Html5(PostProcessExporter):
-    # preprocessors = List([
-    #     CSSHTMLHeaderPreprocessor()
-    # ])
     def from_notebook_node(self, nb, **kw):
         result, meta = super().from_notebook_node(nb, **kw)
         result = self.post_process_html(result)
         return str(result), meta
 
-    notebook_is_main = Bool(True, help="transform notebook div to main").tag(config=True)
-    notebook_cell_is_article = Bool(True, help="transform cell div to article").tag(config=True)
-    cell_output_is_section = Bool(True, help="transform output div to section").tag(config=True)
-    tab_to_cell = Bool(True, help="add tabindex to cells for navigation").tag(config=True)
-    tab_to_cell_display = Bool(True, help="add tabindex to cell displays for navigation").tag(
+    notebook_is_main = Bool(False, help="transform notebook div to main").tag(config=True)
+    notebook_code_cell_is_article = Bool(False, help="transform code cell div to article").tag(
         config=True
     )
-    cell_label = Bool(True, help="add aria-label to cell").tag(config=True)
-    cell_display_label = Bool(True, help="add aria-label to cell").tag(config=True)
+    notebook_md_cell_is_article = Bool(False, help="transform mardown cell div to article").tag(
+        config=True
+    )
+    cell_output_is_section = Bool(False, help="transform output div to section").tag(config=True)
+    tab_to_code_cell = Bool(False, help="add tabindex to code cells for navigation").tag(
+        config=True
+    )
+    tab_to_md_cell = Bool(False, help="add tabindex to md cells for navigation").tag(config=True)
+    tab_to_code_cell_display = Bool(False, help="add tabindex to cell displays for navigation").tag(
+        config=True
+    )
+    code_cell_label = Bool(False, help="add aria-label to code cells").tag(config=True)
+    md_cell_label = Bool(False, help="add aria-label to md cell").tag(config=True)
+    cell_display_label = Bool(False, help="add aria-label to cell").tag(config=True)
     # contenteditable cells make a tag interactive.
     cell_contenteditable = Bool(False, help="make cell code inputs contenteditable").tag(
         config=True
@@ -74,23 +80,35 @@ class Html5(PostProcessExporter):
     cell_contenteditable_label = Bool(False, help="aria-label on contenteditable cells").tag(
         config=True
     )
-    prompt_is_label = Bool(True, help="add the cell input number to the aria label").tag(
+    prompt_is_label = Bool(False, help="add the cell input number to the aria label").tag(
         config=True
     )
     cell_describedby_heading = Bool(
         True, help="set aria-describedby when heading found in markdown cell"
     ).tag(config=True)
+    increase_prompt_visibility = Bool(
+        True, help="decrease prompt transparency for better color contrast"
+    ).tag(config=True)
+    cell_focus_style = CUnicode(
+        """outline: 2px dashed;""", help="the focus style to apply to tabble cells."
+    ).tag(config=True)
 
     def post_process_head(self, soup):
         script = soup.new_tag("style", type="text/css", rel="stylesheet")
-        script.string = """
-        :root {
-            --jp-cell-prompt-not-active-opacity: 1;
-        }
-        .jp-Cell:focus {
-            outline: 2px dashed;
-        }
-        """
+        if self.increase_prompt_visibility:
+            script.string += """
+:root {
+    --jp-cell-prompt-not-active-opacity: 1;
+}
+"""
+        if self.cell_focus_style:
+            script.string += (
+                """.jp-Cell:focus-active {
+    %s
+} 
+"""
+                % self.cell_focus_style
+            )
         soup.select_one("head").append(script)
 
     def post_process_html(self, body):
@@ -107,22 +125,19 @@ class Html5(PostProcessExporter):
 
     def post_process_cells(self, soup):
         for element in soup.select(CODE):
-            self.post_process_cell(element)
             self.post_process_code_cell(element)
 
         for element in soup.select(MD):
-            self.post_process_cell(element)
             self.post_process_markdown_cell(element)
 
-    def post_process_cell(self, cell):
-        if self.notebook_cell_is_article:
+    def post_process_code_cell(self, cell):
+        if self.notebook_code_cell_is_article:
             cell.name = "article"
 
-        if self.tab_to_cell:
+        if self.tab_to_code_cell:
             cell.attrs["tabindex"] = 0  # when we do this we need add styling
 
-    def post_process_code_cell(self, cell):
-        if self.cell_label:
+        if self.code_cell_label:
             # https://ericwbailey.website/published/aria-label-is-a-code-smell/
             cell.attrs["aria-label"] = "code"
             if self.prompt_is_label:
@@ -137,6 +152,9 @@ class Html5(PostProcessExporter):
             input.attrs["contenteditable"] = "false"
             if self.cell_contenteditable_label:
                 input.attrs["aria-label"] += " input {}".format(m.group("n"))
+
+        if self.tab_to_code_cell:
+            cell.attrs["tabindex"] = 0  # when we do this we need add styling
 
         self.post_process_displays(cell)
 
@@ -156,11 +174,14 @@ class Html5(PostProcessExporter):
                     m = PROMPT_RE.match(prompt.text)
                     if m:
                         display.attrs["aria-label"] += " output {}".format(m.group("n"))
-        if self.tab_to_cell_display:
+        if self.tab_to_code_cell_display:
             display.attrs["tabindex"] = 0  # when we do this we need add styling
 
     def post_process_markdown_cell(self, cell):
-        if self.cell_label:
+        if self.notebook_md_cell_is_article:
+            cell.name = "article"
+
+        if self.md_cell_label:
             # https://ericwbailey.website/published/aria-label-is-a-code-smell/
             cell.attrs["aria-label"] = "markdown"
 
@@ -169,6 +190,9 @@ class Html5(PostProcessExporter):
                 if heading:
                     if "id" in heading.attrs:
                         cell.attrs["aria-describedby"] = heading.attrs["id"]
+
+        if self.tab_to_md_cell:
+            cell.attrs["tabindex"] = 0  # when we do this we need add styling
 
     @classmethod
     def generate_config(cls):
