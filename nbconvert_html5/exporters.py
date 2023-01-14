@@ -55,14 +55,14 @@ class Html5(PostProcessExporter):
         result = self.post_process_html(result)
         return str(result), meta
 
-    notebook_is_main = Bool(False, help="transform notebook div to main").tag(config=True)
-    notebook_code_cell_is_article = Bool(False, help="transform code cell div to article").tag(
+    notebook_is_main = Bool(True, help="transform notebook div to main").tag(config=True)
+    notebook_code_cell_is_article = Bool(True, help="transform code cell div to article").tag(
         config=True
     )
-    notebook_md_cell_is_article = Bool(False, help="transform mardown cell div to article").tag(
+    notebook_md_cell_is_article = Bool(True, help="transform mardown cell div to article").tag(
         config=True
     )
-    cell_output_is_section = Bool(False, help="transform output div to section").tag(config=True)
+    cell_output_is_section = Bool(True, help="transform output div to section").tag(config=True)
     tab_to_code_cell = Bool(False, help="add tabindex to code cells for navigation").tag(
         config=True
     )
@@ -83,18 +83,22 @@ class Html5(PostProcessExporter):
     prompt_is_label = Bool(False, help="add the cell input number to the aria label").tag(
         config=True
     )
+    
     cell_describedby_heading = Bool(
         True, help="set aria-describedby when heading found in markdown cell"
     ).tag(config=True)
+    
     increase_prompt_visibility = Bool(
         True, help="decrease prompt transparency for better color contrast"
     ).tag(config=True)
+
     cell_focus_style = CUnicode(
-        """outline: 2px dashed;""", help="the focus style to apply to tabble cells."
+        """outline: 1px dashed;""", help="the focus style to apply to tabble cells.", allow_none=True
     ).tag(config=True)
 
     def post_process_head(self, soup):
         script = soup.new_tag("style", type="text/css", rel="stylesheet")
+        script.string = ""
         if self.increase_prompt_visibility:
             script.string += """
 :root {
@@ -201,7 +205,10 @@ c.CSSHTMLHeaderPreprocessor.style = "default"
 """
         for k, v in vars(cls).items():
             if isinstance(v, TraitType):
-                s += f"c.{cls.__name__}.{k} = {v.default_value} # {v.help}\n"
+                val = v.default_value
+                if isinstance(val, str):
+                    val = F'''"{val}"'''
+                s += f"c.{cls.__name__}.{k} = {val} # {v.help}\n"
         return s
 
     @classmethod
