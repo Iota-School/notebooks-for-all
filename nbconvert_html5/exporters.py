@@ -107,7 +107,7 @@ class Html5(PostProcessExporter):
 """
         if self.cell_focus_style:
             script.string += (
-                """.jp-Cell:focus-active {
+                """.jp-Cell:focus {
     %s
 } 
 """
