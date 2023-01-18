@@ -13,6 +13,10 @@ DIR = Path(__file__).parent
 PROMPT_RE = compile("(In|Out)(\s|&nbsp;){0,1}\[(?P<n>[0-9]+)\]")
 
 
+def soupify(body):
+    return BeautifulSoup(body, features="html.parser")
+
+
 class PostProcessExporter(HTMLExporter):
     """an embellished HTMLExporter that allows modifications of exporting and the exported.
 
@@ -83,18 +87,30 @@ class Html5(PostProcessExporter):
     prompt_is_label = Bool(False, help="add the cell input number to the aria label").tag(
         config=True
     )
-    
+
     cell_describedby_heading = Bool(
-        True, help="set aria-describedby when heading found in markdown cell"
+        False, help="set aria-describedby when heading found in markdown cell"
     ).tag(config=True)
-    
+
     increase_prompt_visibility = Bool(
         True, help="decrease prompt transparency for better color contrast"
     ).tag(config=True)
 
     cell_focus_style = CUnicode(
-        """outline: 1px dashed;""", help="the focus style to apply to tabble cells.", allow_none=True
+        """outline: 1px dashed;""",
+        help="the focus style to apply to tabble cells.",
+        allow_none=True,
     ).tag(config=True)
+
+    include_toc = Bool(
+        False, help="include a top of contents in the page"  # this will likely need styling.
+    )
+    # add toc as as a markdown cell? can't cause there is no canonical plage for it.
+    # the natural place for a table of contents is based on the dom structure.
+    # if the headings are links then they can be tabbed to.
+    h_is_link = Bool(False, help="markdown headings h1..6 are links that get tabbed to.").tag(
+        config=True
+    )
 
     def post_process_head(self, soup):
         script = soup.new_tag("style", type="text/css", rel="stylesheet")
@@ -116,7 +132,7 @@ class Html5(PostProcessExporter):
         soup.select_one("head").append(script)
 
     def post_process_html(self, body):
-        soup = BeautifulSoup(body, features="html.parser")
+        soup = soupify(body)
         if self.notebook_is_main:
             soup.select_one(MAIN).name = "main"
 
@@ -198,6 +214,17 @@ class Html5(PostProcessExporter):
         if self.tab_to_md_cell:
             cell.attrs["tabindex"] = 0  # when we do this we need add styling
 
+        if self.h_is_link:
+            for e in cell.select("h1,h2,h3,h4,h5,h6"):
+                id = e.attrs.get("id")
+                if id:
+                    a = Tag(name="a")
+                    a.attrs["href"] = f"#{id}"
+                    a.extend(list(e.children))
+                    e.clear()
+                    e.append(a)
+                    e.select_one(".anchor-link").decompose()
+
     @classmethod
     def generate_config(cls):
         s = """c.NbConvertApp.export_format = "html5"
@@ -207,7 +234,7 @@ c.CSSHTMLHeaderPreprocessor.style = "default"
             if isinstance(v, TraitType):
                 val = v.default_value
                 if isinstance(val, str):
-                    val = F'''"{val}"'''
+                    val = f'''"{val}"'''
                 s += f"c.{cls.__name__}.{k} = {val} # {v.help}\n"
         return s
 
