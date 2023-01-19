@@ -111,6 +111,7 @@ class Html5(PostProcessExporter):
     h_is_link = Bool(False, help="markdown headings h1..6 are links that get tabbed to.").tag(
         config=True
     )
+    scroll_to_top = Bool(False, help="include a scroll to top link").tag(config=True)
 
     def post_process_head(self, soup):
         script = soup.new_tag("style", type="text/css", rel="stylesheet")
@@ -141,6 +142,16 @@ class Html5(PostProcessExporter):
         self.post_process_head(soup)
 
         self.post_process_cells(soup)
+        if self.scroll_to_top:
+            footer = soup.select_one("main footer")
+            if not footer:
+                footer = Tag(name="footer")
+                soup.select_one("main").append(footer)
+            a = Tag(name="a", attrs=dict(href="#top"))
+            a.string = "Scroll to top"
+            b = Tag(name="span", attrs=dict(id="top"))
+            footer.append(a)
+            soup.select_one("main").insert(0, b)
         return str(soup)
 
     def post_process_cells(self, soup):
