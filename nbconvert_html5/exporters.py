@@ -159,13 +159,12 @@ class Html5(PostProcessExporter):
 
         if self.code_cell_label:
             # https://ericwbailey.website/published/aria-label-is-a-code-smell/
-            cell.attrs["aria-label"] = "code"
+            cell.attrs["aria-label"] = "cell"
             if self.prompt_is_label:
                 prompt = cell.select_one(PROMPT)
                 m = PROMPT_RE.match(prompt.text)
-
-                if m and cell.prompt_is_label:
-                    cell.attrs["aria-label"] += " input {}".format(m.group("n"))
+                if m and self.prompt_is_label:
+                    cell.attrs["aria-label"] += " {}".format(m.group("n"))
 
         if self.cell_contenteditable:
             input = cell.select_one("code")
