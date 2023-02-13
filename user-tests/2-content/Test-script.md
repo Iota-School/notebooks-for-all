@@ -1,4 +1,6 @@
-**Introduction**
+# Content Types in Rendered Notebooks
+
+## Introduction
 Hi, I’m ________ I‘ll be running this meeting today. This is ________, they are here to take notes. 
 
 Thank you for taking the time to participate in this study. A few things I want to remind you about before we start:
@@ -17,7 +19,8 @@ Throughout the session, please think out loud. Tell us if something unexpected h
  
 Before we start, do you have any questions?
 
-**Notebook Tasks**
+## Notebook Tasks
+
 First, can you please share your screen. If using a screen reader, can you set it so that you share the sound or share the text with a “speech viewer” ex: In NVDA you can set it to hold the NVDA button (insert or caps) and hit N and then you get options, go down to tools, and select speech viewer.
 Task 1 - Opening the notebook
 Now I’d like you to open today’s notebook. I’ll tell you how to do this part. 
@@ -28,7 +31,8 @@ tinyurl.com/37pncd8n
 Can you tell me the title of this notebook?
 Complex 2D Background [Y][N] or Imaging_Sky_Background_Estimation [Y][N]
 
-**Task 2 - Markdown cell basics**
+### Task 2 - Markdown cell basics
+
 First, we’re going to start by exploring the foundational units of a notebook: cells. 
 
 Are you familiar with notebook cells? If so, can you briefly describe them for me?
@@ -44,7 +48,8 @@ This is a Markdown cell. In an uneditable version of a notebook like this one, i
 
 Please tell me about the process you used when reading that section. Were you able to do everything you expected? Did anything surprise you?
 
-**Task 3 - Code cell basics**
+### Task 3 - Code cell basics
+
 Please return to the end of the Imports section if you navigated elsewhere. You should be at the end of an unordered (bulleted) list. We’re going to explore the section directly below the unordered (bulleted) list.
 
 What type of content did you find in the cell?
@@ -60,7 +65,8 @@ How did you find your experience of reading that section? Were you able to do ev
 This cell has an additional area of text below the input code block. It is labeled visually with an alternate background color, but may not be labeled non-visually. Please tell me what you think it is. What makes you think that?
 This section is an error or warning message. [Y][N]
 
-**Task 4 - repeat Task 3 in alternate notebook**
+### Task 4 - repeat Task 3 in alternate notebook
+
 Now I’d like you to open an alternate version of the notebook we just reviewed. This notebook has the same content, but different structure. We’ll be asking you to complete some of the same tasks, so don’t worry if you feel like you are giving the same answers. We’re curious to hear you compare the experiences and if you have any preferences.
 Open your web browser of choice
 Paste this link: https://iota-school.github.io/notebooks-for-all/user-tests/2-imnotsurewhat/Imaging_Sky_Background_Estimation.html.html5.html
@@ -78,7 +84,8 @@ In [1]: [Y][N]
 
 How was the process of navigating to this cell compared to the experience from the last web page? Do you have a preference?
 
-**Task 5 - Single chart PNG**
+### Task 5 - Single chart PNG
+
 Now that we’ve covered the basics of cells, we’re going to explore other types of outputs in this notebook.
 Please navigate to Out [7]:, or the output of code cell 7. 
 More support needed? [Y][N]
@@ -109,7 +116,7 @@ Please navigate to this code cell’s output.
 
 Is there anything different from this image output compared to the previous png you observed? How can you tell?
 
-**Task 6 - Iframe, video, and errors**
+### Task 6 - Iframe, video, and errors
 Please navigate to the video on this page.
 Can they easily search for a video without hint [Y][N]
 Hint: this is cell Out [19]: This is also in the Video1: section (heading level 2).
@@ -125,7 +132,7 @@ Facilitator note: this is cell In [19]:
 
 Tell me what you find in the input code cell. Is there any information here you wish was in the output as well?
 
-**Task 7 - Different single chart SVG**
+### Task 7 - Different single chart SVG
 Please navigate back to your original browser tab.
 Please navigate to Out [54]:, or the output of code cell 54. 
 If more support is needed to navigate, this is in the “Routines to facilitate looking at the RMS of the residual background as a function of scale” heading level 2.
@@ -145,7 +152,7 @@ This is a different kind of chart than the prior ones we explored. Are you able 
 What information would better help you understand the charts?
 
 
-**Follow Up Questions**
+## Follow Up Questions
 Now that you’ve explored the notebook, I’d like to ask you to reflect on how that experience went and any other feedback you might have.
 
 Was there a difference in how you experienced the first version of the notebook we linked you compared with the second one?
@@ -161,7 +168,7 @@ Do you have any other impressions or feedback that you would like to share?
 Do you have any questions for me?
 
 
-**Interview Debrief**
+## Interview Debrief
 After each ethnographic interview you complete, take a few minutes to perform an interview
 debrief while the session is fresh in your mind. This ensures that key learnings and observations are not lost in the scramble of many interviews or long timelines.
 
