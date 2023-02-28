@@ -1,0 +1,94 @@
+# Accessibility Tips for Creating & Publishing Jupyter Notebooks
+
+By the [Notebooks for all](https://github.com/Iota-School/notebooks-for-all) team
+
+Draft 2: February 21, 2023
+
+---
+
+When writing & publishing Jupyter notebooks, the notebook editor has a huge influence on the content’s accessibility and there is not much an average user can do to fix that. Depending on the export method and content, notebooks can allow for different levels of accessibility for people using assistive technology. In running user tests, we’ve found that users encounter notebooks in a variety of formats:
+
+[The editable notebook format](https://jupyter.org/try-jupyter/lab?path=notebooks%2FIntro.ipynb) This is **inaccessible** and has many obstacles to navigating the UI or to edit cells
+
+[Uneditable notebooks exported to HTML](https://iota-school.github.io/notebooks-for-all/exports/Imaging_Sky_Background_Estimation-tab-to-content-nav-high-contrast.html) This is **somewhat accessible** because HTML is built for web accessibility. While there are issues, people tend to succeed in accessing a majority of exported notebooks.
+
+The content of notebooks. This **can be totally accessible**, if the authors are mindful of some of the following. This is where you can act now!
+
+The interactive notebook format still does not play well with assistive technology in many ways, particularly in navigating the UI and editing cells. The exported “read only” notebooks can be read fairly well, but still have some issues. If you want your content to be 100% accessible, Jupyter notebooks are not the best way to publish your content (though they can be converted to HTML for a better read-only accessibility experience). Consider if there is an alternate format that could work just as well, or publish a “read only” export alongside the editable one so at least the content is readable by everyone. (That said, things will not be truly accessible until we provide access to content creation, not just knowledge consumption).
+
+There is work to be done to improve the format, and we are trying to figure out what that work is and then push it upstream. It is a slow process with not enough people working on it. We have several [open issues](https://github.com/Iota-School/notebooks-for-all) and hopefully our team and others will make improvements in the next few years. But that does not solve the problem right now.
+
+Currently, if you want to publish notebooks there are still things you can do to make your content more readable for people using assistive tech such as screen readers, magnifiers, and keyboard navigation.
+
+Future: 
+* We will be publishing a best practice document for authoring
+* Attend the accessible notebook hackathon we are running to practice the tips included below on a notebook you intend to publish (March 10th 10-12:30 EST)
+* We will publish a read only notebook format (correct word?)  available on github that has improved navigation, color contrast, etc which you can apply to your static NB viewer notebooks before publishing
+
+## Authoring Tips (Draft)
+
+### Use well-formatted Markdown
+
+Use content headings. There is only one H1. Do not skip heading levels.
+
+### All text in the document needs to appear as plain text
+
+* If there’s text in an image, in a chart, in a video, in an audio recording, or other relatively inaccessible formats, it should also be in plain text somewhere. There are multiple ways you can handle this depending on content and context.
+* Options for providing information in plain text alongside other formats include: adding a description, including a caption, or describing everything fully in surrounding paragraphs.
+
+### Visualization Accessibility
+
+* Include titles in visualizations, such as the outputs from libraries such as Matplotlib. Both in plot and as a property.
+* Label visualization axes, include keys/legends 
+* They should have good contrast (the relative difference in tonal hues). Be cautious of low opacity and thin lines, or color choices that are too similar, such as light gray on white. Try https://github.com/Quansight-Labs/accessible-pygments 
+* Consider plotting in only black and white. You can always add color in later.
+* Don’t rely only on color to convey information. Include labels. Consider using a mix of color and patterns to differentiate values.
+
+### Descriptive text for visual areas
+
+* When bringing in an image with an .img tag in the HTML, alt text may be used normally
+* When creating a plot or graph, some libraries allow alt text and others don’t. Captions and titles should be used to fill in information that alt text would normally contain when there is no option for it. 
+* Legends, Axis labels, numbered tic-marks, and other text in generated graphs cannot currently be read by a screen reader and may be too small for low vision people to find with magnification. 
+* When writing alt text for a plot, Include: 
+    * Type of Plot (bar chart, image, scatter-plot,etc)
+    * Title of graph
+    * Axis labels and range
+    * Key / legend
+    * General explanation of graph and what it is communicating
+* It can be very helpful to link to a file containing the original data, or if possible include a data table near the plot so it can be accessed in a non visual way
+* Include a sonification for a plot. You can use Astronify to do this for time series and spectral astronomy data.
+
+### Organization
+
+To help people orient themselves in the notebook and understand what to expect, give some context at the beginning. We recommend:
+* Give the document a title. This should be the one H1 you use, and it should be at the top.
+* Include a summary of the document under the title.
+* Add a table of contents as an ordered list (even if it cannot contain links)
+* Add the author and affiliation, where relevant
+* Include information such as the date and time first published and the date and time last edited.
+* Link to the notebook source, where it can be used in editable form
+
+### Color contrast
+
+* Color Contrast for in[] out[] can be templated to be higher contrast, standard does not read well for low vision
+* Use a syntax highlighting theme that considers accessible contrast (examples at ericwbailey/a11y-syntax-highlighting)
+
+### Use “plain language”
+
+* Define acronyms the first time you use them and use them sparingly
+* Only use field-specific terms when needed. Use approachable language when the terms aren’t critical to understanding the rest of the document or related literature.
+* More general tips on stylistic choices with accessibility considerations can be found on Google’s developer documentation style guide.
+
+### Use descriptive link names!
+
+* Do not: Click here!
+* Do: Learn more at Space Telescope
+
+### Lead into your code cells (where relevant)
+
+* Make sure they are under other content headings (ie. an imports cell can be preceded by a markdown cell with a header “Imports”)
+* Tell what the cell should do before it is done. Usually this is in a markdown cell before, but it also could be a comment in the code cell.
+* Do not list several different ways someone could complete the task unless that is the point of the notebook. Focus on what you are doing first, and mention alternates later if needed.
+
+### Comment on your code (where relevant)
+* This is especially important for long stretches of code or where more specificity is needed. 
