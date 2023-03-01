@@ -6,13 +6,18 @@ Draft 2: February 21, 2023
 
 ---
 
-When writing & publishing Jupyter notebooks, the notebook editor has a huge influence on the content’s accessibility and there is not much an average user can do to fix that. Depending on the export method and content, notebooks can allow for different levels of accessibility for people using assistive technology. In running user tests, we’ve found that users encounter notebooks in a variety of formats:
+The accessibility of Jupyter Notebooks is determined by many factors, many of which are not within the direct control of notebook authors. For example, specific libraries may create outputs that are not accessible to screen readers, and default export options may create outputs that have issues related to contrast or keyboard navigation. Further, it is important to note that, currently, editing Jupyter Notebooks is largely not accessible for screen reader users.
 
-[The editable notebook format](https://jupyter.org/try-jupyter/lab?path=notebooks%2FIntro.ipynb) This is **inaccessible** and has many obstacles to navigating the UI or to edit cells
+Despite these serious challenges, there are ways that notebook authors can create notebooks that are more accessible for users with disabilities. This document will give context on accessibility in Jupyter Notebooks and provide some tips and best practices for authoring and publishing accessible notebooks.
 
-[Uneditable notebooks exported to HTML](https://iota-school.github.io/notebooks-for-all/exports/Imaging_Sky_Background_Estimation-tab-to-content-nav-high-contrast.html) This is **somewhat accessible** because HTML is built for web accessibility. While there are issues, people tend to succeed in accessing a majority of exported notebooks.
+## Notebook Formats
 
-The content of notebooks. This **can be totally accessible**, if the authors are mindful of some of the following. This is where you can act now!
+ Depending on the export method and content, notebooks can allow for different levels of accessibility for people using assistive technology. In running user tests, we’ve found that users encounter notebooks in a variety of formats:
+
+- [The editable notebook format](https://jupyter.org/try-jupyter/lab?path=notebooks%2FIntro.ipynb) — This format is designed to be opened directly in the Jupyter environment for editing and take the form of `.ipynb` files. This format is currently **inaccessible** to screen reader users and has many obstacles to navigating the UI and editing cells
+- [Uneditable notebooks exported to HTML](https://iota-school.github.io/notebooks-for-all/exports/Imaging_Sky_Background_Estimation-tab-to-content-nav-high-contrast.html) — These `.html` files created through the `nb-convert` exporter are designed to be opened in a browser and are often shared on the web. This format is **somewhat accessible** because HTML is built for web accessibility. While there are issues, people tend to succeed in accessing a majority of notebooks exported in this format.
+
+Since editable notebooks published as `.ipynb` files currently have serious issues related to accessibility, there is little that notebook authors can do to help people with disabilities access this format. However, the accessibility of HTML notebooks can be significantly improved by following specific best practices. By following the below tips, you can act to make a difference in the accessibility of these notebooks.
 
 The interactive notebook format still does not play well with assistive technology in many ways, particularly in navigating the UI and editing cells. The exported “read only” notebooks can be read fairly well, but still have some issues. If you want your content to be 100% accessible, Jupyter notebooks are not the best way to publish your content (though they can be converted to HTML for a better read-only accessibility experience). Consider if there is an alternate format that could work just as well, or publish a “read only” export alongside the editable one so at least the content is readable by everyone. (That said, things will not be truly accessible until we provide access to content creation, not just knowledge consumption).
 
@@ -20,8 +25,9 @@ There is work to be done to improve the format, and we are trying to figure out 
 
 Currently, if you want to publish notebooks there are still things you can do to make your content more readable for people using assistive tech such as screen readers, magnifiers, and keyboard navigation.
 
-Future: 
-* We will be publishing a best practice document for authoring
+## Future Plans and Next Steps
+
+* We will be publishing a best practice document for authoring Jupyter Notebooks
 * Attend the accessible notebook hackathon we are running to practice the tips included below on a notebook you intend to publish (March 10th 10-12:30 EST)
 * We will publish a read only notebook format (correct word?)  available on github that has improved navigation, color contrast, etc which you can apply to your static NB viewer notebooks before publishing
 
