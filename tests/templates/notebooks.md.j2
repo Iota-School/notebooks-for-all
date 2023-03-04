@@ -1,0 +1,25 @@
+# notebook variants 
+
+{% set g = df.unstack() %}
+
+
+there are {{g.shape[0]}} reference notebooks and {{g.shape[1]}} configuration files
+for a total of {{len(g.stack())}} exported html files.
+
+## browse by notebook
+
+{% for i, row in g.iterrows() %}
+### {{i.stem}}
+
+<details markdown>
+<summary>excerpt from {{i.name}} </summary>
+
+{{getdoc(i)}}
+</details>
+
+{% for k, s in row["html"].items() %}
+* [{{k.stem}}]({{s}})
+{% endfor %}
+{% endfor %}
+
+## brow by configuration

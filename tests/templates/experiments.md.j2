@@ -1,0 +1,30 @@
+# experiment contents
+
+in these experiments, our inputs are are pairs of configuration files and reference notebooks.
+our inputs are passed to `nbconvert` to export an html version of the pair. `nbconvert` consumes the configuration files and passes the values to our `nbconvert_html5` project that applies mediations.
+    
+
+```mermaid
+flowchart LR
+    py[.py]--configuration-->nbconvert
+    nb[.ipynb notebook]--content-->nbconvert
+    nbconvert--nbconvert_html5-->html
+    html-->manual[manual\ntest]
+    manual--->nbconvert_html5
+    html--axe-->auto[automated\ntesting]--->nbconvert_html5
+    nbconvert_html5--->nbconvert
+```
+
+configuration files
+: configurations are inputs to `nbconvert` that define the transformations to apply to the notebooks
+
+reference notebooks
+: a hand picked group of notebooks that are used as a control for manual and automated testing
+
+{% set notebooks = df.index.get_level_values(0).unique() %}
+{% set configs = df.index.get_level_values(1).unique() %}
+
+we have are {{len(df)}} notebook/configuration setups.
+this is the product of {{len(notebooks)}} notebooks and {{len(configs)}} configuration files.
+
+you can view the contents of the experiments [faceted by notebook](nbs/README.md) or [faceted by configuration](configs/README.md).
