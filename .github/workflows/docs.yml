@@ -23,7 +23,9 @@ jobs:
       - name: Install dependencies
         run: python -m pip install --upgrade pip hatch
       - name: Build mkdocs
-        run: CI=1 python -m hatch run docs:build
+        run: |
+          python -m hatch run task:export
+          python -m hatch run docs:build
       - name: Deploy main 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         if: ${{ github.ref_name == 'main' }}
