@@ -96,7 +96,7 @@ line_length = 100
 # doit tasks
 [tool.hatch.envs.task.scripts]
 list = "doit list"
-export = "doit copy convert audit"
+export = "doit copy convert audit report"
 run = "doit run"
 
 [tool.hatch.envs.task]
