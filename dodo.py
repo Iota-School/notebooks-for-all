@@ -1,4 +1,5 @@
-from shutil import move, copyfile
+from curses.ascii import US
+from shutil import copytree, move, copyfile
 from doit import create_after, task_params
 from pathlib import Path
 from functools import partial
@@ -16,9 +17,16 @@ HTML = EXPORTS / "html"
 AUDITS = EXPORTS / "audits"
 REPORTS = EXPORTS / "reports"
 
-def cp(x, y):
-    Path.mkdir(y.parent, parents=True, exist_ok=True)
-    copyfile(x, y)
+def cp(x , y):
+    x, y = map(Path, (x, y))
+    if x.is_dir():
+        print(F"copy {x} to {y}")
+        copytree(x, y, dirs_exist_ok=True)
+    else:
+        print(F"copy {x} to {y}")
+        Path.mkdir(y.parent, parents=True, exist_ok=True)
+        copyfile(x, y)
+
 
 
 @task_params(
@@ -60,14 +68,30 @@ def task_copy(notebooks, configurations, target):
         name="readme-nb",
         actions=[(readme, (NB, "ipynb", "reference notebooks"))],
         file_dep=targets,
+        clean=True,
         targets=[NB / "README.md"]
     )
     yield dict(
         name="readme-config",
         actions=[(readme, (CONFIGS, "py", "configuration files"))],
         file_dep=targets,
+        clean=True,
         targets=[CONFIGS / "README.md"]
     )
+    # this is missing the file_deps and targets
+    # they can be computed
+    for d in "user-tests resources".split():
+        DIR = Path(d)
+        files = [x for x in DIR.rglob("*") if x.is_file()]
+        targets = [EXPORTS / x for x in files]
+        print(EXPORTS / DIR)
+        yield dict(
+            name=d,
+            actions=[(cp, (DIR, EXPORTS / DIR))],
+            clean=[F"""rm -rf {EXPORTS / DIR}"""],
+            file_dep=files,
+            targets=targets
+        )
 # @task_params(
 #     [
 #         dict(name="notebooks", default=[TESTS / "notebooks/lorenz.ipynb"], type=list),

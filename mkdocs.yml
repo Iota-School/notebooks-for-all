@@ -39,7 +39,16 @@ plugins:
   
 nav:
   - Overview: readme.md
-  # - User Tests: []
+  - Accessibility Tips:
+    - exports/resources/event-hackathon/accessibility-tips-for-jupyter-notebooks.md
+    - exports/resources/event-hackathon/notebook-authoring-checklist.md
+  - User Tests: 
+    - Navigation Tests:
+      - Script: exports/user-tests/1-navigation/test-script.md
+      - Results: exports/user-tests/1-navigation/results.md
+    - General Testing Resources:
+      - Selecting Test Notebooks: exports/user-tests/0-support/possible-test-notebooks.md
+      - User Testing Resources: exports/user-tests/0-support/user-testing-resources.md
   - Experimental Setup: 
     - exports/reports/experiment.md
     - exports/reports/notebooks.md
