@@ -53,6 +53,8 @@ nav:
     - exports/reports/experiment.md
     - exports/reports/notebooks.md
     # - exports/reports/configs.md
+  - nbconvert_html5 module:
+    - DEVELOPER.md
 
 hooks:
   - hooks.py
