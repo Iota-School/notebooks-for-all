@@ -52,7 +52,7 @@ nav:
   - Experimental Setup: 
     - exports/reports/experiment.md
     - exports/reports/notebooks.md
-    # - exports/reports/configs.md
+    - exports/reports/configs.md
   - nbconvert_html5 module:
     - DEVELOPER.md
 

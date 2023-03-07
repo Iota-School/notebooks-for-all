@@ -70,6 +70,11 @@ def write_notebooks():
     body = get_environment().get_template("notebooks.md.j2")
     (REPORTS / "notebooks.md").write_text(body.render(df=get_data()))
 
+def write_configs(): 
+    REPORTS.mkdir(exist_ok=True)
+    body = get_environment().get_template("configs.md.j2")
+    (REPORTS / "configs.md").write_text(body.render(df=get_data()))
+
 def getdoc_nb(path):
     source = ""
     for i, cell in enumerate(json.loads(path.read_text())["cells"]):

@@ -274,6 +274,13 @@ def task_report():
         clean=True,
         targets=[REPORTS / "notebooks.md"]
     )
+    yield dict(
+        name="configs",
+        actions=[report.write_configs],
+        clean=True,
+        targets=[REPORTS / "configs.md"]
+    )
+
 # @create_after(executed="audit", creates=["docs"])
 # @task_params(
 #     [
