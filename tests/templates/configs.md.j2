@@ -1,0 +1,23 @@
+# configuration variants 
+
+{% set g = df %}
+
+
+there are {{g.shape[0]}} reference notebooks and {{g.shape[1]}} configuration files
+for a total of {{len(g.stack())}} exported html files.
+
+## browse by configuration
+
+{% for name, frame in g.groupby("config") %}
+### {{name.stem}}
+
+<details markdown>
+<summary>docstring from {{name.name}} </summary>
+
+{{getdoc(name)}}
+</details>
+
+{% for (x, y), s in frame["html"].items() %}
+* [{{y.stem}}]({{s}})
+{% endfor %}
+{% endfor %}
