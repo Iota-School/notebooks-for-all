@@ -11,7 +11,7 @@ for a total of {{len(g.stack())}} exported html files.
 {% for name, frame in g.groupby("config") %}
 ### {{name.stem}}
 
-<details markdown>
+<details markdown open>
 <summary>docstring from {{name.name}} </summary>
 
 {{getdoc(name)}}
