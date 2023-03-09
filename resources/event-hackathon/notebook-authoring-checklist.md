@@ -1,12 +1,12 @@
 # Notebook authoring accessibility checklist
 
-How usable Jupyter notebooks are for disabled people can vary greatly depending on how they are set up and presented. Writing notebook content more accessibly is a great place for notebook authors to start making changes now!
+Whether a Jupyter notebook is usable for disabled people can vary widely—it depends on how the document is set up and presented. Notebook authors can use writing and publishing techniques to ensure their notebooks' content is more accessible.
 
-Use this checklist to review notebooks and as a prompt to ask more questions about how a notebook's content can be accessed.
+Use this checklist to review notebooks and get a better sense of if their content is accessible. Editing your notebook for accessibility is an excellent step you can take to make our communities more inclusive!
 
 This checklist is based on the [draft authoring tips from the Notebooks For All team](accessibility-tips-for-jupyter-notebooks.md).
 
-**By the Notebooks for All team** - Erik Tollerud, Isabela Presedo-Floyd, Jenn Kotler, Patrick Smyth, Tony Fast
+**By the Notebooks for All team** - Isabela Presedo-Floyd, Jenn Kotler, Patrick Smyth, Tony Fast, Erik Tollerud
 
 Published February 28, 2023
 
@@ -43,8 +43,8 @@ Throughout the notebook
 
 - [ ] All images (jpg, png, svgs) have an image description. This could be
     - [ ] Alt text (an `alt` attribute) 
-    - [ ] Empty alt text for decorative images/images meant to be skipped (an `alt` attribute with no value) or
-    - [ ] Captions or
+    - [ ] Empty alt text for decorative images/images meant to be skipped (an `alt` attribute with no value)
+    - [ ] Captions
     - [ ] If no other options will work, the image is decribed in surrounding paragraphs.
 
 - [ ] Any text present in images exists in a text form outside of the image (this can be alt text, captions, or surrounding text.)
@@ -53,7 +53,7 @@ Throughout the notebook
 
 - [ ] All visualizations have an image description. Review the previous section, Images, for more information on how to add it.
 - [ ] Visualization descriptions include
-    - [ ]  The type of visualization (like bar chart, scatter plot, etc.)
+    - [ ] The type of visualization (like bar chart, scatter plot, etc.)
     - [ ] Title
     - [ ] Axis labels and range
     - [ ] Key or legend
@@ -65,7 +65,7 @@ Throughout the notebook
     - [ ] Key or legend (if relevant)
 
 - [ ] All visualizations and their parts have enough color contrast to be legible. Remember that transparent colors have lower contrast than their opaque versions.
-- [ ] All visualizations convey information with more than color-coding. Color may also be mixed with text labels, patterns, or icons to fulfill this.
+- [ ] All visualizations convey information with more visual cues than color coding. Use text labels, patterns, or icons alongside color to achieve this.
 - [ ] All visualizations have an additional way for notebook readers to access the information. Linking to the original data, including a table of the data in the same notebook, or sonifying the plot are all options.
 
 ## Text
@@ -79,10 +79,10 @@ Throughout the notebook
 
 ## Code
 
-- [ ] Code sections are introduced/explained before they appear in the notebook. This could be a heading in a prior Markdown cell, a sentence preceding it, or a code comment in the code section.
+- [ ] Code sections are introduced and explained before they appear in the notebook. This can be fulfilled with a heading in a prior Markdown cell, a sentence preceding it, or a code comment in the code section.
 - [ ] Code has explanatory comments (if relevant). This is most important for long sections of code.
 - [ ] If the author has control over the syntax highlighting theme in the notebook, that theme has enough color contrast to be legible.
-- [ ] Code and code explanations focus on one task at a time. Unless comparison is the point of the notebook, only one way to complete the task is described at a time.
+- [ ] Code and code explanations focus on one task at a time. Unless comparison is the point of the notebook, only one method for completing the task is described at a time.
 
 ## Other content
 
@@ -102,8 +102,12 @@ This list is not exhaustive. If you are reviewing a notebook with content that y
 
 ### Sonifications
 
+- [ ] Sonifications include a key explaining the mapping of data to sound. A written description can be used to convey this information.
+- [ ] Sonification outputs reference the method that generated the sonification. This can be done in a code cell or with a link to the file used to generate the sonification.
+- [ ] Audio players include basic listening controls for starting, pausing, volume, and speed.
 - [ ] All audio players have buttons with labels. This can be a persistent label or appear when hovered.
 - [ ] All audio players have buttons with enough color contrast.
+
 
 ### Interactive Widgets 
 
@@ -111,7 +115,7 @@ The accessibility of interactive widgets varies greatly depending how they are i
 
 - [ ] All interactive widgets with visual controls have labels. This can be a persistent label or appear when hovered.
 - [ ]  All interactive widgets with visual controls have enough color contrast.
-- [ ] All interactive widgets have a summary of what they are and what they do in a surrounding text area.
+- [ ] All interactive widgets have a summary of what they are and what they do in the surrounding text.
 - [ ] If an interactive widget's contents are needed to understand the rest of the notebook, the widget either needs to be tested further or have that content fully represented not as a widget elsewhere in the notebook.
 
 ---

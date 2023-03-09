@@ -12,7 +12,7 @@ Despite these serious challenges, there are ways that notebook authors can creat
 
 ## Notebook Formats
 
- Depending on the export method and content, notebooks can allow for different levels of accessibility for people using assistive technology. In running user tests, we’ve found that users encounter notebooks in a variety of formats:
+ Depending on the export method and content, notebooks can allow for different levels of accessibility for people using assistive technology. Users encounter notebooks in a variety of formats:
 
 - [The editable notebook format](https://jupyter.org/try-jupyter/lab?path=notebooks%2FIntro.ipynb) — This format is designed to be opened directly in the Jupyter environment for editing and take the form of `.ipynb` files. This format is currently **inaccessible** to screen reader users and has many obstacles to navigating the UI and editing cells
 - [Uneditable notebooks exported to HTML](https://iota-school.github.io/notebooks-for-all/exports/Imaging_Sky_Background_Estimation-tab-to-content-nav-high-contrast.html) — These `.html` files created through the `nb-convert` exporter are designed to be opened in a browser and are often shared on the web. This format is **somewhat accessible** because HTML is built for web accessibility. While there are issues, people tend to succeed in accessing a majority of notebooks exported in this format.
@@ -45,12 +45,12 @@ Use content headings. There is only one H1. Do not skip heading levels.
 * Include titles in visualizations, such as the outputs from libraries such as Matplotlib. Both in plot and as a property.
 * Label visualization axes, include keys/legends 
 * They should have good contrast (the relative difference in tonal hues). Be cautious of low opacity and thin lines, or color choices that are too similar, such as light gray on white. Try https://github.com/Quansight-Labs/accessible-pygments 
-* Consider plotting in only black and white. You can always add color in later.
+* Consider plotting in only black and white. You can always add color later.
 * Don’t rely only on color to convey information. Include labels. Consider using a mix of color and patterns to differentiate values.
 
 ### Descriptive text for visual areas
 
-* When bringing in an image with an .img tag in the HTML, alt text may be used normally
+* When using an image with an .img tag in the HTML, alt text may be used normally
 * When creating a plot or graph, some libraries allow alt text and others don’t. Captions and titles should be used to fill in information that alt text would normally contain when there is no option for it. 
 * Legends, Axis labels, numbered tic-marks, and other text in generated graphs cannot currently be read by a screen reader and may be too small for low vision people to find with magnification. 
 * When writing alt text for a plot, Include: 
@@ -60,7 +60,7 @@ Use content headings. There is only one H1. Do not skip heading levels.
     * Key / legend
     * General explanation of graph and what it is communicating
 * It can be very helpful to link to a file containing the original data, or if possible include a data table near the plot so it can be accessed in a non visual way
-* Include a sonification for a plot. You can use Astronify to do this for time series and spectral astronomy data.
+* Include a sonification for a plot. You can use [Astronify](https://astronify.readthedocs.io/en/latest/) to do this for time series and spectral astronomy data.
 
 ### Organization
 
