@@ -1,3 +1,5 @@
+"""configuration with a high contrast theme for the code editor [jupyterlab-pygments](https://pypi.org/project/jupyterlab-pygments/)"""
+
 c.NbConvertApp.export_format = "html5"
 c.CSSHTMLHeaderPreprocessor.style = "a11y-high-contrast-light"
 c.Html5.notebook_is_main = True # transform notebook div to main

@@ -36,7 +36,28 @@ test = [
     "beautifulsoup4",
     "scipy",
 ]
-audit = ["doit", "tomli", "requests", "requests_cache", "playwright", "pandas", "tabulate"]
+audit = [
+    "doit",
+    "tomli",
+    "requests",
+    "requests_cache",
+    "playwright",
+    "pandas",
+    "tabulate",
+]
+docs = ["mkdocs-material", "mkdocstrings[python]"]
+
+
+# documentation
+[tool.hatch.envs.docs]
+features = ["docs"]
+
+[tool.hatch.envs.docs.overrides]
+env.CI.features = [{ if = ["1"], value = "audit" }]
+
+[tool.hatch.envs.docs.scripts]
+build = "mkdocs build -v"
+serve = "mkdocs serve -v"
 
 [project.entry-points."nbconvert.exporters"]
 html5 = "nbconvert_html5:Html5"
@@ -75,7 +96,7 @@ line_length = 100
 # doit tasks
 [tool.hatch.envs.task.scripts]
 list = "doit list"
-export = "doit export"
+export = "doit copy convert audit report"
 run = "doit run"
 
 [tool.hatch.envs.task]
@@ -94,11 +115,24 @@ subtasks = true
 [tool.doit]
 backend = "json"
 verbosity = 2
+process = 2
 
-[tool.doit.tasks.export]
+[tool.doit.tasks.copy]
 notebooks = [
-    "user-tests/1-navigation/stsci_example_notebook.ipynb",
-    "user-tests/2-content/Imaging_Sky_Background_Estimation.ipynb",    "tests/notebooks/lorenz.ipynb",
+    "tests/notebooks/lorenz.ipynb",
     "tests/notebooks/lorenz-executed.ipynb",
+    "user-tests/1-navigation/stsci_example_notebook.ipynb",
+    "user-tests/2-content/Imaging_Sky_Background_Estimation.ipynb",
 ]
-configuration = "tests/configurations"
+configurations = [
+    "tests/configurations/default.py",
+    "tests/configurations/contenteditable-code.py",
+    "tests/configurations/tabs-scroll-to-top.py",
+    "tests/configurations/tab-to-content-nav-high-contrast.py",
+    "tests/configurations/tab-to-code-nav-high-contrast.py",
+]
+
+[tool.doit.tasks.convert]
+notebooks_dir = "tests/exports/notebooks"
+configs_dir = "tests/exports/configs"
+target = "tests/exports/html"

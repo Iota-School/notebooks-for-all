@@ -1,0 +1,84 @@
+site_name: notebooks for all
+site_description: accessibility tests and fixes for static rendered jupyter notebooks
+site_url: https://iota-school.github.io/notebooks-for-all/
+repo_url: https://github.com/iota-school/notebooks-for-all
+repo_name: iota-school/notebooks-for-all
+site_dir: site
+docs_dir: tests
+
+theme:
+  name: material
+  features:
+  - navigation.tracking
+  - navigation.top
+
+  palette: 
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+      primary: black
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+      primary: black
+
+
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          import: []
+      enable_inventory: true
+  
+nav:
+  - Overview: readme.md
+  - Accessibility Tips:
+    - exports/resources/event-hackathon/accessibility-tips-for-jupyter-notebooks.md
+    - exports/resources/event-hackathon/notebook-authoring-checklist.md
+  - User Tests: 
+    - Structure & Navigation in Rendered Notebooks:
+      - Script: exports/user-tests/1-navigation/test-script.md
+      - Results: exports/user-tests/1-navigation/results.md
+    - General Testing Resources:
+      - Selecting Test Notebooks: exports/user-tests/0-support/possible-test-notebooks.md
+      - User Testing Resources: exports/user-tests/0-support/user-testing-resources.md
+  - Experimental Setup: 
+    - exports/reports/experiment.md
+    - exports/reports/notebooks.md
+    - exports/reports/configs.md
+  - nbconvert_html5 module:
+    - DEVELOPER.md
+
+hooks:
+  - hooks.py
+
+markdown_extensions:
+  - admonition
+  - pymdownx.emoji
+  - pymdownx.magiclink
+  - footnotes
+  - md_in_html
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets:
+      check_paths: true
+  - toc:
+      permalink: "¤"
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.superfences:
+      custom_fences:
+      - name: mermaid
+        class: mermaid
+        format: !!python/name:pymdownx.superfences.fence_code_format ''
