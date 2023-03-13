@@ -1,3 +1,5 @@
+"""a configuration setup that includes a scroll to top fix."""
+
 c.NbConvertApp.export_format = "html5"
 c.CSSHTMLHeaderPreprocessor.style = "a11y-high-contrast-light"
 c.Html5.notebook_is_main = True # transform notebook div to main

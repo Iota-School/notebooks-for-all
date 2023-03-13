@@ -121,15 +121,26 @@ class Html5(PostProcessExporter):
 :root {
     --jp-cell-prompt-not-active-opacity: 1;
 }
+.jp-InputArea, .jp-Editor, .CodeMirror {
+    overflow: auto;
+}
+.jp-MainAreaWidget > :focus {
+  outline: auto;
+}
 """
         if self.cell_focus_style:
-            script.string += (
+            css = (
                 """.jp-Cell:focus {
     %s
 } 
 """
                 % self.cell_focus_style
             )
+            if self.tab_to_code_cell:
+                script.string += css
+            if self.cell_contenteditable:
+                script.string += css.replace("Cell", "Editor")
+
         soup.select_one("head").append(script)
 
     def post_process_html(self, body):
@@ -155,18 +166,19 @@ class Html5(PostProcessExporter):
         return str(soup)
 
     def post_process_cells(self, soup):
-        for element in soup.select(CODE):
-            self.post_process_code_cell(element)
+        for i, element in enumerate(soup.select(CODE)):
+            self.post_process_code_cell(element, i)
 
         for element in soup.select(MD):
             self.post_process_markdown_cell(element)
 
-    def post_process_code_cell(self, cell):
+    def post_process_code_cell(self, cell, i):
         if self.notebook_code_cell_is_article:
             cell.name = "article"
 
         if self.tab_to_code_cell:
             cell.attrs["tabindex"] = 0  # when we do this we need add styling
+
 
         if self.code_cell_label:
             # https://ericwbailey.website/published/aria-label-is-a-code-smell/
@@ -178,10 +190,33 @@ class Html5(PostProcessExporter):
                     cell.attrs["aria-label"] += " {}".format(m.group("n"))
 
         if self.cell_contenteditable:
-            input = cell.select_one("code")
+            prompt = cell.select_one(PROMPT)
+            prompt.name = "label"
+            text = prompt.text
+            prompt.string = ""
+            start, lbracket, rest = text.partition("[")
+            number, rbracket, rest = rest.partition("]:")
+            prompt.append(start)
+            t = Tag(name="span", attrs={"aria-hidden": "true"})
+            t.string = lbracket
+            prompt.append(t)
+            prompt.append(number)
+            t = Tag(name="span", attrs={"aria-hidden": "true"})
+            t.string = rbracket
+            prompt.append(t)
+            prompt.attrs["for"] = f"code-cell-input-{i}"
+            prompt.attrs["id"] = f"code-cell-prompt-{i}"
+            prompt.attrs["aria-description"] = f"input {number}"
+            input = cell.select_one("code, .jp-Editor")
             input.attrs["contenteditable"] = "false"
-            if self.cell_contenteditable_label:
-                input.attrs["aria-label"] += " input {}".format(m.group("n"))
+            input.attrs["id"] = prompt.attrs["for"]
+            input.attrs["role"] = "textbox"
+            input.attrs["aria-multiline"] = "true"
+            input.attrs["aria-readonly"] = "true"
+            input.attrs["aria-labelledby"] = prompt.attrs["id"]
+            input.attrs["tabindex"] = "0"
+
+
 
         if self.tab_to_code_cell:
             cell.attrs["tabindex"] = 0  # when we do this we need add styling
