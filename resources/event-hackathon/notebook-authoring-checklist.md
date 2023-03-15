@@ -139,7 +139,7 @@ This list is not exhaustive. If you are reviewing a notebook with content that y
 ### Audio and Sonifications
 
 <details>
-<summary>Expand the visualizations checklist</summary>
+<summary>Expand the audio and sonifications checklist</summary>
 
 - [ ] Sonifications include a key explaining the mapping of data to sound. A written description can be used to convey this information.
 - [ ] Sonification outputs reference the method that generated the sonification. This can be done in a code cell or with a link to the file used to generate the sonification.
@@ -153,7 +153,7 @@ This list is not exhaustive. If you are reviewing a notebook with content that y
 ### Interactive Widgets 
 
 <details>
-<summary>Expand the visualizations checklist</summary>
+<summary>Expand the interactive widgets checklist</summary>
 
 
 The accessibility of interactive widgets varies greatly depending how they are included in the notebook. Review beyond this checklist may be needed.
