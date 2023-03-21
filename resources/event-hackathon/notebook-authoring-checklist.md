@@ -2,7 +2,7 @@
 
 How usable a Jupyter notebook is for disabled people can vary widely—-it depends on how the document is set up and presented. Notebook authors can use writing and publishing techniques to ensure their notebooks' content is more accessible.
 
-Use this checklist to review notebooks and get a better sense of if their content is accessible. Editing your notebook for accessibility is an excellent step you can take to make our communities more inclusive!
+Use this checklist to start reviewing notebooks. Editing your notebook for accessibility is an excellent step you can take to make our communities more inclusive!
 
 This checklist is based on the [draft authoring tips from the Notebooks For All team](accessibility-tips-for-jupyter-notebooks.md).
 
