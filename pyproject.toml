@@ -23,7 +23,7 @@ classifiers = [
     "Programming Language :: Python",
     "License :: OSI Approved :: BSD License",
 ]
-dependencies = ["nbconvert", "accessible-pygments"]
+dependencies = ["nbconvert", "accessible-pygments", "pydantic", "IPython", "markdown-it-py[plugins,linkify]", ]
 dynamic = ["version"]
 
 [project.optional-dependencies]
@@ -61,6 +61,7 @@ serve = "mkdocs serve -v"
 
 [project.entry-points."nbconvert.exporters"]
 html5 = "nbconvert_html5:Html5"
+complex_form = "nbconvert_html5.form_exporter:FormExporter"
 
 # versioning is automatically synced using scm tools
 [tool.setuptools_scm]
@@ -130,6 +131,7 @@ configurations = [
     "tests/configurations/tabs-scroll-to-top.py",
     "tests/configurations/tab-to-content-nav-high-contrast.py",
     "tests/configurations/tab-to-code-nav-high-contrast.py",
+    "tests/configurations/table-default.py",
 ]
 
 [tool.doit.tasks.convert]
