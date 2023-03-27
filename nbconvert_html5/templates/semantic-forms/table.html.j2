@@ -1,0 +1,174 @@
+{#
+this notebook template represents cells as a feed pattern of complex forms.
+it is designed with aria in mind, all possible aria is included. the resting, or static, state
+of the notebook is represented here. features are progressively added by flipping different aria switches.
+
+we make no distinction between markdown and code cells. in fact, they are synthesized by adds draggable, multiselectable
+tabs
+in the input area.
+
+for optimal aria support, we wrap input cells in a figure tag so that the figcaption can become the aria-describedby
+reference.
+
+#}
+{%- extends 'semantic-forms/base.html.j2' -%}
+
+{%- block header -%}
+<html lang="en">
+
+<head>
+    <title></title>
+    <style>
+        {% include "semantic-forms/static/style.css" %}
+    </style>
+</head>
+{%- endblock header -%}
+
+
+{%- block body -%}
+
+<body>
+    <nav class="skip" aria-label="skip links">
+        <a class="skip" tabindex="0" href="#cells">Skip to content</a>
+        <a class="skip" tabindex="0" href="#header">Skip to header</a>
+        <a class="skip" tabindex="0" href="#footer">Skip to footer</a>
+    </nav>
+    <header id="header">
+        <nav id="site" aria-label="site-navigation"></nav>
+        <dialog id="settings"></dialog>
+    </header>
+    <main aria-labelledby="notebook-caption">
+        <header>
+            <nav id="toc" aria-label="table of contents"></nav>
+            {# <label class="status">status</label> #}
+        </header>
+        <div id="top"></div>
+        {{metadata_dialog(metadata)}}
+        <table aria-label="{{title}}" class="cells static" id="cells">
+            <caption id="notebook-caption">{{resources.metadata.path}}/{{resources.metadata.name}}.ipynb</caption>
+            <thead>
+                <tr>
+                    <th class="index" scope="col">index</th>
+                    <th class="cell_type" scope="col">type</th>
+                    <th class="source" scope="col">source</th>
+                    <th class="outputs" scope="col">outputs</th>
+                    <th class="metadata" scope="col">metadata</th>
+                    <th class="form" scope="col">form</th>
+                    <th class="execution_count" scope="col">execution count</th>
+                    <th class="id" scope="col">id</th>
+                    <th class="label" scope="col">id</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i, cell in enumerate(nb.cells) %}
+                {{cell_form(cell_type=cell.cell_type, source=cell.source, id=cell.id, metadata=cell.metadata,
+                outputs=cell.outputs,
+                execution_count=cell.execution_count, count=i, total_count=len(cells), cell=cell)}}
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </main>
+    <footer id="footer">
+        <table class="summary"></table>
+        <a href="#top">Scroll to top</a>
+    </footer>
+</body>
+{%- endblock body -%}
+
+{%- block footer -%}
+
+</html>
+{%- endblock footer -%}
+
+
+{% macro highlight(body, type) %}
+{{body}}
+{% endmacro %}
+
+{% macro metadata_dialog(metadata) %}
+{% endmacro %}
+
+{% macro cell_form(cell_type, count=0, total_count=1, id="", execution_count="", source="", outputs="", metadata=None,
+cell=cell)
+%}
+{% set metadata = metadata or {} %}
+{% set count = count + 1 %}
+{% set FORM = "cell-form-" + str(id or count) %}
+
+<tr class="cell {{cell_type}}" id="cell-{{count}}" draggable="false" aria-busy="false">
+    <th class="index" scope="row">{{count}}</th>
+    <td class="cell_type">
+        <label class="cell_type">
+            <select name="cell_type" disabled>
+                <option {% if cell_type=="code" %}selected{% endif %} value="code">code</option>
+                <option {% if cell_type=="markdown" %}selected{% endif %} value="markdown">markdown</option>
+                <option {% if cell_type=="raw" %}selected{% endif %} value="raw">raw</option>
+                <option {% if cell_type=="unknown" %}selected{% endif %} value="unknown">unknown</option>
+            </select>
+        </label>
+    </td>
+    <td class="source">
+        <div role="tablist" aria-multiselectable="true">
+            <button class="plain" aria-selected="true" aria-controls="cell-input-source-plain-{{count}}"
+                tabindex="-1"></button>
+            <button class="render" aria-selected="true" aria-controls="cell-input-source-render-{{count}}"
+                tabindex="-1"></button>
+        </div>
+        <textarea readonly class="sro" name="source" id="cell-input-source-{{count}}" aria-hidden="false"
+            autocomplete="off" autocorrect="off" form="{{FORM}}" placeholder="" spellcheck="default"
+            wrap="soft">{{"".join(source)}}</textarea>
+        <label class="sro" for="cell-input-source-{{count}}">{{cell_type}} cell {{count}}</label>
+        <div class="render" aria-hidden="{% if cell_type=="markdown" %}false{% else %}true{% endif %}">
+            {% if cell_type=="markdown" %}{{markdown(source)}}{% endif %}
+            {% if cell_type=="code" %}{{markdown("```IPython3\n"+"".join(source)+"\n```\n")}}{% endif %}
+        </div>
+    </td>
+    <td class="output">
+        {% for i, output in enumerate(outputs) %}
+        {% block output scoped %}{% block output_prompt %}{% endblock %}{{super()}}{% endblock %}
+        {% endfor %}
+    </td>
+    <td class="metadata">
+        <dialog class="metadata" id="cell-metadata-{{count}}">
+            <figure>
+                <div role="tablist" aria-multiselectable="true">
+                    <button class="plain" aria-selected="false" aria-controls="cell-metadata-plain-{{count}}"
+                        tabindex="-1"></button>
+                    <button class="render" aria-selected="true" aria-controls="cell-metadata-render-json-{{count}}"
+                        tabindex="-1"></button>
+                </div>
+                <textarea name="metadata" id="cell-metadata-plain-{{count}}" aria-hidden="false" autocomplete="off"
+                    autocorrect="off" form="{{id}}" placeholder="" spellcheck="default"
+                    wrap="soft">{{json.dumps(metadata)}}</textarea>
+                <figure id="cell-metadata-render-json-{{count}}">
+                    {{highlight(json.dumps(metadata), cell_type)}}
+                    <figcaption></figcaption>
+                </figure>
+                <figcaption id="cell-metadata-description-{{i}}"></figcaption>
+            </figure>
+        </dialog>
+    </td>
+    <td class="form">
+        <form id="{{FORM}}" aria-labelledby="{{FORM}}-id">
+            <input type="submit" value="run" class="sro" tabindex="0">
+        </form>
+    </td>
+    <td class="execution_count">{{execution_count}}</td>
+    <td class="id">{{id}}</td>
+    <td class="label" id="{{FORM}}-id">{{cell_type}} cell {{count}}</td>
+</tr>
+{% endmacro %}
+
+{#
+<footer>
+    <label class="start_time">
+        <output><time></time></output>
+    </label>
+    <label class="end_time">
+        <output><time></time></output>
+    </label>
+    <label class="elapsed_time">
+        <output><time></time></output>
+    </label>
+</footer> #}

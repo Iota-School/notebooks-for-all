@@ -1,0 +1,95 @@
+th:not(.source, .output), td:not(.source, .output) {
+    visibility: collapse;
+    display: none;
+}
+
+tr.cell {
+    display: grid;
+    grid-template-areas: "source" "outputs";
+}
+
+
+tr.code.cell {
+    display: grid;
+    grid-template-columns: 5% 95%;
+    grid-template-areas: "source source" "outputs outputs";
+}
+
+tr.cell td.execution_count {
+    grid-area: execution_count;
+}
+
+tr.cell td.source {
+    grid-area: source;
+}
+
+tr.cell td.outputs {
+    grid-area: outputs;
+}
+
+td.source > figure > figcaption, 
+[role=tablist],
+table > thead > tr {
+    display: none;
+}
+
+label.execution_count:before {
+    content: "input";
+}
+
+body>.skip>a {
+    position: fixed;
+    left: -9999px;
+}
+
+body>.skip>a:focus {
+    left: 0px;
+}
+
+article.cell label.index:before {
+    content: "cell ";
+    visibility: visible;
+}
+
+article.cell label.total:before {
+    content: "/ ";
+    visibility: visible;
+}
+
+article.code.cell label.index:first-child:before {
+    content: "code ";
+}
+
+header:empty,
+footer:empty {
+    display: none;
+}
+
+.sro:not(:focus):not(:active) {
+    clip: rect(0 0 0 0); 
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap; 
+    width: 1px;
+  }
+
+.static tr.markdown.cell td.source textarea,
+.static tr.code.cell td.source textarea:focus + .render  {
+    display: none;
+}
+
+td.source figure {
+    text-align: left;
+}
+td.source textarea  {
+    width: 100%;
+}
+td.source label {
+    display: none;
+}
+  
+input[type="submit"] {
+    display: none;
+}

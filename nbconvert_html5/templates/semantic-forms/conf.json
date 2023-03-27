@@ -1,0 +1,8 @@
+{
+  "base_template": "null",
+  "mimetypes": {
+    "text/html": true
+  },
+  "preprocessors": {
+  }
+}
