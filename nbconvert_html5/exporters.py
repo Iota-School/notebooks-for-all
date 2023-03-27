@@ -1,3 +1,5 @@
+"""nbconvert exporters towards accessible notebook html"""
+
 import os
 import os.path
 from pathlib import Path
@@ -13,7 +15,8 @@ DIR = Path(__file__).parent
 PROMPT_RE = compile("(In|Out)(\s|&nbsp;){0,1}\[(?P<n>[0-9]+)\]")
 
 
-def soupify(body):
+def soupify(body: str) -> BeautifulSoup:
+    """convert a string of html to an beautiful soup object"""
     return BeautifulSoup(body, features="html.parser")
 
 
@@ -34,26 +37,18 @@ class PostProcessExporter(HTMLExporter):
     extra_template_paths = List([(DIR / "templates").absolute().__str__()])
     post_processor = Callable(lambda x: x).tag(config=True)
 
-    def code_set_cell_label(self, cell, label=None):
-        pass
-
-    def post_process_cell(self, cell):
-        pass
-
-    def post_process_markdown_cell(self, cell):
-        pass
-
-    def post_process_code_cell(self, cell):
-        pass
-
-    # def _template_file_default(self):
-    #     return "html5-lab.j2"
-
 
 from traitlets import Bool, CUnicode
 
 
 class Html5(PostProcessExporter):
+    """the primary exporter produced by notebooks for all
+    
+    this class has a lot of flags that we designed to test.
+    the naming occurred organically as the project progressed.
+    we try to limit the degrees of freedom of each trait
+    so that the configuration changes are minimal.
+    """
     def from_notebook_node(self, nb, **kw):
         result, meta = super().from_notebook_node(nb, **kw)
         result = self.post_process_html(result)
@@ -114,6 +109,9 @@ class Html5(PostProcessExporter):
     scroll_to_top = Bool(False, help="include a scroll to top link").tag(config=True)
 
     def post_process_head(self, soup):
+        """post process the head of the document.
+        
+        add custom css based on flags"""
         script = soup.new_tag("style", type="text/css", rel="stylesheet")
         script.string = ""
         if self.increase_prompt_visibility:
@@ -292,3 +290,4 @@ c.CSSHTMLHeaderPreprocessor.style = "default"
 
         print(f"writing config to {target}")
         target.write_text(cls.generate_config())
+
