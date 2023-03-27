@@ -1,3 +1,9 @@
+when we are designing for screen reader, or the colorless experience.
+we must program for a machine so it treats the human kindly;
+our primary effort is teach the machine to be nice.
+through this effort we can use rdfa to improve the context.
+https://www.w3.org/TR/rdfa-lite/
+
 # the semantic forms template
 
 this template is designed is optimize the [screen reader] experience of static jupyter notebooks.

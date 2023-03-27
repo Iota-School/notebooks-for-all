@@ -12,7 +12,7 @@ reference.
 
 #}
 {%- extends 'semantic-forms/base.html.j2' -%}
-
+    `   
 {%- block header -%}
 <html lang="en">
 
@@ -29,26 +29,30 @@ reference.
 
 <body>
     <nav class="skip" aria-label="skip links">
-        <a class="skip" tabindex="0" href="#cells">Skip to content</a>
-        <a class="skip" tabindex="0" href="#header">Skip to header</a>
-        <a class="skip" tabindex="0" href="#footer">Skip to footer</a>
+        <a class="skip sro" tabindex="0" href="#cells">Skip to content</a>
+        <a class="skip sro" tabindex="0" href="#header">Skip to header</a>
+        <a class="skip sro" tabindex="0" href="#footer">Skip to footer</a>
     </nav>
     <header id="header">
+        <!-- use headers for introductory content -->
         <nav id="site" aria-label="site-navigation"></nav>
         <dialog id="settings"></dialog>
     </header>
-    <main aria-labelledby="notebook-caption">
+    <div id="top"></div>
+    <main class="notebook static" aria-labelledby="notebook-caption">
+        <!--the notebook is main area. it is represented by a big table. -->
         <header>
             <nav id="toc" aria-label="table of contents"></nav>
-            {# <label class="status">status</label> #}
+            <!--this is generated from the dom. sure these is a resting state, but this should probably in the javascript so its updates when interactive.-->
         </header>
-        <div id="top"></div>
-        {{metadata_dialog(metadata)}}
-        <table aria-label="{{title}}" class="cells static" id="cells">
-            <caption id="notebook-caption">{{resources.metadata.path}}/{{resources.metadata.name}}.ipynb</caption>
+        {{metadata_dialog(metadata)}} <!-- metadata is NOT introductory content, and it is supplemental, it is NOT complementary -->
+        <!-- metadata is colorless at rest so we place it in a dialog that can be revealed by the user -->
+        <table class="cells" id="cells">
+        {# aria-label="{{title}}"  #}
             <thead>
-                <tr>
-                    <th class="index" scope="col">index</th>
+                <tr class="cell header">
+                    {# <th class="index" scope="col">index</th> #}
+                    {# we dont need to keep the index because the table manages that for us. #}
                     <th class="cell_type" scope="col">type</th>
                     <th class="source" scope="col">source</th>
                     <th class="outputs" scope="col">outputs</th>
@@ -66,7 +70,8 @@ reference.
                 execution_count=cell.execution_count, count=i, total_count=len(cells), cell=cell)}}
                 {% endfor %}
             </tbody>
-
+            <tfoot><tr></tr></tfoot>
+            <caption id="notebook-caption">{{resources.metadata.path}}/{{resources.metadata.name}}.ipynb</caption>
         </table>
     </main>
     <footer id="footer">
@@ -97,7 +102,6 @@ cell=cell)
 {% set FORM = "cell-form-" + str(id or count) %}
 
 <tr class="cell {{cell_type}}" id="cell-{{count}}" draggable="false" aria-busy="false">
-    <th class="index" scope="row">{{count}}</th>
     <td class="cell_type">
         <label class="cell_type">
             <select name="cell_type" disabled>
@@ -115,10 +119,10 @@ cell=cell)
             <button class="render" aria-selected="true" aria-controls="cell-input-source-render-{{count}}"
                 tabindex="-1"></button>
         </div>
-        <textarea readonly class="sro" name="source" id="cell-input-source-{{count}}" aria-hidden="false"
-            autocomplete="off" autocorrect="off" form="{{FORM}}" placeholder="" spellcheck="default"
-            wrap="soft">{{"".join(source)}}</textarea>
         <label class="sro" for="cell-input-source-{{count}}">{{cell_type}} cell {{count}}</label>
+        <textarea readonly class="sro" name="source" id="cell-input-source-{{count}}" aria-hidden="false"
+            autocomplete="off" autocorrect="off" form="{{FORM}}" placeholder="" spellcheck="default" rows="{{source.rstrip().count("\n") + 1}}"
+            wrap="soft">{{"".join(source)}}</textarea>
         <div class="render" aria-hidden="{% if cell_type=="markdown" %}false{% else %}true{% endif %}">
             {% if cell_type=="markdown" %}{{markdown(source)}}{% endif %}
             {% if cell_type=="code" %}{{markdown("```IPython3\n"+"".join(source)+"\n```\n")}}{% endif %}
@@ -139,7 +143,7 @@ cell=cell)
                         tabindex="-1"></button>
                 </div>
                 <textarea name="metadata" id="cell-metadata-plain-{{count}}" aria-hidden="false" autocomplete="off"
-                    autocorrect="off" form="{{id}}" placeholder="" spellcheck="default"
+                    autocorrect="off" form="{{id}}" placeholder="" spellcheck="default" 
                     wrap="soft">{{json.dumps(metadata)}}</textarea>
                 <figure id="cell-metadata-render-json-{{count}}">
                     {{highlight(json.dumps(metadata), cell_type)}}
