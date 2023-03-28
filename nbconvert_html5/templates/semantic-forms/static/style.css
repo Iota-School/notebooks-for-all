@@ -39,11 +39,13 @@ td.execution_count:before {
 tr.cell {
     max-width: 90vw;
     overflow-x: auto;
+    width: 100%;
+
 }
 
 td.cell_type,
 tr.cell form label.cell_type,
-tr.markdown.cell td.outputs, 
+tr.markdown.cell td.outputs,
 tr.markdown.cell td.execution_count,
 .static input[type="submit"],
 .static tr.markdown.cell td.source form textarea {
@@ -51,8 +53,9 @@ tr.markdown.cell td.execution_count,
 }
 
 tr.markdown.cell {
-    grid-template-areas: "source:";
+    grid-template-areas: "source";
 }
+
 tr.code.cell {
     grid-template-columns: 5em auto;
     grid-template-areas: "execution_count source" "outputs outputs";
@@ -65,11 +68,12 @@ td.source {
 td.outputs {
     grid-area: "outputs";
 }
+
 td.execution_count {
     grid-area: "execution_count";
 }
 
-td.source form textarea:focus ~ .render {
+td.source form textarea:focus~.render {
     display: none;
 }
 
@@ -78,3 +82,6 @@ td.source textarea {
     width: 100%;
 }
 
+td.metadata > button:disabled {
+    display: none;
+}

@@ -12,12 +12,13 @@ reference.
 
 #}
 {%- extends 'semantic-forms/base.html.j2' -%}
-`
+
 {%- block header -%}
 <html lang="en">
 
 <head>
     <title></title>
+    <meta name="color-scheme" content="dark light">
     <style>
         {% include "semantic-forms/static/style.css" %}
     </style>
@@ -30,24 +31,34 @@ reference.
 <body>
     <nav class="skip" aria-label="skip links">
         <a class="skip sro" tabindex="0" href="#cells">Skip to Content</a>
-        <a class="skip sro" tabindex="0" href="#toc"  onclick="document.getElementById('toc').open = true">Skip to Table of Contents</a>
+        <a class="skip sro" tabindex="0" href="#toc" onclick="document.getElementById('toc').open = true">Skip to Table
+            of Contents</a>
     </nav>
     <header id="header">
         <!-- use headers for introductory content -->
         <nav id="site" aria-label="site-navigation"></nav>
-        <dialog id="settings"></dialog>
     </header>
-    <div id="top"></div>
     <main class="notebook static" aria-labelledby="notebook-caption">
         <!--the notebook is main area. it is represented by a big table. -->
         <header>
             <!--this is generated from the dom. sure these is a resting state, but this should probably in the javascript so its updates when interactive.-->
+            <span id="notebook-caption">{{resources.metadata.path}}/{{resources.metadata.name}}.ipynb
+                <button onclick="document.querySelector('#nb-metadata').showModal()" title="show notebook metadata" {%
+                    if not nb.metadata %}disabled{% endif %}>🛈</button>
+            </span>
+            <dialog class="metadata" id="nb-metadata">
+                <figure>
+                    {{markdown("```json\n" + json.dumps(nb.metadata, indent=2) + "\n```\n")}}
+                    <figcaption>notebook metadata</figcaption>
+                </figure>
+                <form method="dialog">
+                    <button>OK</button>
+                </form>
+            </dialog>
         </header>
-        {{metadata_dialog(metadata)}}
         <!-- metadata is NOT introductory content, and it is supplemental, it is NOT complementary -->
         <!-- metadata is colorless at rest so we place it in a dialog that can be revealed by the user -->
-        <table class="cells" id="cells">
-            {# aria-label="{{title}}" #}
+        <table class="cells" id="cells" aria-labelledby="notebook-caption">
             <thead>
                 <tr class="cell header">
                     {# <th class="index" scope="col">index</th> #}
@@ -69,16 +80,24 @@ reference.
             <tfoot>
                 <tr></tr>
             </tfoot>
-            <caption id="notebook-caption">{{resources.metadata.path}}/{{resources.metadata.name}}.ipynb</caption>
+
         </table>
+        <footer id="nb-footer">
+            <nav class="notebook" aria-label="table">  
+              <details id="toc">
+                    <summary id="toc-summary"><span aria-hidden="true">📑</span> Table of Contents</summary>
+                </details>
+            </nav>
+        </footer>
     </main>
     <footer id="footer">
-        <nav class="notebook" aria-label="table of contents">
-            <details id="toc"><summary id="toc-summary">Table of Contents</summary></details>
-        </nav>
-
-        <table class="summary"></table>
-        <a href="#top">Scroll to top</a>
+        <details id="accessibility-settings">
+            <summary><span aria-hidden="true">⚙</span> Accessibility Settings</summary>
+            <form id="accessibility-settings">
+            work in progress
+            </form>
+        </details>
+        <a href="#cells">Scroll to Top</a>
     </footer>
 </body>
 {%- endblock body -%}
@@ -102,7 +121,7 @@ cell=cell)
 {% set metadata = metadata or {} %}
 {% set count = count + 1 %}
 {% set source = "".join(source) %}
-{% set FORM = "cell-form-" + str(id or count) %}
+{% set FORM = "cell-" + str(id or count) %}
 
 <tr class="cell {{cell_type}}" id="cell-{{count}}" draggable="false" aria-busy="false">
     <td class="execution_count" id="{{FORM}}-exec">{{execution_count}}</td>
@@ -134,23 +153,16 @@ cell=cell)
         {% endfor %}
     </td>
     <td class="metadata">
-        <dialog class="metadata" id="cell-metadata-{{count}}">
+        <button onclick="document.querySelector('#{{FORM}}-metadata').showModal()" title="show metadata" {% if not
+            metadata %}disabled{% endif %}>🛈</button>
+        <dialog class="metadata" id="{{FORM}}-metadata">
             <figure>
-                <div role="tablist" aria-multiselectable="true">
-                    <button class="plain" aria-selected="false" aria-controls="cell-metadata-plain-{{count}}"
-                        tabindex="-1"></button>
-                    <button class="render" aria-selected="true" aria-controls="cell-metadata-render-json-{{count}}"
-                        tabindex="-1"></button>
-                </div>
-                <textarea name="metadata" id="cell-metadata-plain-{{count}}" aria-hidden="false" autocomplete="off"
-                    autocorrect="off" form="{{id}}" placeholder="" spellcheck="default"
-                    wrap="soft">{{json.dumps(metadata)}}</textarea>
-                <figure id="cell-metadata-render-json-{{count}}">
-                    {{highlight(json.dumps(metadata), cell_type)}}
-                    <figcaption></figcaption>
-                </figure>
-                <figcaption id="cell-metadata-description-{{i}}"></figcaption>
+                {{markdown("```json\n" + json.dumps(metadata, indent=2) + "\n```\n")}}
+                <figcaption id="{{FORM}}-metadata-caption">{{cell_type}} metadata</figcaption>
             </figure>
+            <form method="dialog">
+                <button>OK</button>
+            </form>
         </dialog>
     </td>
 
