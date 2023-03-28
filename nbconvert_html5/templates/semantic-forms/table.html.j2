@@ -29,9 +29,8 @@ reference.
 
 <body>
     <nav class="skip" aria-label="skip links">
-        <a class="skip sro" tabindex="0" href="#cells">Skip to content</a>
-        <a class="skip sro" tabindex="0" href="#header" onclick="document.getElementById('toc').open = true">Skip to header</a>
-        <a class="skip sro" tabindex="0" href="#footer">Skip to footer</a>
+        <a class="skip sro" tabindex="0" href="#cells">Skip to Content</a>
+        <a class="skip sro" tabindex="0" href="#toc"  onclick="document.getElementById('toc').open = true">Skip to Table of Contents</a>
     </nav>
     <header id="header">
         <!-- use headers for introductory content -->
@@ -42,9 +41,6 @@ reference.
     <main class="notebook static" aria-labelledby="notebook-caption">
         <!--the notebook is main area. it is represented by a big table. -->
         <header>
-            <nav aria-label="table of contents">
-                <details id="toc"><summary>table of contents</summary></details>
-            </nav>
             <!--this is generated from the dom. sure these is a resting state, but this should probably in the javascript so its updates when interactive.-->
         </header>
         {{metadata_dialog(metadata)}}
@@ -77,6 +73,10 @@ reference.
         </table>
     </main>
     <footer id="footer">
+        <nav class="notebook" aria-label="table of contents">
+            <details id="toc"><summary id="toc-summary">Table of Contents</summary></details>
+        </nav>
+
         <table class="summary"></table>
         <a href="#top">Scroll to top</a>
     </footer>
