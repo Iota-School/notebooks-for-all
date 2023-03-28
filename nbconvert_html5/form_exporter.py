@@ -3,7 +3,7 @@
 this design assumes __notebooks are a feed of forms__.
 """
 
-from .exporters import PostProcessExporter
+from .exporters import PostProcessExporter, soupify
 from contextlib import suppress
 from copy import copy, deepcopy
 import enum
@@ -304,17 +304,29 @@ class FormExporter(PostProcessExporter):
 
     def from_notebook_node(self, nb, resources=None, **kw):
         html, resources = super().from_notebook_node(nb, resources, **kw)
-        html = heading_links(html)
+        html = self.post_process_html(html)
         return html, resources
     
+    def post_process_html(self, body):
+        soup = soupify(body)
+        heading_links(soup)
+        soup.select_one("title").string = soup.select_one("h1").string
+        soup.select_one("details#toc").append(soupify(toc(soup)))
+        return str(soup)
+
+def toc(html):
+    import io
+    toc = io.StringIO()
+    for header in html.select("h1,h2,h3,h4,h5,h6"):
+        l = int(header.name[-1])
+        toc.write("  "*(l-1) + F"* [{header.string}](#{header.attrs.get('id')})\n")
+    return get_markdown(toc.getvalue())
+    
 def heading_links(html):
-    from .exporters import soupify
-    html = soupify(html)
     for header in html.select("h1,h2,h3,h4,h5,h6"):
         link = soupify(F"""<a href="#{header.attrs.get('id')}">{header.encode_contents().decode()}</a>""")
         header.clear()
         header.append(link)
-    return str(html)
 
 
 # * navigate links

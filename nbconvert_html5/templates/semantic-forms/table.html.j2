@@ -30,7 +30,7 @@ reference.
 <body>
     <nav class="skip" aria-label="skip links">
         <a class="skip sro" tabindex="0" href="#cells">Skip to content</a>
-        <a class="skip sro" tabindex="0" href="#header">Skip to header</a>
+        <a class="skip sro" tabindex="0" href="#header" onclick="document.getElementById('toc').open = true">Skip to header</a>
         <a class="skip sro" tabindex="0" href="#footer">Skip to footer</a>
     </nav>
     <header id="header">
@@ -42,7 +42,9 @@ reference.
     <main class="notebook static" aria-labelledby="notebook-caption">
         <!--the notebook is main area. it is represented by a big table. -->
         <header>
-            <nav id="toc" aria-label="table of contents"></nav>
+            <nav aria-label="table of contents">
+                <details id="toc"><summary>table of contents</summary></details>
+            </nav>
             <!--this is generated from the dom. sure these is a resting state, but this should probably in the javascript so its updates when interactive.-->
         </header>
         {{metadata_dialog(metadata)}}
@@ -55,6 +57,7 @@ reference.
                     {# <th class="index" scope="col">index</th> #}
                     {# we dont need to keep the index because the table manages that for us. #}
                     <th class="execution_count" scope="col">execution count</th>
+                    <th class="cell_type" scope="col">cell type</th>
                     <th class="source" scope="col">source</th>
                     <th class="outputs" scope="col">outputs</th>
                     <th class="metadata" scope="col">metadata</th>
@@ -103,26 +106,27 @@ cell=cell)
 
 <tr class="cell {{cell_type}}" id="cell-{{count}}" draggable="false" aria-busy="false">
     <td class="execution_count" id="{{FORM}}-exec">{{execution_count}}</td>
+    <td class="cell_type">
+        <label class="cell_type">
+            <select name="cell_type" disabled>
+                <option {% if cell_type=="code" %}selected{% endif %} value="code">code</option>
+                <option {% if cell_type=="markdown" %}selected{% endif %} value="markdown">markdown</option>
+                <option {% if cell_type=="raw" %}selected{% endif %} value="raw">raw</option>
+                <option {% if cell_type=="unknown" %}selected{% endif %} value="unknown">unknown</option>
+            </select> cell
+        </label>
+    </td>
     <td class="source">
-        <form id="{{FORM}}">
-            <label class="cell_type">
-                <select name="cell_type" disabled>
-                    <option {% if cell_type=="code" %}selected{% endif %} value="code">code</option>
-                    <option {% if cell_type=="markdown" %}selected{% endif %} value="markdown">markdown</option>
-                    <option {% if cell_type=="raw" %}selected{% endif %} value="raw">raw</option>
-                    <option {% if cell_type=="unknown" %}selected{% endif %} value="unknown">unknown</option>
-                </select> cell
-            </label>
+        <form id="{{FORM}}" aria-label="{{cell_type}} cell {{count}}">
             <textarea readonly class="sro" name="source" id="{{FORM}}-source" aria-hidden="false" autocomplete="off"
                 autocorrect="off" placeholder="" spellcheck="default" rows="{{len(source.rstrip().splitlines())}}"
-                wrap="soft">{{source}}</textarea>
+                aria-labelledby="{{FORM}}-exec" wrap="soft">{{source}}</textarea>
             <div class="render" aria-hidden="{% if cell_type == "markdown" %}false{% else %}true{% endif %}">
                 {% if cell_type=="markdown" %}{{markdown(source)}}{% endif %}
                 {% if cell_type=="code" %}{{markdown("```IPython3\n"+"".join(source)+"\n```\n")}}{% endif %}
             </div>
             <input type="submit" for="{{FORM}}-source" value="run" title="run the cell" class="sro" tabindex="0">
         </form>
-
     </td>
     <td class="outputs">
         {% for i, output in enumerate(outputs) %}

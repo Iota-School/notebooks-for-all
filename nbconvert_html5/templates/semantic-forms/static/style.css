@@ -41,6 +41,7 @@ tr.cell {
     overflow-x: auto;
 }
 
+td.cell_type,
 tr.cell form label.cell_type,
 tr.markdown.cell td.outputs, 
 tr.markdown.cell td.execution_count,
