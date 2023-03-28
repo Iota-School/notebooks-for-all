@@ -17,15 +17,8 @@ main {
     width: 1px;
 }
 
-
-tr:has(:focus) {
-    outline: 1px black; 
-}
-
-thead tr.cell,
-tr.cell>td:not(.source, .render, .outputs) {
+thead tr.cell {
     visibility: collapse;
-    display: none;
 }
 
 [role=tablist],
@@ -36,28 +29,51 @@ footer:empty {
 
 tr.cell {
     display: grid;
-    grid-template-areas: "source outputs";
-    max-width: 90vw;
 }
 
-tr.cell td.source,
-tr.cell td.render {
+
+td.execution_count:before {
+    content: "In: ";
+}
+
+tr.cell {
+    max-width: 90vw;
+    overflow-x: auto;
+}
+
+tr.cell form label.cell_type,
+tr.markdown.cell td.outputs, 
+tr.markdown.cell td.execution_count,
+.static input[type="submit"],
+.static tr.markdown.cell td.source form textarea {
+    display: none;
+}
+
+tr.markdown.cell {
+    grid-template-areas: "source:";
+}
+tr.code.cell {
+    grid-template-columns: 5em auto;
+    grid-template-areas: "execution_count source" "outputs outputs";
+}
+
+td.source {
     grid-area: "source";
 }
+
+td.outputs {
+    grid-area: "outputs";
+}
+td.execution_count {
+    grid-area: "execution_count";
+}
+
+td.source form textarea:focus ~ .render {
+    display: none;
+}
+
 
 td.source textarea {
     width: 100%;
 }
 
-
-tr.cell td.outputs {
-    grid-area: "outputs";
-}
-
-.static tr.markdown.cell td.source textarea {
-    display: none;
-}
-
-td.source textarea:focus + .render {
-    display: none;
-}

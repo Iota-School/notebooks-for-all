@@ -12,7 +12,7 @@ reference.
 
 #}
 {%- extends 'semantic-forms/base.html.j2' -%}
-    `   
+`
 {%- block header -%}
 <html lang="en">
 
@@ -45,22 +45,19 @@ reference.
             <nav id="toc" aria-label="table of contents"></nav>
             <!--this is generated from the dom. sure these is a resting state, but this should probably in the javascript so its updates when interactive.-->
         </header>
-        {{metadata_dialog(metadata)}} <!-- metadata is NOT introductory content, and it is supplemental, it is NOT complementary -->
+        {{metadata_dialog(metadata)}}
+        <!-- metadata is NOT introductory content, and it is supplemental, it is NOT complementary -->
         <!-- metadata is colorless at rest so we place it in a dialog that can be revealed by the user -->
         <table class="cells" id="cells">
-        {# aria-label="{{title}}"  #}
+            {# aria-label="{{title}}" #}
             <thead>
                 <tr class="cell header">
                     {# <th class="index" scope="col">index</th> #}
                     {# we dont need to keep the index because the table manages that for us. #}
-                    <th class="cell_type" scope="col">type</th>
+                    <th class="execution_count" scope="col">execution count</th>
                     <th class="source" scope="col">source</th>
                     <th class="outputs" scope="col">outputs</th>
                     <th class="metadata" scope="col">metadata</th>
-                    <th class="form" scope="col">form</th>
-                    <th class="execution_count" scope="col">execution count</th>
-                    <th class="id" scope="col">id</th>
-                    <th class="label" scope="col">id</th>
                 </tr>
             </thead>
             <tbody>
@@ -70,7 +67,9 @@ reference.
                 execution_count=cell.execution_count, count=i, total_count=len(cells), cell=cell)}}
                 {% endfor %}
             </tbody>
-            <tfoot><tr></tr></tfoot>
+            <tfoot>
+                <tr></tr>
+            </tfoot>
             <caption id="notebook-caption">{{resources.metadata.path}}/{{resources.metadata.name}}.ipynb</caption>
         </table>
     </main>
@@ -99,36 +98,33 @@ cell=cell)
 %}
 {% set metadata = metadata or {} %}
 {% set count = count + 1 %}
+{% set source = "".join(source) %}
 {% set FORM = "cell-form-" + str(id or count) %}
 
 <tr class="cell {{cell_type}}" id="cell-{{count}}" draggable="false" aria-busy="false">
-    <td class="cell_type">
-        <label class="cell_type">
-            <select name="cell_type" disabled>
-                <option {% if cell_type=="code" %}selected{% endif %} value="code">code</option>
-                <option {% if cell_type=="markdown" %}selected{% endif %} value="markdown">markdown</option>
-                <option {% if cell_type=="raw" %}selected{% endif %} value="raw">raw</option>
-                <option {% if cell_type=="unknown" %}selected{% endif %} value="unknown">unknown</option>
-            </select>
-        </label>
-    </td>
+    <td class="execution_count" id="{{FORM}}-exec">{{execution_count}}</td>
     <td class="source">
-        <div role="tablist" aria-multiselectable="true">
-            <button class="plain" aria-selected="true" aria-controls="cell-input-source-plain-{{count}}"
-                tabindex="-1"></button>
-            <button class="render" aria-selected="true" aria-controls="cell-input-source-render-{{count}}"
-                tabindex="-1"></button>
-        </div>
-        <label class="sro" for="cell-input-source-{{count}}">{{cell_type}} cell {{count}}</label>
-        <textarea readonly class="sro" name="source" id="cell-input-source-{{count}}" aria-hidden="false"
-            autocomplete="off" autocorrect="off" form="{{FORM}}" placeholder="" spellcheck="default" rows="{{source.rstrip().count("\n") + 1}}"
-            wrap="soft">{{"".join(source)}}</textarea>
-        <div class="render" aria-hidden="{% if cell_type=="markdown" %}false{% else %}true{% endif %}">
-            {% if cell_type=="markdown" %}{{markdown(source)}}{% endif %}
-            {% if cell_type=="code" %}{{markdown("```IPython3\n"+"".join(source)+"\n```\n")}}{% endif %}
-        </div>
+        <form id="{{FORM}}">
+            <label class="cell_type">
+                <select name="cell_type" disabled>
+                    <option {% if cell_type=="code" %}selected{% endif %} value="code">code</option>
+                    <option {% if cell_type=="markdown" %}selected{% endif %} value="markdown">markdown</option>
+                    <option {% if cell_type=="raw" %}selected{% endif %} value="raw">raw</option>
+                    <option {% if cell_type=="unknown" %}selected{% endif %} value="unknown">unknown</option>
+                </select> cell
+            </label>
+            <textarea readonly class="sro" name="source" id="{{FORM}}-source" aria-hidden="false" autocomplete="off"
+                autocorrect="off" placeholder="" spellcheck="default" rows="{{len(source.rstrip().splitlines())}}"
+                wrap="soft">{{source}}</textarea>
+            <div class="render" aria-hidden="{% if cell_type == "markdown" %}false{% else %}true{% endif %}">
+                {% if cell_type=="markdown" %}{{markdown(source)}}{% endif %}
+                {% if cell_type=="code" %}{{markdown("```IPython3\n"+"".join(source)+"\n```\n")}}{% endif %}
+            </div>
+            <input type="submit" for="{{FORM}}-source" value="run" title="run the cell" class="sro" tabindex="0">
+        </form>
+
     </td>
-    <td class="output">
+    <td class="outputs">
         {% for i, output in enumerate(outputs) %}
         {% block output scoped %}{% block output_prompt %}{% endblock %}{{super()}}{% endblock %}
         {% endfor %}
@@ -143,7 +139,7 @@ cell=cell)
                         tabindex="-1"></button>
                 </div>
                 <textarea name="metadata" id="cell-metadata-plain-{{count}}" aria-hidden="false" autocomplete="off"
-                    autocorrect="off" form="{{id}}" placeholder="" spellcheck="default" 
+                    autocorrect="off" form="{{id}}" placeholder="" spellcheck="default"
                     wrap="soft">{{json.dumps(metadata)}}</textarea>
                 <figure id="cell-metadata-render-json-{{count}}">
                     {{highlight(json.dumps(metadata), cell_type)}}
@@ -153,14 +149,7 @@ cell=cell)
             </figure>
         </dialog>
     </td>
-    <td class="form">
-        <form id="{{FORM}}" aria-labelledby="{{FORM}}-id">
-            <input type="submit" value="run" class="sro" tabindex="0">
-        </form>
-    </td>
-    <td class="execution_count">{{execution_count}}</td>
-    <td class="id">{{id}}</td>
-    <td class="label" id="{{FORM}}-id">{{cell_type}} cell {{count}}</td>
+
 </tr>
 {% endmacro %}
 

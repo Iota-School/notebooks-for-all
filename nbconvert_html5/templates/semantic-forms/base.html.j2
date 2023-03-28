@@ -29,13 +29,13 @@
 {%- endblock stream_stderr %}
 
 {% block data_svg scoped -%}
-<figure class="svg">
+{# <figure class="svg"> #}
 {%- if output.svg_filename %}
 <img src="{{ output.svg_filename | posix_path | escape_html }}">
 {%- else %}
 {{ output.data['image/svg+xml'].encode("utf-8") | clean_html }}
 {%- endif %}
-</figure>
+{# </figure> #}
 {%- endblock data_svg %}
 
 {% block data_html scoped -%}
@@ -67,7 +67,7 @@
 {%- endblock data_markdown %}
 
 {% block data_png scoped %}
-<figure class="png">
+{# <figure class="png"> #}
 {%- if 'image/png' in output.metadata.get('filenames', {}) %}
 <img src="{{ output.metadata.filenames['image/png'] | posix_path | escape_html }}"
 {%- else %}
@@ -89,11 +89,11 @@ class="unconfined"
 alt="{{ alttext | escape_html }}"
 {%- endif %}
 >
-</figure>
+{# </figure> #}
 {%- endblock data_png %}
 
 {% block data_jpg scoped %}
-<figure class="jpeg jpg">
+{# <figure class="jpeg jpg"> #}
 {%- if 'image/jpeg' in output.metadata.get('filenames', {}) %}
 <img src="{{ output.metadata.filenames['image/jpeg'] | posix_path | escape_html }}"
 {%- else %}
@@ -115,13 +115,13 @@ class="unconfined"
 alt="{{ alttext | escape_html }}"
 {%- endif %}
 >
-</figure>
+{# </figure> #}
 {%- endblock data_jpg %}
 
 {% block data_latex scoped %}
-<figure class="latex">
+{# <figure class="latex"> #}
 {{ output.data['text/latex'] | e }}
-</figure>
+{# </figure> #}
 {%- endblock data_latex %}
 
 {% block error -%}
