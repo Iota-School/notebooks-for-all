@@ -1,7 +1,7 @@
 # Astronomy Notebooks for All
 Jupyter Notebooks play a central role in modern data science workflows. Despite their importance, these notebooks are inaccessible to people with disabilities, especially those who rely on assistive technology. Impacted users must find extreme workarounds or [give up using them entirely.](https://www.freelists.org/post/program-l/Accessability-of-Jupyter-notebooks) Students with disabilities have [reported leaving their field](https://github.com/jupyterlab/jupyterlab/issues/9399#issuecomment-740524422) once they learn their chosen career’s foundational tools are inaccessible to them. 
 
-This is a challenging problem to solve. The Notebooks for All project is taking the first steps to solve this problem, initially focusing on static notebooks: 
+This is a challenging problem to solve. The Notebooks for All project is taking the first steps, initially focusing on static notebooks: 
 - Running usability feedback sessions with impacted users who rely on a variety of assistive technology
 - Editing notebooks based on the feedback
 - Defining precisely what makes notebooks inaccessible with assistive tech and compiling documents that describe the issues and feedback
