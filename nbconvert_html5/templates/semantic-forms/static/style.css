@@ -1,10 +1,84 @@
-body {
-    font-size: 1.25em;
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap');
+
+:root {
+    --bs-offcanvas-width: 50vw;
+}
+
+
+body>nav.header,
+nav.header>nav {
+    display: inline-block;
+}
+
+a.skip:focus~span:first,
+a.skip:focus~span:first {
+    display: none;
+}
+
+footer.offcanvas {
+    overflow: auto;
+    width: 50vw;
+}
+
+.is-hidden {
+    display: none;
+}
+
+dialog#settings {
+    height: 100% !important;
+    width: 50% !important;
+    left: 50%;
+    opacity: .9;
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+dialog.metadata form[method="dialog"] {
+    display: inline;
+    float: right;
 }
 
 main {
-    margin: auto;
-    padding: 1em;
+    grid-template-areas: "nav . toolbar" "main main main";
+}
+
+main>header[role="toolbar"] {
+    display: sticky;
+    top: 0;
+}
+
+
+main>header[role="toolbar"] label {
+    display: none;
+}
+
+nav ul,
+nav ol {
+    padding-left: 0;
+}
+
+nav ol>li {
+    list-style: none
+}
+
+code,
+textarea {
+    font: "Roboto";
+    font-family: mono;
+}
+
+body {
+    font-size: 1.25em;
+    font-family: "Atkinson Hyperlegible";
+}
+
+
+main {
+    margin: 2vw;
 }
 
 .sro:not(:focus):not(:active) {
@@ -17,40 +91,105 @@ main {
     width: 1px;
 }
 
+table.cells thead {
+    display: none;
+}
+
 thead tr.cell {
     visibility: collapse;
 }
 
-[role=tablist],
+
 header:empty,
 footer:empty {
     display: none;
 }
 
-tr.cell {
-    display: grid;
-}
-
-
-td.execution_count:before {
+.static td.execution_count label:not(:empty):before {
     content: "In: ";
 }
 
-tr.cell {
-    max-width: 90vw;
-    overflow-x: auto;
+table#cells {
+    table-layout: fixed;
     width: 100%;
+}
 
+tr.cell {
+    display: grid;
+    width: 96vw;
+}
+
+
+tr.code.cell {
+    grid-template-rows: 2rem 1rem auto auto;
+    grid-template-columns: 5fr 95fr;
+    justify-items: start;
+    grid-template-areas: "execution_count source" "toolbar source" ". source" "outputs outputs";
+    align-items: start;
+    justify-items: start;
+    width: 95vw;
+}
+
+tr.markdown.cell {
+    grid-template-columns: 95fr 5fr;
+    grid-template-areas: "source toolbar";
+}
+
+tr.cell>td.source {
+    grid-area: source;
+    width: 100%;
+    overflow-x: auto;
+}
+
+tr.cell>td.cell_type {
+    grid-area: cell_type;
+}
+
+tr.cell>td.outputs {
+    overflow-x: auto;
+    grid-area: outputs;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+tr.cell>td.toolbar {
+    grid-area: toolbar;
+}
+
+tr.cell>td.metadata li {
+    list-style-type: none;
+}
+
+tr.cell>td.execution_count {
+    grid-area: execution_count;
+}
+
+td.source form textarea {
+    width: 100%;
 }
 
 td.cell_type,
 tr.cell form label.cell_type,
 tr.markdown.cell td.outputs,
 tr.markdown.cell td.execution_count,
-.static input[type="submit"],
+.static td.toolbar,
+.static input.run,
 .static tr.markdown.cell td.source form textarea {
     display: none;
 }
+
+td.source form textarea:focus~.render {
+    display: none;
+}
+
+/* tr.cell {
+    max-width: 90vw;
+    overflow-x: auto;
+    width: 100%;
+
+}
+
 
 tr.markdown.cell {
     grid-template-areas: "source";
@@ -73,9 +212,6 @@ td.execution_count {
     grid-area: "execution_count";
 }
 
-td.source form textarea:focus~.render {
-    display: none;
-}
 
 
 td.source textarea {
@@ -84,4 +220,24 @@ td.source textarea {
 
 td.metadata > button:disabled {
     display: none;
+} */
+
+[role="toolbar"] {
+    display: flex;
+    flex-direction: row-reverse;
+    ;
+}
+
+[role="tooltip"] {
+    visibility: hidden;
+}
+
+[aria-describedby]:hover,
+[aria-describedby]:focus {
+    position: relative;
+}
+
+[aria-describedby]:hover+[role="tooltip"],
+[aria-describedby]:focus+[role="tooltip"] {
+    visibility: visible;
 }

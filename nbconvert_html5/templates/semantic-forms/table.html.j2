@@ -11,17 +11,178 @@ for optimal aria support, we wrap input cells in a figure tag so that the figcap
 reference.
 
 #}
-{%- extends 'semantic-forms/base.html.j2' -%}
+{%- extends 'semantic-forms/components.html.j2' -%}
 
 {%- block header -%}
 <html lang="en">
 
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
     <title></title>
     <meta name="color-scheme" content="dark light">
-    <style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+    <style{{">"}}
         {% include "semantic-forms/static/style.css" %}
-    </style>
+    </style{{">"}}
+    <script>/*
+*   This content is licensed according to the W3C Software License at
+*   https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document
+*
+*   File:   tabs-automatic.js
+*
+*   Desc:   Tablist widget that implements ARIA Authoring Practices
+*/
+
+        'use strict';
+
+        class TabsAutomatic {
+            constructor(groupNode) {
+                this.tablistNode = groupNode;
+
+                this.tabs = [];
+
+                this.firstTab = null;
+                this.lastTab = null;
+
+                this.tabs = Array.from(this.tablistNode.querySelectorAll('[role=tab]'));
+                this.tabpanels = [];
+
+                for (var i = 0; i < this.tabs.length; i += 1) {
+                    var tab = this.tabs[i];
+                    var tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
+
+                    tab.tabIndex = -1;
+                    tab.setAttribute('aria-selected', 'false');
+                    this.tabpanels.push(tabpanel);
+
+                    tab.addEventListener('keydown', this.onKeydown.bind(this));
+                    tab.addEventListener('click', this.onClick.bind(this));
+
+                    if (!this.firstTab) {
+                        this.firstTab = tab;
+                    }
+                    this.lastTab = tab;
+                }
+
+                this.setSelectedTab(this.firstTab, false);
+            }
+
+            setSelectedTab(currentTab, setFocus) {
+                if (typeof setFocus !== 'boolean') {
+                    setFocus = true;
+                }
+                for (var i = 0; i < this.tabs.length; i += 1) {
+                    var tab = this.tabs[i];
+                    if (currentTab === tab) {
+                        tab.setAttribute('aria-selected', 'true');
+                        tab.removeAttribute('tabindex');
+                        this.tabpanels[i].classList.remove('is-hidden');
+                        if (setFocus) {
+                            tab.focus();
+                        }
+                    } else {
+                        tab.setAttribute('aria-selected', 'false');
+                        tab.tabIndex = -1;
+                        this.tabpanels[i].classList.add('is-hidden');
+                    }
+                }
+            }
+
+            setSelectedToPreviousTab(currentTab) {
+                var index;
+
+                if (currentTab === this.firstTab) {
+                    this.setSelectedTab(this.lastTab);
+                } else {
+                    index = this.tabs.indexOf(currentTab);
+                    this.setSelectedTab(this.tabs[index - 1]);
+                }
+            }
+
+            setSelectedToNextTab(currentTab) {
+                var index;
+
+                if (currentTab === this.lastTab) {
+                    this.setSelectedTab(this.firstTab);
+                } else {
+                    index = this.tabs.indexOf(currentTab);
+                    this.setSelectedTab(this.tabs[index + 1]);
+                }
+            }
+
+            /* EVENT HANDLERS */
+
+            onKeydown(event) {
+                var tgt = event.currentTarget,
+                    flag = false;
+
+                switch (event.key) {
+                    case 'ArrowLeft':
+                        this.setSelectedToPreviousTab(tgt);
+                        flag = true;
+                        break;
+
+                    case 'ArrowRight':
+                        this.setSelectedToNextTab(tgt);
+                        flag = true;
+                        break;
+
+                    case 'Home':
+                        this.setSelectedTab(this.firstTab);
+                        flag = true;
+                        break;
+
+                    case 'End':
+                        this.setSelectedTab(this.lastTab);
+                        flag = true;
+                        break;
+
+                    default:
+                        break;
+                }
+
+                if (flag) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+            }
+
+            onClick(event) {
+                this.setSelectedTab(event.currentTarget);
+            }
+        }
+
+        // Initialize tablist
+
+        window.addEventListener('load', function () {
+            var tablists = document.querySelectorAll('[role=tablist]');
+            for (var i = 0; i < tablists.length; i++) {
+                new TabsAutomatic(tablists[i]);
+            }
+
+            document.addEventListener("keydown", (key) => {
+                if (key.keyCode == 191) {
+                    document.querySelector("#nb-toolbar-settings").click();
+                }
+            });
+
+            if (["toc", "settings", "metadata"].includes(window.location.hash.substr(1))) {
+                document.querySelector("#settings").showModal();
+            };
+
+            document.querySelectorAll("#toc li > a").forEach((x) => {
+                x.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    window.location = x.href;
+                    x.focus();
+
+                });
+            });
+        });
+    </script>
 </head>
 {%- endblock header -%}
 
@@ -29,76 +190,74 @@ reference.
 {%- block body -%}
 
 <body>
-    <nav class="skip" aria-label="skip links">
-        <a class="skip sro" tabindex="0" href="#cells">Skip to Content</a>
-        <a class="skip sro" tabindex="0" href="#toc" onclick="document.getElementById('toc').open = true">Skip to Table
-            of Contents</a>
+    <nav class="navbar header float-left" aria-label="document name">
+        <span id="nb-path" class="float-left active nav-brand">{{resources.metadata.name}}.ipynb</span>
+        <a class="skip visually-hidden-focusable float-left" tabindex="0" href="#cells">Skip to Content</a>
     </nav>
-    <header id="header">
-        <!-- use headers for introductory content -->
-        <nav id="site" aria-label="site-navigation"></nav>
+
+    <nav class="navbar sticky-top float-end" aria-label="document toolbar">
+        <div class="btn-group" role="group">
+            <label for="nb-scroll-top" class="visually-hidden">Scroll to Top</label>
+            <a class="btn btn-secondary" href="#cells" id="nb-scroll-top" tabindex="-1">🔝</a>
+            <label for="nb-toolbar-settings" class="visually-hidden"><b>Table of Contents</b> and
+                <b>Settings</b></label>
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#settings"
+                aria-controls="settings" id="nb-toolbar-settings" title="show notebook metadata" {% if not nb.metadata
+                %}disabled{% endif %}>🛈</button>
+        </div>
+    </nav>
+    <header id="header navbar">
     </header>
-    <main class="notebook static" aria-labelledby="notebook-caption">
+    <main class="notebook static" aria-labelledby="nb-path" data-bs-spy="scroll" data-bs-target="#toc-spy"
+        data-bs-smooth-scroll="true">
         <!--the notebook is main area. it is represented by a big table. -->
         <header>
             <!--this is generated from the dom. sure these is a resting state, but this should probably in the javascript so its updates when interactive.-->
-            <span id="notebook-caption">{{resources.metadata.path}}/{{resources.metadata.name}}.ipynb
-                <button onclick="document.querySelector('#nb-metadata').showModal()" title="show notebook metadata" {%
-                    if not nb.metadata %}disabled{% endif %}>🛈</button>
-            </span>
-            <dialog class="metadata" id="nb-metadata">
-                <figure>
-                    {{markdown("```json\n" + json.dumps(nb.metadata, indent=2) + "\n```\n")}}
-                    <figcaption>notebook metadata</figcaption>
-                </figure>
-                <form method="dialog">
-                    <button>OK</button>
-                </form>
-            </dialog>
+            {# <dialog class="metadata" id="settings">
+            </dialog> #}
         </header>
+
         <!-- metadata is NOT introductory content, and it is supplemental, it is NOT complementary -->
         <!-- metadata is colorless at rest so we place it in a dialog that can be revealed by the user -->
-        <table class="cells" id="cells" aria-labelledby="notebook-caption">
-            <thead>
-                <tr class="cell header">
-                    {# <th class="index" scope="col">index</th> #}
-                    {# we dont need to keep the index because the table manages that for us. #}
-                    <th class="execution_count" scope="col">execution count</th>
-                    <th class="cell_type" scope="col">cell type</th>
-                    <th class="source" scope="col">source</th>
-                    <th class="outputs" scope="col">outputs</th>
-                    <th class="metadata" scope="col">metadata</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for i, cell in enumerate(nb.cells) %}
-                {{cell_form(cell_type=cell.cell_type, source=cell.source, id=cell.id, metadata=cell.metadata,
-                outputs=cell.outputs,
-                execution_count=cell.execution_count, count=i, total_count=len(cells), cell=cell)}}
-                {% endfor %}
-            </tbody>
-            <tfoot>
-                <tr></tr>
-            </tfoot>
-
-        </table>
+        {{notebook_table(nb.cells)}}
         <footer id="nb-footer">
-            <nav class="notebook" aria-label="table">  
-              <details id="toc">
-                    <summary id="toc-summary"><span aria-hidden="true">📑</span> Table of Contents</summary>
-                </details>
-            </nav>
         </footer>
     </main>
     <footer id="footer">
-        <details id="accessibility-settings">
-            <summary><span aria-hidden="true">⚙</span> Accessibility Settings</summary>
-            <form id="accessibility-settings">
-            work in progress
-            </form>
-        </details>
-        <a href="#cells">Scroll to Top</a>
     </footer>
+    <footer class="offcanvas offcanvas-end " tabindex="-1" id="settings" aria-labelledby="offcanvasLabel">
+        <header class="offcanvas-header">
+            Notebook Settings <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+        </header>
+
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="tab" class="active nav-item" role="presentation">
+                <button class="nav-link active" id="toc-button" data-bs-toggle="tab" data-bs-target="#toc" type="button"
+                    role="tab" aria-controls="toc" aria-selected="true">Table of Contents</button>
+            </li>
+            <li role="tab" role="presentation" class="nav-item"> <button class=" nav-link active"
+                    id="nb-metadata-button" data-bs-toggle="tab" data-bs-target="#nb-metadata" type="button" role="tab"
+                    aria-controls="nb-metadata" aria-selected="true">Metadata</button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="toc" role="tabpanel">
+            </div>
+            <div id="nb-metadata" role="tabpanel">
+                {{markdown("```json\n" + json.dumps(nb.metadata, indent=2) + "\n```\n")}}
+            </div>
+        </div>
+    </footer>
+    <a href="#cells">Scroll to Top</label>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+        integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+        crossorigin="anonymous"></script>
 </body>
 {%- endblock body -%}
 
@@ -114,70 +273,3 @@ reference.
 
 {% macro metadata_dialog(metadata) %}
 {% endmacro %}
-
-{% macro cell_form(cell_type, count=0, total_count=1, id="", execution_count="", source="", outputs="", metadata=None,
-cell=cell)
-%}
-{% set metadata = metadata or {} %}
-{% set count = count + 1 %}
-{% set source = "".join(source) %}
-{% set FORM = "cell-" + str(id or count) %}
-
-<tr class="cell {{cell_type}}" id="cell-{{count}}" draggable="false" aria-busy="false">
-    <td class="execution_count" id="{{FORM}}-exec">{{execution_count}}</td>
-    <td class="cell_type">
-        <label class="cell_type">
-            <select name="cell_type" disabled>
-                <option {% if cell_type=="code" %}selected{% endif %} value="code">code</option>
-                <option {% if cell_type=="markdown" %}selected{% endif %} value="markdown">markdown</option>
-                <option {% if cell_type=="raw" %}selected{% endif %} value="raw">raw</option>
-                <option {% if cell_type=="unknown" %}selected{% endif %} value="unknown">unknown</option>
-            </select> cell
-        </label>
-    </td>
-    <td class="source">
-        <form id="{{FORM}}" aria-label="{{cell_type}} cell {{count}}">
-            <textarea readonly class="sro" name="source" id="{{FORM}}-source" aria-hidden="false" autocomplete="off"
-                autocorrect="off" placeholder="" spellcheck="default" rows="{{len(source.rstrip().splitlines())}}"
-                aria-labelledby="{{FORM}}-exec" wrap="soft">{{source}}</textarea>
-            <div class="render" aria-hidden="{% if cell_type == "markdown" %}false{% else %}true{% endif %}">
-                {% if cell_type=="markdown" %}{{markdown(source)}}{% endif %}
-                {% if cell_type=="code" %}{{markdown("```IPython3\n"+"".join(source)+"\n```\n")}}{% endif %}
-            </div>
-            <input type="submit" for="{{FORM}}-source" value="run" title="run the cell" class="sro" tabindex="0">
-        </form>
-    </td>
-    <td class="outputs">
-        {% for i, output in enumerate(outputs) %}
-        {% block output scoped %}{% block output_prompt %}{% endblock %}{{super()}}{% endblock %}
-        {% endfor %}
-    </td>
-    <td class="metadata">
-        <button onclick="document.querySelector('#{{FORM}}-metadata').showModal()" title="show metadata" {% if not
-            metadata %}disabled{% endif %}>🛈</button>
-        <dialog class="metadata" id="{{FORM}}-metadata">
-            <figure>
-                {{markdown("```json\n" + json.dumps(metadata, indent=2) + "\n```\n")}}
-                <figcaption id="{{FORM}}-metadata-caption">{{cell_type}} metadata</figcaption>
-            </figure>
-            <form method="dialog">
-                <button>OK</button>
-            </form>
-        </dialog>
-    </td>
-
-</tr>
-{% endmacro %}
-
-{#
-<footer>
-    <label class="start_time">
-        <output><time></time></output>
-    </label>
-    <label class="end_time">
-        <output><time></time></output>
-    </label>
-    <label class="elapsed_time">
-        <output><time></time></output>
-    </label>
-</footer> #}

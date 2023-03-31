@@ -1,0 +1,95 @@
+{% extends "semantic-forms/base.html.j2" %}
+
+{% macro notebook_table(cells) %}
+<table class="cells" id="cells" aria-labelledby="nb-path" role="treegrid">
+    <colgroup>
+        <col class="execution_count">
+        <col class="source">
+        <col class="outputs">
+        <col class="cell_type">
+        <col class="metadata">
+        <col class="toolbar">
+    </colgroup>
+    <thead>
+        <tr class="cell header">
+            <th scope="col">execution count</th>
+            <th scope="col">source</th>
+            <th scope="col">outputs</th>
+            <th scope="col">cell type</th>
+            <th scope="col">metadata</th>
+            <th scope="col">toolbar</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for count, cell in enumerate(cells) %}{{cell_row(cell, nb)}}{% endfor %}
+    <tbody>
+    <tfoot></tfoot>
+</table>
+{% endmacro %}
+
+{% macro cell_row(cell, nb) %}
+{% set count = nb.cells.index(cell) %}
+{% set FORM = "cell-" + str(cell.id or count) %}
+<tr class="cell {{cell.cell_type}}" id="cell-{{count}}-row" draggable="false" aria-busy="false"
+    aria-posinset="{{nb.cells.index(cell)}}" aria-setsize="{{count}}">
+    <td class="execution_count"><label for="{{FORM}}-source" id="{{FORM}}-exec">{{cell.execution_count}}</label></td>
+    <td class="source" data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true">{{source_cell(cell, nb, FORM)}}</td>
+    <td class="outputs" data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true">{{outputs_cell(cell)}}</td>
+    <td class="cell_type">{{cell_type_cell(cell)}}</td>
+    <td class="metadata">{{metadata_dialog(cell, FORM)}}</td>
+    <td class="toolbar">{{cell_toolbar(cell, FORM)}}</td>
+</tr>
+{% endmacro %}
+
+{% macro cell_type_cell(cell) %}
+{% set cell_type = cell.cell_type %}
+<label class="cell_type">
+    <select name="cell_type" disabled>
+        <option {% if cell_type=="code" %}selected{% endif %} value="code">code</option>
+        <option {% if cell_type=="markdown" %}selected{% endif %} value="markdown">markdown</option>
+        <option {% if cell_type=="raw" %}selected{% endif %} value="raw">raw</option>
+        <option {% if cell_type=="unknown" %}selected{% endif %} value="unknown">unknown</option>
+    </select>
+</label>
+{% endmacro %}
+
+{% macro source_cell(cell, nb, FORM) %}
+{% set count = nb["cells"].index(cell) +1%}
+{% set source = cell.source %}
+<form id="{{FORM}}" aria-label="{{cell.cell_type}} cell {{count}}">
+    <textarea readonly class="sro" name="source" id="{{FORM}}-source" aria-hidden="false" autocomplete="off"
+        autocorrect="off" placeholder="" spellcheck="default" rows="{{len(source.rstrip().splitlines())}}"
+        aria-labelledby="{{FORM}}-exec" wrap="soft">{{source}}</textarea>
+    <div class="render" aria-hidden="{% if cell.cell_type == "markdown" %}false{% else %}true{% endif %}">
+        {% if cell.cell_type=="markdown" %}{{markdown(cell.source)}}{% endif %}
+        {% if cell.cell_type=="code" %}{{markdown("```IPython3\n"+"".join(cell.source)+"\n```\n")}}{% endif %}
+    </div>
+</form>
+{% endmacro %}
+
+{% macro outputs_cell(cell) %}
+{% for i, output in enumerate(cell.outputs) %}
+{% block output scoped %}{% block output_prompt %}{% endblock %}{{super()}}{% endblock %}
+{% endfor %}
+{% endmacro %}
+
+
+{% macro metadata_dialog(cell, FORM) %}
+<dialog class="metadata" id="{{FORM}}-metadata">
+    <figure>
+        {{markdown("```json\n" + json.dumps(cell.metadata, indent=2) + "\n```\n")}}
+        <figcaption id="{{FORM}}-metadata-caption">{{cell.cell_type}} metadata</figcaption>
+    </figure>
+    <form method="dialog">
+        <button>OK</button>
+    </form>
+</dialog>
+{% endmacro %}
+
+{% macro cell_toolbar(cell, FORM) %}
+<div role="toolbar">
+    <input class="run" type="submit" form="{{FORM}}" for="{{FORM}}-source" value="run" title="run the cell"
+        tabindex="0">
+    <button onclick="document.querySelector('#{{FORM}}-metadata').showModal()" title="show metadata">🛈</button>
+</div>
+{% endmacro %}

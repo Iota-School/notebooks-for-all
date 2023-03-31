@@ -311,10 +311,13 @@ class FormExporter(PostProcessExporter):
         soup = soupify(body)
         heading_links(soup)
         soup.select_one("title").string = soup.select_one("h1").string
-        soup.select_one("details#toc").append(soupify(toc(soup)))
+        soup.select_one("#toc").append(soupify(toc(soup)))
+        # links = list(soupify(flattoc(soup)).select_one("p").children)
+        # soup.select_one("#toc-spy").extend(links[1:])
+        # soup.select_one("#toc-spy").append(links[0])
         return str(soup)
 
-def toc(html):
+def mdtoc(html):
     import io
     toc = io.StringIO()
     for header in html.select("h1,h2,h3,h4,h5,h6"):
@@ -322,8 +325,12 @@ def toc(html):
         if id:
             l = int(header.name[-1])
             toc.write("  "*(l-1) + F"* [{header.string}](#{header.attrs.get('id')})\n")
-    return get_markdown(toc.getvalue())
-    
+    return toc.getvalue()
+
+def toc(html):
+    return get_markdown(mdtoc(html))
+
+
 def heading_links(html):
     for header in html.select("h1,h2,h3,h4,h5,h6"):
         id =header.attrs.get('id')
