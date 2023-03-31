@@ -202,7 +202,7 @@ reference.
             <label for="nb-toolbar-settings" class="visually-hidden"><b>Table of Contents</b> and
                 <b>Settings</b></label>
             <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#settings"
-                aria-controls="settings" id="nb-toolbar-settings" title="show notebook metadata" {% if not nb.metadata
+                aria-controls="settings" id="nb-toolbar-settings" {% if not nb.metadata
                 %}disabled{% endif %}>🛈</button>
         </div>
     </nav>

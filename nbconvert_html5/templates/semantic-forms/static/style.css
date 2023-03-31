@@ -65,10 +65,8 @@ nav ol>li {
     list-style: none
 }
 
-code,
 textarea {
-    font: "Roboto";
-    font-family: mono;
+    font-family: monospace;
 }
 
 body {
