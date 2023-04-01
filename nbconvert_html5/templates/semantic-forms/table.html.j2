@@ -1,17 +1,4 @@
-{#
-this notebook template represents cells as a feed pattern of complex forms.
-it is designed with aria in mind, all possible aria is included. the resting, or static, state
-of the notebook is represented here. features are progressively added by flipping different aria switches.
-
-we make no distinction between markdown and code cells. in fact, they are synthesized by adds draggable, multiselectable
-tabs
-in the input area.
-
-for optimal aria support, we wrap input cells in a figure tag so that the figcaption can become the aria-describedby
-reference.
-
-#}
-{%- extends 'semantic-forms/components.html.j2' -%}
+{% extends "semantic-forms/base.html.j2" %}
 
 {%- block header -%}
 <html lang="en">
@@ -27,237 +14,28 @@ reference.
     <style{{">"}}
         {% include "semantic-forms/static/style.css" %}
     </style{{">"}}
-    <script>/*
-*   This content is licensed according to the W3C Software License at
-*   https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document
-*
-*   File:   tabs-automatic.js
-*
-*   Desc:   Tablist widget that implements ARIA Authoring Practices
-*/
-
-        'use strict';
-
-        class TabsAutomatic {
-            constructor(groupNode) {
-                this.tablistNode = groupNode;
-
-                this.tabs = [];
-
-                this.firstTab = null;
-                this.lastTab = null;
-
-                this.tabs = Array.from(this.tablistNode.querySelectorAll('[role=tab]'));
-                this.tabpanels = [];
-
-                for (var i = 0; i < this.tabs.length; i += 1) {
-                    var tab = this.tabs[i];
-                    var tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
-
-                    tab.tabIndex = -1;
-                    tab.setAttribute('aria-selected', 'false');
-                    this.tabpanels.push(tabpanel);
-
-                    tab.addEventListener('keydown', this.onKeydown.bind(this));
-                    tab.addEventListener('click', this.onClick.bind(this));
-
-                    if (!this.firstTab) {
-                        this.firstTab = tab;
-                    }
-                    this.lastTab = tab;
-                }
-
-                this.setSelectedTab(this.firstTab, false);
-            }
-
-            setSelectedTab(currentTab, setFocus) {
-                if (typeof setFocus !== 'boolean') {
-                    setFocus = true;
-                }
-                for (var i = 0; i < this.tabs.length; i += 1) {
-                    var tab = this.tabs[i];
-                    if (currentTab === tab) {
-                        tab.setAttribute('aria-selected', 'true');
-                        tab.removeAttribute('tabindex');
-                        this.tabpanels[i].classList.remove('is-hidden');
-                        if (setFocus) {
-                            tab.focus();
-                        }
-                    } else {
-                        tab.setAttribute('aria-selected', 'false');
-                        tab.tabIndex = -1;
-                        this.tabpanels[i].classList.add('is-hidden');
-                    }
-                }
-            }
-
-            setSelectedToPreviousTab(currentTab) {
-                var index;
-
-                if (currentTab === this.firstTab) {
-                    this.setSelectedTab(this.lastTab);
-                } else {
-                    index = this.tabs.indexOf(currentTab);
-                    this.setSelectedTab(this.tabs[index - 1]);
-                }
-            }
-
-            setSelectedToNextTab(currentTab) {
-                var index;
-
-                if (currentTab === this.lastTab) {
-                    this.setSelectedTab(this.firstTab);
-                } else {
-                    index = this.tabs.indexOf(currentTab);
-                    this.setSelectedTab(this.tabs[index + 1]);
-                }
-            }
-
-            /* EVENT HANDLERS */
-
-            onKeydown(event) {
-                var tgt = event.currentTarget,
-                    flag = false;
-
-                switch (event.key) {
-                    case 'ArrowLeft':
-                        this.setSelectedToPreviousTab(tgt);
-                        flag = true;
-                        break;
-
-                    case 'ArrowRight':
-                        this.setSelectedToNextTab(tgt);
-                        flag = true;
-                        break;
-
-                    case 'Home':
-                        this.setSelectedTab(this.firstTab);
-                        flag = true;
-                        break;
-
-                    case 'End':
-                        this.setSelectedTab(this.lastTab);
-                        flag = true;
-                        break;
-
-                    default:
-                        break;
-                }
-
-                if (flag) {
-                    event.stopPropagation();
-                    event.preventDefault();
-                }
-            }
-
-            onClick(event) {
-                this.setSelectedTab(event.currentTarget);
-            }
-        }
-
-        // Initialize tablist
-
-        window.addEventListener('load', function () {
-            var tablists = document.querySelectorAll('[role=tablist]');
-            for (var i = 0; i < tablists.length; i++) {
-                new TabsAutomatic(tablists[i]);
-            }
-
-            document.addEventListener("keydown", (key) => {
-                if (key.keyCode == 191) {
-                    document.querySelector("#nb-toolbar-settings").click();
-                }
-            });
-
-            if (["toc", "settings", "metadata"].includes(window.location.hash.substr(1))) {
-                document.querySelector("#settings").showModal();
-            };
-
-            document.querySelectorAll("#toc li > a").forEach((x) => {
-                x.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    window.location = x.href;
-                    x.focus();
-
-                });
-            });
-        });
-    </script>
 </head>
 {%- endblock header -%}
-
 
 {%- block body -%}
 
 <body>
-    <nav class="navbar header float-left" aria-label="document name">
-        <span id="nb-path" class="float-left active nav-brand">{{resources.metadata.name}}.ipynb</span>
-        <a class="skip visually-hidden-focusable float-left" tabindex="0" href="#cells">Skip to Content</a>
-    </nav>
-
-    <nav class="navbar sticky-top float-end" aria-label="document toolbar">
-        <div class="btn-group" role="group">
-            <label for="nb-scroll-top" class="visually-hidden">Scroll to Top</label>
-            <a class="btn btn-secondary" href="#cells" id="nb-scroll-top" tabindex="-1">🔝</a>
-            <label for="nb-toolbar-settings" class="visually-hidden"><b>Table of Contents</b> and
-                <b>Settings</b></label>
-            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#settings"
-                aria-controls="settings" id="nb-toolbar-settings" {% if not nb.metadata
-                %}disabled{% endif %}>🛈</button>
-        </div>
-    </nav>
-    <header id="header navbar">
-    </header>
-    <main class="notebook static" aria-labelledby="nb-path" data-bs-spy="scroll" data-bs-target="#toc-spy"
-        data-bs-smooth-scroll="true">
-        <!--the notebook is main area. it is represented by a big table. -->
-        <header>
-            <!--this is generated from the dom. sure these is a resting state, but this should probably in the javascript so its updates when interactive.-->
-            {# <dialog class="metadata" id="settings">
-            </dialog> #}
+    <a class="skip visually-hidden-focusable float-left" tabindex="0" href="#cells">Skip to Content</a>
+    <main class="notebook static" aria-labelledby="nb-summary">
+        <header class="navbar sticky-top navbar-light bg-light">
+            <details id="toc">
+                <summary id="nb-summary">{{resources.metadata.name}}.ipynb contents</summary>
+            </details>
         </header>
-
-        <!-- metadata is NOT introductory content, and it is supplemental, it is NOT complementary -->
-        <!-- metadata is colorless at rest so we place it in a dialog that can be revealed by the user -->
         {{notebook_table(nb.cells)}}
-        <footer id="nb-footer">
+        <footer id="nb-footer" class="navbar navbar-light bg-light">
+            <details id="nb-metadata">
+                <summary>metadata</summary>
+                {{highlight(json.dumps(nb.metadata, indent=2), "json")}}
+            </details>
         </footer>
     </main>
-    <footer id="footer">
-    </footer>
-    <footer class="offcanvas offcanvas-end " tabindex="-1" id="settings" aria-labelledby="offcanvasLabel">
-        <header class="offcanvas-header">
-            Notebook Settings <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
-                aria-label="Close"></button>
-        </header>
-
-        <ul class="nav nav-tabs" role="tablist">
-            <li role="tab" class="active nav-item" role="presentation">
-                <button class="nav-link active" id="toc-button" data-bs-toggle="tab" data-bs-target="#toc" type="button"
-                    role="tab" aria-controls="toc" aria-selected="true">Table of Contents</button>
-            </li>
-            <li role="tab" role="presentation" class="nav-item"> <button class=" nav-link active"
-                    id="nb-metadata-button" data-bs-toggle="tab" data-bs-target="#nb-metadata" type="button" role="tab"
-                    aria-controls="nb-metadata" aria-selected="true">Metadata</button>
-            </li>
-        </ul>
-
-        <div class="tab-content">
-            <div id="toc" role="tabpanel">
-            </div>
-            <div id="nb-metadata" role="tabpanel">
-                {{markdown("```json\n" + json.dumps(nb.metadata, indent=2) + "\n```\n")}}
-            </div>
-        </div>
-    </footer>
-    <a href="#cells">Scroll to Top</label>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-        integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
-        crossorigin="anonymous"></script>
+    <a href="#cells">Scroll to Top</a>
 </body>
 {%- endblock body -%}
 
@@ -268,8 +46,103 @@ reference.
 
 
 {% macro highlight(body, type) %}
-{{body}}
+{{markdown("```{{type}}\n" + json.dumps(nb.metadata, indent=2) + "\n```\n")}}
 {% endmacro %}
 
-{% macro metadata_dialog(metadata) %}
+
+
+{% macro notebook_table(cells) %}
+<table class="cells" id="cells" aria-labelledby="nb-path">
+    <colgroup>
+        <col class="execution_count">
+        <col class="source">
+        <col class="outputs">
+        <col class="cell_type">
+        <col class="metadata">
+        <col class="toolbar">
+    </colgroup>
+    <thead>
+        <tr class="cell header">
+            <th scope="col">execution count</th>
+            <th scope="col">source</th>
+            <th scope="col">outputs</th>
+            <th scope="col">cell type</th>
+            <th scope="col">metadata</th>
+            <th scope="col">toolbar</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for count, cell in enumerate(cells) %}{{cell_row(cell, nb)}}{% endfor %}
+    <tbody>
+    <tfoot></tfoot>
+</table>
+{% endmacro %}
+
+{% macro cell_row(cell, nb) %}
+{% set count = nb.cells.index(cell) %}
+{% set FORM = "cell-" + str(cell.id or count) %}
+<tr class="cell {{cell.cell_type}}" id="cell-{{count}}-row" draggable="false" aria-busy="false"
+    aria-posinset="{{nb.cells.index(cell)}}" aria-setsize="{{count}}">
+    <td class="execution_count"><label for="{{FORM}}-source" id="{{FORM}}-exec">{{cell.execution_count}}</label></td>
+    <td class="source" data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true">
+        {{source_cell(cell, nb, FORM)}}</td>
+    <td class="outputs" data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true">
+        {{outputs_cell(cell)}}</td>
+    <td class="cell_type">{{cell_type_cell(cell)}}</td>
+    <td class="metadata">{{metadata_dialog(cell, FORM)}}</td>
+    <td class="toolbar">{{cell_toolbar(cell, FORM)}}</td>
+</tr>
+{% endmacro %}
+
+{% macro cell_type_cell(cell) %}
+{% set cell_type = cell.cell_type %}
+<label class="cell_type">
+    <select name="cell_type" disabled>
+        <option {% if cell_type=="code" %}selected{% endif %} value="code">code</option>
+        <option {% if cell_type=="markdown" %}selected{% endif %} value="markdown">markdown</option>
+        <option {% if cell_type=="raw" %}selected{% endif %} value="raw">raw</option>
+        <option {% if cell_type=="unknown" %}selected{% endif %} value="unknown">unknown</option>
+    </select>
+</label>
+{% endmacro %}
+
+{% macro source_cell(cell, nb, FORM) %}
+{% set count = nb["cells"].index(cell) +1%}
+{% set source = cell.source %}
+<form id="{{FORM}}" aria-label="{{cell.cell_type}} cell {{count}}">
+    <textarea readonly class="sro" name="source" id="{{FORM}}-source" aria-hidden="false" autocomplete="off"
+        autocorrect="off" placeholder="" spellcheck="default" rows="{{len(source.rstrip().splitlines())}}"
+        aria-labelledby="{{FORM}}-exec" wrap="soft">{{source}}</textarea>
+    <div class="render" aria-hidden="{% if cell.cell_type == " markdown" %}false{% else %}true{% endif %}">
+        {% if cell.cell_type=="markdown" %}{{markdown(cell.source)}}{% endif %}
+        {% if cell.cell_type=="code" %}{{markdown("```IPython3\n"+"".join(cell.source)+"\n```\n")}}{% endif %}
+    </div>
+</form>
+{% endmacro %}
+
+{% macro outputs_cell(cell) %}
+{% for i, output in enumerate(cell.outputs) %}
+{% block output scoped %}{% block output_prompt %}{% endblock %}{{super()}}{% endblock %}
+{% endfor %}
+{% endmacro %}
+
+
+{% macro metadata_dialog(cell, FORM) %}
+<dialog class="metadata" id="{{FORM}}-metadata">
+    <figure>
+        {{markdown("```json\n" + json.dumps(cell.metadata, indent=2) + "\n```\n")}}
+        <figcaption id="{{FORM}}-metadata-caption">{{cell.cell_type}} metadata</figcaption>
+    </figure>
+    <form method="dialog">
+        <button>OK</button>
+    </form>
+</dialog>
+{% endmacro %}
+
+{% macro cell_toolbar(cell, FORM) %}
+<div role="toolbar">
+    <input class="run" type="submit" form="{{FORM}}" for="{{FORM}}-source" value="run" title="run the cell"
+        tabindex="0">
+    <button onclick="document.querySelector('#{{FORM}}-metadata').showModal()" title="show metadata">🛈</button>
+</div>
 {% endmacro %}
