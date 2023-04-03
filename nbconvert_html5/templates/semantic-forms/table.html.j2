@@ -122,7 +122,7 @@
 {% set count = nb["cells"].index(cell) +1%}
 {% set source = cell.source %}
 <form id="{{FORM}}" aria-label="{{cell.cell_type}} cell {{count}}">
-    <textarea readonly class="sro" name="source" id="{{FORM}}-source" aria-hidden="false" autocomplete="off"
+    <textarea readonly class="visually-hidden" name="source" id="{{FORM}}-source" aria-hidden="false" autocomplete="off"
         autocorrect="off" placeholder="" spellcheck="default" rows="{{len(source.rstrip().splitlines())}}"
         aria-labelledby="{{FORM}}-exec" wrap="soft">{{source}}</textarea>
     <div class="render" aria-hidden="{% if cell.cell_type == " markdown" %}false{% else %}true{% endif %}">

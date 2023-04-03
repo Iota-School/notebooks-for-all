@@ -1,4 +1,4 @@
-//
+// 
 
 const mediumScreen = window.matchMedia('(min-width: 768px)')
 
@@ -70,7 +70,7 @@ window.addEventListener('load', function () {
     });
 
     // link the cells text area to the cell anchor and update it on tabbing
-    document.querySelectorAll("tr.code.cell td.source textarea").forEach((x) => {
+    document.querySelectorAll("tr.code.cell td.source textarea, td.outputs").forEach((x) => {
         x.addEventListener("focus", (event) => {
             var number = getParentRow(event.target).getAttribute("aria-posinset");
             widget.value = number;
