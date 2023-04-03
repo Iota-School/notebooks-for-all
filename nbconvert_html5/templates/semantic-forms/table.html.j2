@@ -6,25 +6,31 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
     <title></title>
     <meta name="color-scheme" content="dark light">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
-    <style{{">"}}
-        {% include "semantic-forms/static/style.css" %}
-    </style{{">"}}
+    {{"<"}}script>
+    {% include "semantic-forms/static/script.js" %}
+    {{"<"}}/script>
+    {{"<"}}style>
+    {% include "semantic-forms/static/style.css" %}
+    {{"<"}}/style>
 </head>
 {%- endblock header -%}
 
 {%- block body -%}
 
 <body>
-    <a class="skip visually-hidden-focusable float-left" tabindex="0" href="#cells">Skip to Content</a>
-    <main class="notebook static" aria-labelledby="nb-summary">
-        <header class="navbar sticky-top navbar-light bg-light">
-            <details id="toc">
-                <summary id="nb-summary">{{resources.metadata.name}}.ipynb contents</summary>
+    <a class="visually-hidden" tabindex="0" href="#cells">Skip to Main Content</a>
+    <a class="visually-hidden" tabindex="0" href="#site-settings">Skip to Accessibility Settings</a>
+    <main class="notebook static" aria-labelledby="nb-summary" data-nb="""" id="nb-main">
+        <header class="clearfix" id="nb-header">
+            <details id="nb-toc" class="toc">
+                <summary id="nb-summary">{{resources.metadata.name}}.ipynb <span class="tip">Table of Contents
+                        Navigation</span></summary>
+                <div id="nb-cells-slider">
+                    <label for="nb-cells-slider-widget">Navigate to Cell</label>
+                    <input type="range" id="nb-cells-slider-widget" value="1" min="1" max="{{len(nb.cells)+1}}">
+                    <output>1</output>
             </details>
         </header>
         {{notebook_table(nb.cells)}}
@@ -35,6 +41,12 @@
             </details>
         </footer>
     </main>
+    <footer id="site-footer">
+        <details id="site-settings">
+            <summary id="site-settings-summary"></summary>
+        </details>
+    </footer>
+
     <a href="#cells">Scroll to Top</a>
 </body>
 {%- endblock body -%}
@@ -81,12 +93,12 @@
 {% macro cell_row(cell, nb) %}
 {% set count = nb.cells.index(cell) %}
 {% set FORM = "cell-" + str(cell.id or count) %}
-<tr class="cell {{cell.cell_type}}" id="cell-{{count}}-row" draggable="false" aria-busy="false"
+<tr class="cell {{cell.cell_type}}" id="/cells/{{count}}" draggable="false" aria-busy="false"
     aria-posinset="{{nb.cells.index(cell)}}" aria-setsize="{{count}}">
     <td class="execution_count"><label for="{{FORM}}-source" id="{{FORM}}-exec">{{cell.execution_count}}</label></td>
-    <td class="source" data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true">
+    <td class="source">
         {{source_cell(cell, nb, FORM)}}</td>
-    <td class="outputs" data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true">
+    <td class="outputs">
         {{outputs_cell(cell)}}</td>
     <td class="cell_type">{{cell_type_cell(cell)}}</td>
     <td class="metadata">{{metadata_dialog(cell, FORM)}}</td>

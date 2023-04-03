@@ -311,7 +311,7 @@ class FormExporter(PostProcessExporter):
         soup = soupify(body)
         heading_links(soup)
         soup.select_one("title").string = soup.select_one("h1").string
-        soup.select_one("#toc").append(soupify(toc(soup)))
+        soup.select_one("#nb-toc").append(soupify(toc(soup)))
         # links = list(soupify(flattoc(soup)).select_one("p").children)
         # soup.select_one("#toc-spy").extend(links[1:])
         # soup.select_one("#toc-spy").append(links[0])

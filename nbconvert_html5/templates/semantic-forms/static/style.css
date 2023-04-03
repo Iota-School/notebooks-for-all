@@ -1,85 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap');
-
-:root {
-    --bs-offcanvas-width: 50vw;
-}
-
-
-body>nav.header,
-nav.header>nav {
-    display: inline-block;
-}
-
-a.skip:focus~span:first,
-a.skip:focus~span:first {
-    display: none;
-}
-
-footer.offcanvas {
-    overflow: auto;
-    width: 50vw;
-}
-
-.is-hidden {
-    display: none;
-}
-
-dialog#settings {
-    height: 100% !important;
-    width: 50% !important;
-    left: 50%;
-    opacity: .9;
-}
-
-.clearfix::after {
-    content: "";
-    clear: both;
-    display: table;
-}
-
-dialog.metadata form[method="dialog"] {
-    display: inline;
-    float: right;
-}
-
-main {
-    grid-template-areas: "nav . toolbar" "main main main";
-}
-
-main>header[role="toolbar"] {
-    display: sticky;
-    top: 0;
-}
-
-
-main>header[role="toolbar"] label {
-    display: none;
-}
-
-nav ul,
-nav ol {
-    padding-left: 0;
-}
-
-nav ol>li {
-    list-style: none
-}
-
-textarea {
-    font-family: monospace;
-}
-
+/* @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap'); */
 body {
+    /* prefer system fonts https://css-tricks.com/snippets/css/system-font-stack/ */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     font-size: 1.25em;
-    font-family: "Atkinson Hyperlegible";
 }
 
-
-main {
-    margin: 2vw;
-}
-
-.sro:not(:focus):not(:active) {
+/* we need to visually hide content that may have focus */
+.visually-hidden:not(:focus):not(:active) {
     clip: rect(0 0 0 0);
     clip-path: inset(50%);
     height: 1px;
@@ -87,6 +14,57 @@ main {
     position: absolute;
     white-space: nowrap;
     width: 1px;
+}
+
+.tip {
+    display: none;
+}
+
+summary:focus .tip {
+    display: inline-block;
+}
+
+textarea {
+    font-family: monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+    main>header details.toc {
+        background-color: black;
+    }
+}
+
+main>header {
+    display: grid;
+    grid-template-areas: "toc";
+    overflow: auto;
+    opacity: .9;
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+}
+
+main>header details.toc {
+    grid-area: toc;
+}
+
+body>header details.site {
+    grid-area: site;
+}
+
+@media (prefers-color-scheme: light) {
+    main>header details.toc {
+        background-color: white;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    main>header {
+        overflow: auto;
+        grid-template-columns: auto 50%;
+        grid-template-areas: ". toc";
+    }
+
 }
 
 table.cells thead {
@@ -97,24 +75,17 @@ thead tr.cell {
     visibility: collapse;
 }
 
-
-header:empty,
-footer:empty {
-    display: none;
-}
-
 .static td.execution_count label:not(:empty):before {
     content: "In: ";
 }
 
 table#cells {
-    table-layout: fixed;
+    /* table-layout: fixed; */
     width: 100%;
 }
 
 tr.cell {
     display: grid;
-    width: 96vw;
 }
 
 
