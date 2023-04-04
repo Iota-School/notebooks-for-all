@@ -16,27 +16,23 @@ body {
     width: 1px;
 }
 
-.tip {
-    display: none;
-}
-
-summary:focus .tip {
-    display: inline-block;
-}
-
 textarea {
     font-family: monospace;
 }
 
 @media (prefers-color-scheme: dark) {
-    main>header details.toc {
-        background-color: black;
+    main>header details.nav {
+        background-color: darkslategray;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    main>header details.nav {
+        background-color: white;
     }
 }
 
 main>header {
-    display: grid;
-    grid-template-areas: "toc";
     overflow: auto;
     opacity: .9;
     position: sticky;
@@ -44,50 +40,21 @@ main>header {
     max-height: 100vh;
 }
 
-main>header details.toc {
-    grid-area: toc;
-}
-
-body>header details.site {
-    grid-area: site;
-}
-
-@media (prefers-color-scheme: light) {
-    main>header details.toc {
-        background-color: white;
-    }
-}
-
-@media screen and (min-width: 768px) {
-    main>header {
-        overflow: auto;
-        grid-template-columns: auto 50%;
-        grid-template-areas: ". toc";
-    }
-
-}
-
-table.cells thead {
+main > table.cells > thead {
     display: none;
-}
-
-thead tr.cell {
-    visibility: collapse;
 }
 
 .static td.execution_count label:not(:empty):before {
     content: "In: ";
 }
 
-table#cells {
-    /* table-layout: fixed; */
+table.cells {
     width: 100%;
 }
 
 tr.cell {
     display: grid;
 }
-
 
 tr.code.cell {
     grid-template-rows: 2rem 1rem auto auto;
@@ -126,10 +93,6 @@ tr.cell>td.toolbar {
     grid-area: toolbar;
 }
 
-tr.cell>td.metadata li {
-    list-style-type: none;
-}
-
 tr.cell>td.execution_count {
     grid-area: execution_count;
 }
@@ -150,63 +113,4 @@ tr.markdown.cell td.execution_count,
 
 td.source form textarea:focus~.render {
     display: none;
-}
-
-/* tr.cell {
-    max-width: 90vw;
-    overflow-x: auto;
-    width: 100%;
-
-}
-
-
-tr.markdown.cell {
-    grid-template-areas: "source";
-}
-
-tr.code.cell {
-    grid-template-columns: 5em auto;
-    grid-template-areas: "execution_count source" "outputs outputs";
-}
-
-td.source {
-    grid-area: "source";
-}
-
-td.outputs {
-    grid-area: "outputs";
-}
-
-td.execution_count {
-    grid-area: "execution_count";
-}
-
-
-
-td.source textarea {
-    width: 100%;
-}
-
-td.metadata > button:disabled {
-    display: none;
-} */
-
-[role="toolbar"] {
-    display: flex;
-    flex-direction: row-reverse;
-    ;
-}
-
-[role="tooltip"] {
-    visibility: hidden;
-}
-
-[aria-describedby]:hover,
-[aria-describedby]:focus {
-    position: relative;
-}
-
-[aria-describedby]:hover+[role="tooltip"],
-[aria-describedby]:focus+[role="tooltip"] {
-    visibility: visible;
 }

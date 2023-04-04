@@ -1,40 +1,28 @@
-// 
-
-const mediumScreen = window.matchMedia('(min-width: 768px)')
-
 function setTocFocus() {
     var id = window.location.hash;
-    if (id.startsWith("#/cells")) {
-        document.querySelector("#nb-cells-slider-widget").focus();
-    } else {
-        document.querySelector(`main >  header a[href="${window.location.hash}"]`).focus();
-    }
+    document.querySelector(id.startsWith("#/cells") ? "#nb-nav-cells-widget" : `main >  header a[href="${window.location.hash}"]`).focus();
 }
 
 function getParentRow(element) {
-    console.log(element);
     return element.tagName == "TR" ? element : getParentRow(element.parentElement)
 }
 
 function setHeadingLinkFocus() {
-    var tag = window.location.hash.startsWith("#/cells") ? "texarea" : "a";
-    document.getElementById(window.location.hash.substring(1)).querySelector(tag).focus();
+    document.getElementById(window.location.hash.substring(1)).querySelector(
+        window.location.hash.startsWith("#/cells") ? "textarea" : "a"
+    ).focus();
 }
 
 window.addEventListener('load', function () {
-    var widget = document.getElementById("nb-cells-slider-widget");
+    var widget = document.getElementById("nb-nav-cells-widget");
     // add a quicky key to open the table of contents
-    var toc = document.getElementById("nb-toc");
+    var toc = document.getElementById("nb-nav");
 
     document.addEventListener("keydown", (key) => {
-        if (key.key == "?") {
-            document.querySelector("#nb-toc").toggleAttribute("open");
+        if (key.key == "Escape") {
+            // this event shouldnt happen in an interactive element.  
+            toc.toggleAttribute("open", key.ctrlKey ? undefined : false);
         }
-    });
-
-    // escape the table of contents
-    toc.addEventListener("keydown", (key) => {
-        key.key == "Escape" ? toc.toggleAttribute("open") : null;
     });
 
     // toggling the toc sets focus on the document or the table of contents
@@ -43,18 +31,9 @@ window.addEventListener('load', function () {
     });
 
     // click handlers for the table of contents navigation
-    document.querySelectorAll("#nb-toc a").forEach((x) => {
-        x.addEventListener("click", (event) => {
-            event.preventDefault();
-            // the link in the document
-            var a = document.getElementById(event.target.href.split("#", 2).at(-1));
-            history.replaceState({}, `${x.textContent}`, event.target.href);
-            mediumScreen.matches ? a.scrollIntoView() : toc.toggleAttribute("open");
-
-            // update the widget with the parent cell
-            var row = getParentRow(a);
-            widget.value = row.getAttribute("aria-posinset");
-            widget.dispatchEvent(new Event("input"));
+    toc.querySelectorAll("#nb-nav a").forEach((x) => {
+        x.addEventListener("click", () => {
+            toc.toggleAttribute("open");
         })
     });
 
@@ -63,9 +42,7 @@ window.addEventListener('load', function () {
     document.querySelectorAll("table :where(h1, h2, h3, h4, h5, h6) > a").forEach((x) => {
         x.addEventListener("focus", (event) => {
             widget.value = getParentRow(event.target).getAttribute("aria-posinset");
-            this.setTimeout(
-                () => history.replaceState({}, `${event.target.textContent}`, event.target.href), 800
-            );
+            history.replaceState({}, `${event.target.textContent}`, event.target.href);
         })
     });
 
@@ -78,7 +55,8 @@ window.addEventListener('load', function () {
         })
     })
 
-    var slider = document.getElementById("nb-cells-slider-widget");
+    var slider = document.getElementById("nb-nav-cells-widget");
+
     // define the cell slider input triggers we scroll a cell into view
     slider.addEventListener("input", (event) => {
         var id = `#/cells/${event.target.value}`;

@@ -9,8 +9,8 @@
     <title></title>
     <meta name="color-scheme" content="dark light">
     {{"<"}}style>
-    {% include "semantic-forms/static/style.css" %}
-    {{"<"}}/style>
+        {% include "semantic-forms/static/style.css" %}
+        {{"<"}}/style>
 </head>
 {%- endblock header -%}
 
@@ -19,35 +19,70 @@
 <body>
     <a class="visually-hidden" tabindex="0" href="#cells">Skip to Main Content</a>
     <a class="visually-hidden" tabindex="0" href="#site-settings">Skip to Accessibility Settings</a>
+    <header class="site"></header>
+    <!-- search and site navigation would go here -->
+    <!-- links go to the original content -->
+
     <main class="notebook static" aria-labelledby="nb-summary" data-nb="""" id="nb-main">
-        <header class="clearfix" id="nb-header">
-            <details id="nb-toc" class="toc">
-                <summary id="nb-summary">{{resources.metadata.name}}.ipynb <span class="tip">Table of Contents
-                        Navigation</span></summary>
-                <div id="nb-cells-slider">
-                    <label for="nb-cells-slider-widget">Navigate to Cell</label>
-                    <input type="range" id="nb-cells-slider-widget" value="1" min="1" max="{{len(nb.cells)+1}}">
-                    <output>1</output>
+        <header class="notebook" id="nb-header">
+            <details id="nb-nav" class="nav">
+                <summary id="nb-nav-summary">{{resources.metadata.name}}.ipynb Contents Navigation</summary>
+                <form id="nb-nav-cells">
+                    <label for="nb-nav-cells-widget">Navigate to Cell</label>
+                    <input type="range" id="nb-nav-cells-widget" value="1" min="1" max="{{len(nb.cells)+1}}">
+                    <output></output>
+                </form>
+                <nav></nav>
             </details>
         </header>
-        {{notebook_table(nb.cells)}}
-        <footer id="nb-footer" class="navbar navbar-light bg-light">
+        <table class="notebook cells" id="/cells" aria-labelledby="nb-path">
+            <colgroup>
+                <col class="execution_count">
+                <col class="source">
+                <col class="outputs">
+                <col class="cell_type">
+                <col class="metadata">
+                <col class="toolbar">
+            </colgroup>
+            <thead>
+                <tr class="cell">
+                    <th scope="col">execution count</th>
+                    <th scope="col">source</th>
+                    <th scope="col">outputs</th>
+                    <th scope="col">cell type</th>
+                    <th scope="col">metadata</th>
+                    <th scope="col">toolbar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for count, cell in enumerate(nb.cells) %}{{cell_row(cell, nb)}}{% endfor %}
+            <tbody>
+            <tfoot>
+                <td class="execution count"></td>
+                <td class="source"></td>
+                <td class="outputs"></td>
+                <td class="cell type"></td>
+                <td class="metadata"></td>
+                <td class="toolbar"></td>
+            </tfoot>
+        </table>
+        <footer id="nb-footer" class="notebook">
             <details id="nb-metadata">
                 <summary>metadata</summary>
-                {{highlight(json.dumps(nb.metadata, indent=2), "json")}}
+                <script id="/metadata" type="application/json">{{json.dumps(nb.metadata, indent=2)}}</script>
             </details>
         </footer>
     </main>
     <footer id="site-footer">
+        <!-- legal goes here -->
         <details id="site-settings">
-            <summary id="site-settings-summary"></summary>
+            <summary id="site-settings-summary">Site Accessibility Settings</summary>
         </details>
     </footer>
 
-    <a href="#cells">Scroll to Top</a>
     {{"<"}}script>
-    {% include "semantic-forms/static/script.js" %}
-    {{"<"}}/script>
+        {% include "semantic-forms/static/script.js" %}
+        {{"<"}}/script>
 </body>
 {%- endblock body -%}
 
@@ -62,46 +97,20 @@
 {% endmacro %}
 
 
-
-{% macro notebook_table(cells) %}
-<table class="cells" id="cells" aria-labelledby="nb-path">
-    <colgroup>
-        <col class="execution_count">
-        <col class="source">
-        <col class="outputs">
-        <col class="cell_type">
-        <col class="metadata">
-        <col class="toolbar">
-    </colgroup>
-    <thead>
-        <tr class="cell header">
-            <th scope="col">execution count</th>
-            <th scope="col">source</th>
-            <th scope="col">outputs</th>
-            <th scope="col">cell type</th>
-            <th scope="col">metadata</th>
-            <th scope="col">toolbar</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for count, cell in enumerate(cells) %}{{cell_row(cell, nb)}}{% endfor %}
-    <tbody>
-    <tfoot></tfoot>
-</table>
-{% endmacro %}
-
 {% macro cell_row(cell, nb) %}
 {% set count = nb.cells.index(cell) %}
 {% set FORM = "cell-" + str(cell.id or count) %}
 <tr class="cell {{cell.cell_type}}" id="/cells/{{count}}" draggable="false" aria-busy="false"
-    aria-posinset="{{nb.cells.index(cell)}}" aria-setsize="{{count}}">
+    aria-posinset="{{nb.cells.index(cell)+1}}" aria-setsize="{{len(nb.cells)}}">
     <td class="execution_count"><label for="{{FORM}}-source" id="{{FORM}}-exec">{{cell.execution_count}}</label></td>
     <td class="source">
         {{source_cell(cell, nb, FORM)}}</td>
     <td class="outputs">
         {{outputs_cell(cell)}}</td>
     <td class="cell_type">{{cell_type_cell(cell)}}</td>
-    <td class="metadata">{{metadata_dialog(cell, FORM)}}</td>
+    <td class="metadata">
+        <script id="/cells/{{count}}/metadata" type="application/json">{{json.dumps(cell.metadata, indent=2)}}</script>
+    </td>
     <td class="toolbar">{{cell_toolbar(cell, FORM)}}</td>
 </tr>
 {% endmacro %}
@@ -125,7 +134,7 @@
     <textarea readonly class="visually-hidden" name="source" id="{{FORM}}-source" aria-hidden="false" autocomplete="off"
         autocorrect="off" placeholder="" spellcheck="default" rows="{{len(source.rstrip().splitlines())}}"
         aria-labelledby="{{FORM}}-exec" wrap="soft">{{source}}</textarea>
-    <div class="render" aria-hidden="{% if cell.cell_type == " markdown" %}false{% else %}true{% endif %}">
+    <div class="render" aria-hidden="{% if cell.cell_type == "markdown" %}false{% else %}true{% endif %}">
         {% if cell.cell_type=="markdown" %}{{markdown(cell.source)}}{% endif %}
         {% if cell.cell_type=="code" %}{{markdown("```IPython3\n"+"".join(cell.source)+"\n```\n")}}{% endif %}
     </div>
@@ -138,18 +147,6 @@
 {% endfor %}
 {% endmacro %}
 
-
-{% macro metadata_dialog(cell, FORM) %}
-<dialog class="metadata" id="{{FORM}}-metadata">
-    <figure>
-        {{markdown("```json\n" + json.dumps(cell.metadata, indent=2) + "\n```\n")}}
-        <figcaption id="{{FORM}}-metadata-caption">{{cell.cell_type}} metadata</figcaption>
-    </figure>
-    <form method="dialog">
-        <button>OK</button>
-    </form>
-</dialog>
-{% endmacro %}
 
 {% macro cell_toolbar(cell, FORM) %}
 <div role="toolbar">
