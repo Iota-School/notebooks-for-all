@@ -17,13 +17,14 @@
 {%- block body -%}
 
 <body>
-    <a class="visually-hidden" tabindex="0" href="#cells">Skip to Main Content</a>
-    <a class="visually-hidden" tabindex="0" href="#site-settings">Skip to Accessibility Settings</a>
-    <header class="site"></header>
-    <!-- search and site navigation would go here -->
-    <!-- links go to the original content -->
+    <a class="visually-hidden" tabindex="0" href="#/cells">Skip to Main Content</a>
+    <a class="visually-hidden" tabindex="0" href="#site-settings-summary">Skip to Accessibility Settings</a>
+    <header class="site">
+        <!-- search and site navigation would go here -->
+        <!-- links go to the original content -->
+    </header>
 
-    <main class="notebook static" aria-labelledby="nb-summary" data-nb="""" id="nb-main">
+    <main class="notebook static" aria-labelledby="nb-summary" id="nb-main">
         <header class="notebook" id="nb-header">
             <details id="nb-nav" class="nav">
                 <summary id="nb-nav-summary">{{resources.metadata.name}}.ipynb Contents Navigation</summary>
@@ -35,7 +36,7 @@
                 <nav></nav>
             </details>
         </header>
-        <table class="notebook cells" id="/cells" aria-labelledby="nb-path">
+        <table class="notebook cells" aria-labelledby="nb-path">
             <colgroup>
                 <col class="execution_count">
                 <col class="source">
@@ -54,7 +55,7 @@
                     <th scope="col">toolbar</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="/cells">
                 {% for count, cell in enumerate(nb.cells) %}{{cell_row(cell, nb)}}{% endfor %}
             <tbody>
             <tfoot>
