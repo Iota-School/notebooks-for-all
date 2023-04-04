@@ -24,10 +24,10 @@
         <!-- links go to the original content -->
     </header>
 
-    <main class="notebook static" aria-labelledby="nb-summary" id="nb-main">
+    <main class="notebook static" aria-labelledby="nb-nav-summary-name" id="nb-main">
         <header class="notebook" id="nb-header">
             <details id="nb-nav" class="nav">
-                <summary id="nb-nav-summary">{{resources.metadata.name}}.ipynb Contents Navigation</summary>
+                <summary id="nb-nav-summary"><span id="nb-nav-summary-name">{{resources.metadata.name}}.ipynb</span> Navigation</summary>
                 <form id="nb-nav-cells">
                     <label for="nb-nav-cells-widget">Navigate to Cell</label>
                     <input type="range" id="nb-nav-cells-widget" value="1" min="1" max="{{len(nb.cells)+1}}">
