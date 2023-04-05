@@ -36,7 +36,7 @@
                 <nav></nav>
             </details>
         </header>
-        <table class="notebook cells" aria-labelledby="nb-path" aria-rowcount="{{len(nb.cells)}}">
+        <table class="notebook cells" aria-labelledby="nb-nav-summary-name" aria-rowcount="{{len(nb.cells)}}">
             <colgroup>
                 <col class="execution_count">
                 <col class="source">
@@ -57,7 +57,7 @@
             </thead>
             <tbody id="/cells">
                 {% for count, cell in enumerate(nb.cells) %}{{cell_row(cell, nb)}}{% endfor %}
-            <tbody>
+            </tbody>
             <tfoot>
                 <td class="execution count"></td>
                 <td class="source"></td>
@@ -110,7 +110,7 @@
         {{outputs_cell(cell)}}</td>
     <td class="cell_type">{{cell_type_cell(cell)}}</td>
     <td class="metadata">
-        <script id="/cells/{{count}}/metadata" type="application/json">{{json.dumps(cell.metadata, indent=2)}}</script>
+        <script id="/cells/{{count}}/metadata" type="application/json">{{json.dumps(cell.metadata, indent=2) | escape_html}}</script>
     </td>
     <td class="toolbar">{{cell_toolbar(cell, FORM)}}</td>
 </tr>
