@@ -41,7 +41,7 @@ window.addEventListener('load', function () {
     // update the url location when headers are passed.
     document.querySelectorAll("table :where(h1, h2, h3, h4, h5, h6) > a").forEach((x) => {
         x.addEventListener("focus", (event) => {
-            widget.value = getParentRow(event.target).getAttribute("aria-posinset");
+            widget.value = getParentRow(event.target).ariaRowIndex;
             history.replaceState({}, `${event.target.textContent}`, event.target.href);
         })
     });
@@ -49,7 +49,7 @@ window.addEventListener('load', function () {
     // link the cells text area to the cell anchor and update it on tabbing
     document.querySelectorAll("tr.code.cell td.source textarea, td.outputs").forEach((x) => {
         x.addEventListener("focus", (event) => {
-            var number = getParentRow(event.target).getAttribute("aria-posinset");
+            var number = getParentRow(event.target).ariaRowIndex;
             widget.value = number;
             history.replaceState({}, `Code cell ${number}`, `#/cells/${widget.value}`);
         })

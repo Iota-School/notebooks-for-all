@@ -36,7 +36,7 @@
                 <nav></nav>
             </details>
         </header>
-        <table class="notebook cells" aria-labelledby="nb-path">
+        <table class="notebook cells" aria-labelledby="nb-path" aria-rowcount="{{len(nb.cells)}}">
             <colgroup>
                 <col class="execution_count">
                 <col class="source">
@@ -102,7 +102,7 @@
 {% set count = nb.cells.index(cell) %}
 {% set FORM = "cell-" + str(cell.id or count) %}
 <tr class="cell {{cell.cell_type}}" id="/cells/{{count}}" draggable="false" aria-busy="false"
-    aria-posinset="{{nb.cells.index(cell)+1}}" aria-setsize="{{len(nb.cells)}}">
+    aria-rowindex="{{nb.cells.index(cell)+1}}">
     <td class="execution_count"><label for="{{FORM}}-source" id="{{FORM}}-exec">{{cell.execution_count}}</label></td>
     <td class="source">
         {{source_cell(cell, nb, FORM)}}</td>
@@ -135,7 +135,7 @@
     <textarea readonly class="visually-hidden" name="source" id="{{FORM}}-source" aria-hidden="false" autocomplete="off"
         autocorrect="off" placeholder="" spellcheck="default" rows="{{len(source.rstrip().splitlines())}}"
         aria-labelledby="{{FORM}}-exec" wrap="soft">{{source}}</textarea>
-    <div class="render" aria-hidden="{% if cell.cell_type == "markdown" %}false{% else %}true{% endif %}">
+    <div class="render" role="document" aria-hidden="{% if cell.cell_type == "markdown" %}false{% else %}true{% endif %}">
         {% if cell.cell_type=="markdown" %}{{markdown(cell.source)}}{% endif %}
         {% if cell.cell_type=="code" %}{{markdown("```IPython3\n"+"".join(cell.source)+"\n```\n")}}{% endif %}
     </div>

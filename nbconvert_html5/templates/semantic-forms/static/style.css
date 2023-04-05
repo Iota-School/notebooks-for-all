@@ -23,6 +23,7 @@ textarea {
 @media (prefers-color-scheme: dark) {
     main>header details.nav {
         background-color: darkslategray;
+        color: white;
     }
 }
 
