@@ -291,9 +291,15 @@ class FormExporter(PostProcessExporter):
 
     export_from_notebook = "complex_form"
     template_file = "semantic-forms/table.html.j2"
+    exclude_anchor_links = True
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        from nbconvert.filters import strings
+        for k, v in vars(strings).items():
+            if callable(v):
+                if not k.startswith("_"):
+                    self.environment.filters.setdefault(k, v)
         self.environment.globals.update(vars(builtins))
         from markdown_it import MarkdownIt
         from mdit_py_plugins.anchors import anchors_plugin
@@ -310,7 +316,7 @@ class FormExporter(PostProcessExporter):
     def post_process_html(self, body):
         soup = soupify(body)
         heading_links(soup)
-        soup.select_one("title").string = soup.select_one("h1").string
+        # soup.select_one("title").string = soup.select_one("h1").string
         soup.select_one("#nb-nav nav").append(soupify(toc(soup)))
         # links = list(soupify(flattoc(soup)).select_one("p").children)
         # soup.select_one("#toc-spy").extend(links[1:])
