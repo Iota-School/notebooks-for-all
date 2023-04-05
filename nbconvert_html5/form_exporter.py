@@ -313,15 +313,16 @@ class FormExporter(PostProcessExporter):
         html = self.post_process_html(html)
         return html, resources
     
-    # def post_process_html(self, body):
-    #     soup = soupify(body)
-    #     # heading_links(soup)
-    #     # soup.select_one("title").string = soup.select_one("h1").string
-    #     # soup.select_one("#nb-nav nav").append(soupify(toc(soup)))
-    #     # links = list(soupify(flattoc(soup)).select_one("p").children)
-    #     # soup.select_one("#toc-spy").extend(links[1:])
-    #     # soup.select_one("#toc-spy").append(links[0])
-    #     return str(soup)
+    def post_process_html(self, body):
+        return body
+        soup = soupify(body)
+        # heading_links(soup)
+        # soup.select_one("title").string = soup.select_one("h1").string
+        # soup.select_one("#nb-nav nav").append(soupify(toc(soup)))
+        # links = list(soupify(flattoc(soup)).select_one("p").children)
+        # soup.select_one("#toc-spy").extend(links[1:])
+        # soup.select_one("#toc-spy").append(links[0])
+        return str(soup)
 
 def mdtoc(html):
     import io
