@@ -16,6 +16,18 @@ body {
     width: 1px;
 }
 
+a.cell-index:before {
+    content: "cell ";
+}
+
+header nav li {
+    display: flex;
+}
+a.cell-index:after {
+    content: ":";
+}
+
+
 textarea {
     font-family: monospace;
 }

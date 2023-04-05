@@ -1,3 +1,53 @@
+HEADINGS = "h1, h2, h3, h4, h5, h6"
+
+function anchorHeadings() {
+    document.querySelectorAll(HEADINGS).forEach((x) => {
+        var a = document.createElement("a")
+        console.log(x);
+        var id = x.id ? x.id : (x.textContent ? slugify(x.textContent) : "");
+        if (id) {
+            a.href = `#${id}`;
+            a.text = x.textContent;
+            while (x.firstChild) { x.removeChild(x.firstChild); }
+            x.appendChild(a);
+        }
+    })
+}
+
+function buildToc() {
+    var list = toc = document.createElement("ul")
+    document.querySelectorAll(HEADINGS).forEach((x) => {
+        var li = document.createElement("li");
+        toc.appendChild(li)
+        var node = x.querySelector("a");
+        node ? li.appendChild(node.cloneNode(true)) : null;
+        var row = getParentRow(x);
+        var i = parseInt(row.getAttribute("aria-rowindex"), 10);
+        var cell_link = document.createElement("a");
+        cell_link.classList = "cell-index";
+        cell_link.text = i;
+        // cell_link.href = `#/cells/${row.i}`;
+        li.prepend(cell_link);
+    });
+    return toc;
+}
+
+function slugify(string) {
+    const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìıİłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
+    const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz------'
+    const p = new RegExp(a.split('').join('|'), 'g')
+
+    return string.toString().toLowerCase()
+        .replace(/\s+/g, '-') // Replace spaces with -
+        .replace(p, c => b.charAt(a.indexOf(c))) // Replace special characters
+        .replace(/&/g, '-and-') // Replace & with 'and'
+        .replace(/[^\w\-]+/g, '') // Remove all non-word characters
+        .replace(/\-\-+/g, '-') // Replace multiple - with single -
+        .replace(/^-+/, '') // Trim - from start of text
+        .replace(/-+$/, '') // Trim - from end of text
+}
+
+
 function setTocFocus() {
     var id = window.location.hash;
     document.querySelector(id.startsWith("#/cells") ? "#nb-nav-cells-widget" : `main >  header a[href="${window.location.hash}"]`).focus();
@@ -14,6 +64,8 @@ function setHeadingLinkFocus() {
 }
 
 window.addEventListener('load', function () {
+    anchorHeadings();
+    document.querySelector("#nb-nav nav").appendChild(buildToc());
     var widget = document.getElementById("nb-nav-cells-widget");
     // add a quicky key to open the table of contents
     var toc = document.getElementById("nb-nav");
