@@ -6,6 +6,7 @@ function anchorHeadings() {
         console.log(x);
         var id = x.id ? x.id : (x.textContent ? slugify(x.textContent) : "");
         if (id) {
+            x.id = id;
             a.href = `#${id}`;
             a.text = x.textContent;
             while (x.firstChild) { x.removeChild(x.firstChild); }
