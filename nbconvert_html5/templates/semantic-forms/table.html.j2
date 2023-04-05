@@ -55,7 +55,7 @@
         <!-- search and site navigation would go here -->
         <!-- links go to the original content -->
     </header>
-    <main class="notebook static" aria-labelledby="nb-nav-summary-name" id="nb-main">
+    <main class="notebook static" aria-label="notebook" id="nb-main">
         <header class="notebook" id="nb-header">
             <details id="nb-nav" class="nav">
                 <summary id="nb-nav-summary"><span id="nb-nav-summary-name">{{resources.metadata.name}}.ipynb</span>
@@ -68,7 +68,7 @@
                 <nav></nav>
             </details>
         </header>
-        <table class="notebook cells" aria-rowcount="{{len(nb.cells)}}">
+        <table class="notebook cells" aria-label="cells" aria-rowcount="{{len(nb.cells)}}">
             <colgroup>
                 <col class="execution_count">
                 <col class="source">
@@ -96,7 +96,6 @@
                 {% endblock anycell %}
                 {% endfor %}
                 {% endblock body_loop %}
-
                 {%- block body_footer -%}
             </tbody>
             <tfoot>
