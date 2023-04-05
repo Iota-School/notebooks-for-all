@@ -1,4 +1,4 @@
-{%- extends 'base.html.j2' -%}
+{%- extends 'semantic-forms/base.html.j2' -%}
 {% from 'mathjax.html.j2' import mathjax %}
 {% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
 
@@ -34,7 +34,7 @@
     {% block notebook_css %}
     {{ resources.include_css("semantic-forms/static/style.css") }}
     {% endblock notebook_css %}
-
+    
     {%- block html_head_js_mathjax -%}
     {{ mathjax(resources.mathjax_url) }}
     {%- endblock html_head_js_mathjax -%}
@@ -49,9 +49,9 @@
 {%- block body_header -%}
 
 <body>
-    <a class="visually-hidden" tabindex="0" href="#/cells">Skip to Main Content</a>
-    <a class="visually-hidden" tabindex="0" href="#site-settings-summary">Skip to Accessibility Settings</a>
     <header class="site">
+        <a class="visually-hidden" tabindex="0" href="#/cells">Skip to Main Content</a>
+        <a class="visually-hidden" tabindex="0" href="#site-settings-summary">Skip to Accessibility Settings</a>
         <!-- search and site navigation would go here -->
         <!-- links go to the original content -->
     </header>
@@ -68,7 +68,7 @@
                 <nav></nav>
             </details>
         </header>
-        <table class="notebook cells" aria-labelledby="nb-nav-summary-name" aria-rowcount="{{len(nb.cells)}}">
+        <table class="notebook cells" aria-rowcount="{{len(nb.cells)}}">
             <colgroup>
                 <col class="execution_count">
                 <col class="source">
@@ -148,7 +148,7 @@
     <td class="source" {{hide(resources.global_content_filter.include_input)}}>
         {{source_cell(cell, nb, ID)}}</td>
     <td class="outputs">
-        {{outputs_cell(cell)}}</td>
+        {{outputs_cell(cell, ID)}}</td>
     <td class="cell_type">{{cell_type_cell(cell)}}</td>
     <td class="metadata">
         <script id="/cells/{{count}}/metadata"
@@ -178,7 +178,7 @@
     <textarea readonly class="visually-hidden" name="source" id="{{ID}}-source" aria-hidden="false" autocomplete="off"
         autocorrect="off" placeholder="" spellcheck="default" rows="{{len(source.rstrip().splitlines())}}"
         aria-labelledby="{{ID}}-exec" wrap="soft">{{source}}</textarea>
-    <div class="render" role="document" aria-hidden="{% if cell.cell_type == " markdown" %}false{% else %}true{% endif
+    <div class="render" role="document" aria-hidden="{% if cell.cell_type == "markdown" %}false{% else %}true{% endif
         %}">
         {% if cell.cell_type=="markdown" %}{{markdown(cell.source) | strip_files_prefix}}{% endif %}
         {% if cell.cell_type=="code" %}{{ cell.source | highlight_code(metadata=cell.metadata) }}{% endif %}
@@ -186,7 +186,7 @@
 </form>
 {% endmacro %}
 
-{% macro outputs_cell(cell) %}
+{% macro outputs_cell(cell, ID) %}
 {% for i, output in enumerate(cell.outputs) %}
 {% block output scoped %}{% block output_prompt %}{% endblock %}{{super()}}{% endblock %}
 {% endfor %}

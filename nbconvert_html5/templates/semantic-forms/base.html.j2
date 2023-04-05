@@ -2,9 +2,9 @@
 {% from 'celltags.j2' import celltags %}
 
 {% block output %}
-<div class="output_area">
+<output form="{{ID}}" for="{{ID}}-source" role="document" class="output_area">
 {{ super() }}
-</div>
+</output>
 {% endblock output %}
 
 {% block execute_result -%}
