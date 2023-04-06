@@ -54,7 +54,7 @@ nav:
     - exports/reports/notebooks.md
     - exports/reports/configs.md
   - nbconvert_html5 module:
-    - DEVELOPER.md
+    - nbconvert_html5.md
 
 hooks:
   - hooks.py
