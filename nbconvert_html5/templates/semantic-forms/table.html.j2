@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% set nb_title = nb.metadata.get('title', resources['metadata']['name']) | escape_html %}
     <title>{{nb_title}}</title>
-    <meta name="color-scheme" content="dark light">
+    <meta name="color-scheme" content="light">
     <meta name="description" content="">
 
 
@@ -109,7 +109,7 @@
         </table>
         <footer id="nb-footer" class="notebook">
             <details id="nb-metadata">
-                <summary>metadata</summary>
+                <summary>Metadata</summary>
                 <script id="/metadata" type="application/json">{{json.dumps(nb.metadata, indent=2)}}</script>
             </details>
         </footer>
