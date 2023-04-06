@@ -26,8 +26,10 @@ theme:
         icon: material/brightness-7 
         name: Switch to dark mode
       primary: black
+      accent: "#CB037B"
 
-
+extra_css:
+  - stylesheets/extra.css
 
 plugins:
   - search
