@@ -32,8 +32,7 @@ class PostProcessExporter(HTMLExporter):
     def post_process_code_cell(self, cell):
         pass
     A/B testing with out requiring `nbconvert` or notebook knowleldge."""
-
-    export_from_notebook = "html_post"
+    enabled = True
     extra_template_paths = List([(DIR / "templates").absolute().__str__()])
     post_processor = Callable(lambda x: x).tag(config=True)
 
@@ -41,7 +40,7 @@ class PostProcessExporter(HTMLExporter):
 from traitlets import Bool, CUnicode
 
 
-class Html5(PostProcessExporter):
+class Html5Test(PostProcessExporter):
     """the primary exporter produced by notebooks for all
     
     this class has a lot of flags that we designed to test.
@@ -49,7 +48,7 @@ class Html5(PostProcessExporter):
     we try to limit the degrees of freedom of each trait
     so that the configuration changes are minimal.
     """
-    export_from_notebook = "html5_test"
+
     def from_notebook_node(self, nb, **kw):
         result, meta = super().from_notebook_node(nb, **kw)
         result = self.post_process_html(result)

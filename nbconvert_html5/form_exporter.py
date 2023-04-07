@@ -3,7 +3,7 @@
 this design assumes __notebooks are a feed of forms__.
 """
 
-from .exporters import PostProcessExporter, soupify
+from nbconvert.exporters.html import HTMLExporter
 from contextlib import suppress
 from copy import copy, deepcopy
 import enum
@@ -276,7 +276,7 @@ def get_soup(x):
 
 
 
-class FormExporter(PostProcessExporter):
+class FormExporter(HTMLExporter):
     """an embellished HTMLExporter that allows modifications of exporting and the exported.
 
     the `nbconvert` exporter has a lot machinery for converting notebook data into strings.
@@ -289,7 +289,6 @@ class FormExporter(PostProcessExporter):
         pass
     A/B testing with out requiring `nbconvert` or notebook knowleldge."""
 
-    export_from_notebook = "html5"
     template_file = "semantic-forms/table.html.j2"
     exclude_anchor_links = True
 
@@ -307,6 +306,7 @@ class FormExporter(PostProcessExporter):
         import html
         self.environment.globals.update(json=json, markdown=markdown)
         self.environment.filters.update(escape_html=html.escape)
+
 
     def from_notebook_node(self, nb, resources=None, **kw):
         html, resources = super().from_notebook_node(nb, resources, **kw)

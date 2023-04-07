@@ -60,9 +60,12 @@ build = "mkdocs build -v"
 serve = "mkdocs serve -v"
 
 [project.entry-points."nbconvert.exporters"]
-html_post = "nbconvert_html5.exporters:PostProcessExporter"
-html5_test = "nbconvert_html5:Html5"
+html5_test = "nbconvert_html5.exporters:Html5Test"
 html5 = "nbconvert_html5.form_exporter:FormExporter"
+html_post = "nbconvert_html5.exporters:PostProcessExporter"
+
+[tool.hatch.build.targets.wheel.shared-data]
+"nbconvert_html5/templates" = "share/jupyter/nbconvert/templates"
 
 # versioning is automatically synced using scm tools
 [tool.setuptools_scm]

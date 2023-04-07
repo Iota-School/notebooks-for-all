@@ -12,4 +12,4 @@ we called this library `nbconvert_html5` because we hope discover html5 patterns
 that offer a POUR notebook reading experience for assistive tech.
 """
 
-from .exporters import Html5
+from .form_exporter import FormExporter as Html5

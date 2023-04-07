@@ -210,7 +210,6 @@ def task_convert(notebooks_dir, configs_dir, target):
             name = "-".join((nb.stem, c.stem))
             t = Path(target) / (name + ".html")
             targets.append(t)
-            print(executable)
             yield dict(
                 name=str(name),
                 actions=[
