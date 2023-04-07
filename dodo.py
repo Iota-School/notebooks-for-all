@@ -1,3 +1,6 @@
+from importlib import import_module
+from importlib.machinery import SourceFileLoader
+from importlib.util import module_from_spec, spec_from_file_location
 from shutil import copytree, move, copyfile
 from doit import create_after, task_params
 from pathlib import Path
@@ -265,7 +268,13 @@ def task_audit(html_dir, target):
 
 @create_after(executed="audit")
 def task_report():
-    from tests.templates import report
+    print((HERE / "tests/templates/report.py").exists())
+    TPL = HERE / "tests/templates/report.py"
+    report = module_from_spec(
+        spec_from_file_location("test.templates.report", TPL)
+    )
+    report.__loader__.exec_module(report)
+    
     yield dict(
         name="readme",
         actions=[report.write_experiments],
