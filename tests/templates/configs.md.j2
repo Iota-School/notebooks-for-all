@@ -18,6 +18,6 @@ for a total of {{len(g.stack())}} exported html files.
 </details>
 
 {% for (x, y), s in frame["html"].items() %}
-* [{{x.stem}}]({{s}})
+* [{{x.stem}}](../html/{{s.name}})
 {% endfor %}
 {% endfor %}

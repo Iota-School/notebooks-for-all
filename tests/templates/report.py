@@ -11,8 +11,8 @@ import tomli
 DIR = Path(__file__).parent.parent.parent
 PYPROJECT = DIR / "pyproject.toml"
 DOCS = DIR / "tests"
-CONFIGS = DOCS / "configurations"
 EXPORTS = DOCS / "exports"
+CONFIGS = EXPORTS / "configs"
 REPORTS = EXPORTS / "reports"
 AUDITS = EXPORTS / "audit"
 NBS = EXPORTS / "notebooks"
@@ -23,7 +23,7 @@ DOIT = config["tool"]["doit"]
 
 notebooks = list(Path(x).name for x in DOIT["tasks"]["copy"]["notebooks"])
 configs = list(Path(x).name for x in DOIT["tasks"]["copy"]["configurations"])
-
+print(configs, notebooks)
 @lru_cache
 def get_environment():
     env = Environment(loader=FileSystemLoader(DOCS / "templates"))
@@ -36,19 +36,19 @@ def get_data():
     df = pandas.DataFrame(
         index=pandas.MultiIndex.from_product(
             (
-                pandas.Index(sorted(NBS.glob("*.ipynb"), key=lambda x: notebooks.index(x.name))),
-                pandas.Index(sorted(CONFIGS.glob("*.py"), key=lambda x: configs.index(x.name))),
+                sorted(NBS.glob("*.ipynb"), key=lambda x: notebooks.index(x.name)),
+                sorted(CONFIGS.glob("*.py"), key=lambda x: configs.index(x.name)),
             ),
             names=["nb", "config"],
         )
     )
-
+   
     df = df.assign(
         html=df.index.map(
             lambda x: (HTML / "-".join(map(operator.attrgetter("stem"), x))).with_suffix(".html")
         )
     )
-
+    print(df.html)
     assert df.html.apply(Path.exists).all(), "the translation of the config/nb pairs failed"
 
     df = df.assign(
@@ -68,7 +68,7 @@ def write_experiments():
 def write_notebooks(): 
     REPORTS.mkdir(exist_ok=True)
     body = get_environment().get_template("notebooks.md.j2")
-    (REPORTS / "notebooks.md").write_text(body.render(df=get_data()))
+    (REPORTS / "notebooks.md").write_text(body.render(df=get_data(), SITE=DOCS))
 
 def write_configs(): 
     REPORTS.mkdir(exist_ok=True)
