@@ -58,7 +58,7 @@ async def test_axe_one(file: Path, browser=None, **config):
             config.setdefault("runOnly", ["best-practice", "wcag22aa", "wcag2aaa"])
             config.setdefault("allowedOrigins", ["<same_origin>"])
             logger.info(f"inject axe {page.url}")
-            await page.evaluate(requests.get("https://unpkg.com/axe-core").text)
+            await page.evaluate(requests.get("https://cdn.jsdelivr.net/npm/axe-core").text)
             logger.info(f"running axe tests {page.url}")
             try:
                 return await page.evaluate(f"window.axe.run(window.document, {dumps(config)})")
