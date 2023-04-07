@@ -289,7 +289,7 @@ class FormExporter(PostProcessExporter):
         pass
     A/B testing with out requiring `nbconvert` or notebook knowleldge."""
 
-    export_from_notebook = "complex_form"
+    export_from_notebook = "html5"
     template_file = "semantic-forms/table.html.j2"
     exclude_anchor_links = True
 
@@ -315,14 +315,6 @@ class FormExporter(PostProcessExporter):
     
     def post_process_html(self, body):
         return body
-        soup = soupify(body)
-        # heading_links(soup)
-        # soup.select_one("title").string = soup.select_one("h1").string
-        # soup.select_one("#nb-nav nav").append(soupify(toc(soup)))
-        # links = list(soupify(flattoc(soup)).select_one("p").children)
-        # soup.select_one("#toc-spy").extend(links[1:])
-        # soup.select_one("#toc-spy").append(links[0])
-        return str(soup)
 
 def mdtoc(html):
     import io

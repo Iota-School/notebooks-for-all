@@ -60,8 +60,9 @@ build = "mkdocs build -v"
 serve = "mkdocs serve -v"
 
 [project.entry-points."nbconvert.exporters"]
-html5 = "nbconvert_html5:Html5"
-complex_form = "nbconvert_html5.form_exporter:FormExporter"
+html_post = "nbconvert_html5:Html5"
+html5_test = "nbconvert_html5:Html5"
+html5 = "nbconvert_html5.form_exporter:FormExporter"
 
 # versioning is automatically synced using scm tools
 [tool.setuptools_scm]
