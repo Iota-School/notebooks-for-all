@@ -1,10 +1,9 @@
-from curses.ascii import US
 from shutil import copytree, move, copyfile
 from doit import create_after, task_params
 from pathlib import Path
 from functools import partial
 import warnings
-
+from sys import executable
 HERE = Path(__file__).parent
 
 DOCS = Path("docs")
@@ -16,6 +15,11 @@ CONFIGS = EXPORTS / "configs"
 HTML = EXPORTS / "html"
 AUDITS = EXPORTS / "audits"
 REPORTS = EXPORTS / "reports"
+
+def do(cmd, *args):
+    from doit.cmd_base import CmdAction
+    from shlex import split
+    return CmdAction(split(cmd) + list(args), shell=False)
 
 def cp(x , y):
     x, y = map(Path, (x, y))
@@ -206,10 +210,11 @@ def task_convert(notebooks_dir, configs_dir, target):
             name = "-".join((nb.stem, c.stem))
             t = Path(target) / (name + ".html")
             targets.append(t)
+            print(executable)
             yield dict(
                 name=str(name),
                 actions=[
-                    f"jupyter nbconvert --config {c} --output {name} --output-dir {target} {nb}"
+                    do(f"{executable} -m jupyter nbconvert --config {c} --output {name} --output-dir {target} {nb}")
                 ],
                 file_dep=[nb, c],
                 targets=[t],

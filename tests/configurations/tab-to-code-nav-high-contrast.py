@@ -2,7 +2,7 @@
 these tests were run on large notebooks that were difficult to navigate."""
 
 
-c.NbConvertApp.export_format = "html5"
+c.NbConvertApp.export_format = "html5_test"
 c.CSSHTMLHeaderPreprocessor.style = "a11y-high-contrast-light"
 c.Html5.notebook_is_main = True # transform notebook div to main
 c.Html5.notebook_code_cell_is_article = True # transform code cell div to article

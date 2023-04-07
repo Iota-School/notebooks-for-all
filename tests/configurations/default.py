@@ -1,6 +1,6 @@
 """the default settings we recommend with the `nbconvert_html5` project."""
 
-c.NbConvertApp.export_format = "html5"
+c.NbConvertApp.export_format = "html5_test"
 c.CSSHTMLHeaderPreprocessor.style = "default"
 c.Html5.notebook_is_main = True  # transform notebook div to main
 c.Html5.notebook_code_cell_is_article = True  # transform code cell div to article
