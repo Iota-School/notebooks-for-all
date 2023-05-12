@@ -23,4 +23,8 @@ August 2022. How do users navigate and access different levels of structure with
 
 ## Test 2: Content types
 
-Work in progress. 2022.
+November 2022–January 2023. How are users able to access a range of commonly used content types within HTML outputs of Jupyter notebooks?
+
+- [Test 2 script](2-content/Test-script.md)
+- [Test 2 notebook](2-content/Imaging_Sky_Background_Estimation.ipynb). Originally sourced from the [STScI JDAT notebooks' Imaging Sky Background Estimation notebook](https://github.com/spacetelescope/jdat_notebooks/blob/main/notebooks/background_estimation_imaging/Imaging_Sky_Background_Estimation.ipynb). This notebook is part of a STScI's larger post-pipeline Data Analysis Tools Ecosystem and demonstrates how to estimate the sky background in complex scenes and evaluate the quality of the sky estimation.
+- [Test 1 results](2-content/results.md)
