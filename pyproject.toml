@@ -130,12 +130,13 @@ notebooks = [
     "user-tests/2-content/Imaging_Sky_Background_Estimation.ipynb",
 ]
 configurations = [
-    "tests/configurations/default.py",
-    "tests/configurations/contenteditable-code.py",
-    "tests/configurations/tabs-scroll-to-top.py",
-    "tests/configurations/tab-to-content-nav-high-contrast.py",
-    "tests/configurations/tab-to-code-nav-high-contrast.py",
+    # "tests/configurations/default.py",
+    # "tests/configurations/contenteditable-code.py",
+    # "tests/configurations/tabs-scroll-to-top.py",
+    # "tests/configurations/tab-to-content-nav-high-contrast.py",
+    # "tests/configurations/tab-to-code-nav-high-contrast.py",
     "tests/configurations/table-default.py",
+    # "tests/configurations/notebook-list.py",
 ]
 
 [tool.doit.tasks.convert]

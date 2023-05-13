@@ -1,136 +1,46 @@
-{%- extends 'semantic-forms/base.html.j2' -%}
+{%- extends 'semantic-forms/index.html.j2' -%}
 {% from 'mathjax.html.j2' import mathjax %}
 {% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
 
-{%- block header -%}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    {%- block html_head -%}
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% set nb_title = nb.metadata.get('title', resources['metadata']['name']) | escape_html %}
-    <title>{{nb_title}}</title>
-    <meta name="color-scheme" content="light">
-    <meta name="description" content="">
-
-
-    {% block jupyter_widgets %}
-    {%- if "widgets" in nb.metadata -%}
-    <script src="{{ resources.require_js_url }}"></script>
-    {{ jupyter_widgets(resources.jupyter_widgets_base_url, resources.html_manager_semver_range,
-    resources.widget_renderer_url) }}
-    {%- endif -%}
-    {% endblock jupyter_widgets %}
-
-    {% block extra_css %}
-    {% endblock extra_css %}
-
-    {% for css in resources.inlining.css -%}
-    <style type="text/css">{{css}}</style>
-    {% endfor %}
-
-    {% block notebook_css %}
-    {{ resources.include_css("semantic-forms/static/style.css") }}
-    {% endblock notebook_css %}
-    
-    {%- block html_head_js_mathjax -%}
-    {{ mathjax(resources.mathjax_url) }}
-    {%- endblock html_head_js_mathjax -%}
-
-    {%- endblock html_head -%}
-</head>
-{%- endblock header -%}
+{% block body_loop %}
+<table class="notebook cells" aria-label="cells" aria-rowcount="{{len(nb.cells)}}">
+    <colgroup>
+        <col class="execution_count">
+        <col class="source">
+        <col class="outputs">
+        <col class="cell_type">
+        <col class="metadata">
+        <col class="toolbar">
+    </colgroup>
+    <thead>
+        <tr class="cell">
+            <th scope="col">execution count</th>
+            <th scope="col">source</th>
+            <th scope="col">outputs</th>
+            <th scope="col">cell type</th>
+            <th scope="col">metadata</th>
+            <th scope="col">toolbar</th>
+        </tr>
+    </thead>
+    <tbody id="/cells">
+    {{super()}}
+    </tbody>
+    <tfoot>
+        <td class="execution count"></td>
+        <td class="source"></td>
+        <td class="outputs"></td>
+        <td class="cell type"></td>
+        <td class="metadata"></td>
+        <td class="toolbar"></td>
+    </tfoot>
+</table>
+{% endblock body_loop %}
 
 
-
-
-{%- block body_header -%}
-
-<body>
-    <header class="site">
-        <a class="visually-hidden" tabindex="0" href="#/cells">Skip to Main Content</a>
-        <a class="visually-hidden" tabindex="0" href="#site-settings-summary">Skip to Accessibility Settings</a>
-        <!-- search and site navigation would go here -->
-        <!-- links go to the original content -->
-    </header>
-    <main class="notebook static" aria-label="notebook" id="nb-main">
-        <header class="notebook" id="nb-header">
-            <details id="nb-nav" class="nav">
-                <summary id="nb-nav-summary"><span id="nb-nav-summary-name">{{resources.metadata.name}}.ipynb</span>
-                    Navigation</summary>
-                <form id="nb-nav-cells">
-                    <label for="nb-nav-cells-widget">Navigate to Cell</label>
-                    <input type="range" id="nb-nav-cells-widget" value="1" min="1" max="{{len(nb.cells)+1}}">
-                    <output></output>
-                </form>
-                <nav></nav>
-            </details>
-        </header>
-        <table class="notebook cells" aria-label="cells" aria-rowcount="{{len(nb.cells)}}">
-            <colgroup>
-                <col class="execution_count">
-                <col class="source">
-                <col class="outputs">
-                <col class="cell_type">
-                <col class="metadata">
-                <col class="toolbar">
-            </colgroup>
-            <thead>
-                <tr class="cell">
-                    <th scope="col">execution count</th>
-                    <th scope="col">source</th>
-                    <th scope="col">outputs</th>
-                    <th scope="col">cell type</th>
-                    <th scope="col">metadata</th>
-                    <th scope="col">toolbar</th>
-                </tr>
-            </thead>
-            <tbody id="/cells">
-                {%- endblock body_header -%}
-                {% block body_loop %}
-                {% for cell in nb.cells %}
-                {% block anycell scoped %}
-                {{cell_row(cell, nb, resources)}}
-                {% endblock anycell %}
-                {% endfor %}
-                {% endblock body_loop %}
-                {%- block body_footer -%}
-            </tbody>
-            <tfoot>
-                <td class="execution count"></td>
-                <td class="source"></td>
-                <td class="outputs"></td>
-                <td class="cell type"></td>
-                <td class="metadata"></td>
-                <td class="toolbar"></td>
-            </tfoot>
-        </table>
-        <footer id="nb-footer" class="notebook">
-            <details id="nb-metadata">
-                <summary>Metadata</summary>
-                <script id="/metadata" type="application/json">{{json.dumps(nb.metadata, indent=2)}}</script>
-            </details>
-        </footer>
-    </main>
-    <footer id="site-footer">
-        <!-- legal goes here -->
-        <details id="site-settings">
-            <summary id="site-settings-summary">Site Accessibility Settings</summary>
-        </details>
-    </footer>
-</body>
-{%- endblock body_footer -%}
-
-{% block footer %}
-{% block footer_js %}
-{{resources.include_js("semantic-forms/static/script.js")}}
-{% endblock footer_js %}
-{{ super() }}
-
-</html>
-{% endblock footer %}
+{% block any_cell %}
+{{cell_row(cell, nb, resources)}}
+{% endblock any_cell %}
 
 {% macro highlight(body, type) %}
 {{markdown("```{{type}}\n" + json.dumps(nb.metadata, indent=2) + "\n```\n")}}
@@ -177,11 +87,11 @@
     <textarea readonly class="visually-hidden" name="source" id="{{ID}}-source" aria-hidden="false" autocomplete="off"
         autocorrect="off" placeholder="" spellcheck="default" rows="{{len(source.rstrip().splitlines())}}"
         aria-labelledby="{{ID}}-exec" wrap="soft">{{source}}</textarea>
-    <div class="render" role="document" aria-hidden="{% if cell.cell_type == "markdown" %}false{% else %}true{% endif
+    <output class="render" for="{{ID}}-source" aria-hidden="{% if cell.cell_type == "markdown" %}false{% else %}true{% endif
         %}">
         {% if cell.cell_type=="markdown" %}{{markdown(cell.source) | strip_files_prefix}}{% endif %}
         {% if cell.cell_type=="code" %}{{ cell.source | highlight_code(metadata=cell.metadata) }}{% endif %}
-    </div>
+    </output>
 </form>
 {% endmacro %}
 

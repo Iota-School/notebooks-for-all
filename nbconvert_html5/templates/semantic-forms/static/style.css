@@ -40,28 +40,25 @@ main>header details.nav {
 main>header {
     overflow: auto;
     opacity: .9;
-    position: sticky;
-    top: 0;
-    max-height: 100vh;
 }
 
-main > table.cells > thead {
+main > .cells > thead {
     display: none;
 }
 
-.static td.execution_count label:not(:empty):before {
+.static .execution_count label:not(:empty):before {
     content: "In: ";
 }
 
-table.cells {
+.cells {
     width: 100%;
 }
 
-tr.cell {
+.cell {
     display: grid;
 }
 
-tr.code.cell {
+.code.cell {
     grid-template-rows: 2rem 1rem auto auto;
     grid-template-columns: 5fr 95fr;
     justify-items: start;
@@ -71,22 +68,22 @@ tr.code.cell {
     width: 95vw;
 }
 
-tr.markdown.cell {
+.markdown.cell {
     grid-template-columns: 95fr 5fr;
     grid-template-areas: "source toolbar";
 }
 
-tr.cell>td.source {
+textarea.source {
     grid-area: source;
     width: 100%;
     overflow-x: auto;
 }
 
-tr.cell>td.cell_type {
+.cell>.cell_type {
     grid-area: cell_type;
 }
 
-tr.cell>td.outputs {
+.cell>.outputs {
     overflow-x: auto;
     grid-area: outputs;
     display: flex;
@@ -94,28 +91,29 @@ tr.cell>td.outputs {
     width: 100%;
 }
 
-tr.cell>td.toolbar {
+.cell>.toolbar {
     grid-area: toolbar;
 }
 
-tr.cell>td.execution_count {
+.cell>.execution_count {
     grid-area: execution_count;
 }
 
-td.source form textarea {
+textarea.source {
     width: 100%;
 }
 
-td.cell_type,
-tr.cell form label.cell_type,
-tr.markdown.cell td.outputs,
-tr.markdown.cell td.execution_count,
-.static td.toolbar,
+.cell_type,
+.cell label.cell_type,
+.markdown.cell .outputs,
+.markdown.cell .execution_count,
+.static .toolbar,
 .static input.run,
-.static tr.markdown.cell td.source form textarea {
+.static .markdown.cell textarea.source,
+.markdown fieldset.outputs {
     display: none;
 }
 
-td.source form textarea:focus~.render {
+.cell textarea.source:focus~.render {
     display: none;
 }
