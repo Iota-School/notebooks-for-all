@@ -1,0 +1,13 @@
+{%- extends 'semantic-forms/index.html.j2' -%}
+{% from 'mathjax.html.j2' import mathjax %}
+{% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
+
+{% block body_loop %}
+<ul>{{super()}}</ul>
+{% endblock body_loop %}
+
+{% block any_cell %}
+<li class="cell {{cell.cell_type}} {{celltags(cell)}}">
+{{cell_form(cell, nb)}}
+</li>
+{% endblock any_cell %}

@@ -1,0 +1,61 @@
+{%- extends 'semantic-forms/index.html.j2' -%}
+{% from 'mathjax.html.j2' import mathjax %}
+{% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
+
+
+{% block any_cell %}
+{{cell_section(cell, nb, resources)}}
+{% endblock any_cell %}
+
+{% macro highlight(body, type) %}
+{{markdown("```{{type}}\n" + json.dumps(nb.metadata, indent=2) + "\n```\n")}}
+{% endmacro %}
+
+
+{% macro cell_section(cell, nb, resources={}) %}
+{% set count = nb.cells.index(cell) %}
+{% set ID = "/cells/" + str(cell.id or count) %}
+<form id="{{ID}}">
+    {{cell_type_cell(cell)}}
+    <label>
+        <textarea name="source" id="{{ID}}/source">{{cell.source}}</textarea>
+    </label>
+</form>
+{{cell_toolbar(cell, ID)}}
+<output class="render" for="{{ID}}/source" form={{ID}} aria-hidden="{% if cell.cell_type == "markdown" %}false{% else %}true{% endif %}">
+    {% if cell.cell_type=="markdown" %}{{markdown(cell.source) | strip_files_prefix}}{% endif %}
+    {% if cell.cell_type=="code" %}{{ cell.source | highlight_code(metadata=cell.metadata) }}{% endif %}
+</output>
+<output form={{ID}} for="{{ID}}/source" name=execution_count id="{{ID}}/outputs">{{cell.execution_count or ""}}</output>
+<output form={{ID}} for="{{ID}}/source" name=outputs role=log>{{outputs_cell(cell, ID)}}</output>
+{% endmacro %}
+
+
+{% macro cell_type_cell(cell) %}
+{% set cell_type = cell.cell_type %}
+<label class="cell_type">
+    <select name="cell_type" disabled>
+        <option {% if cell_type=="code" %}selected{% endif %} value="code">code</option>
+        <option {% if cell_type=="markdown" %}selected{% endif %} value="markdown">markdown</option>
+        <option {% if cell_type=="raw" %}selected{% endif %} value="raw">raw</option>
+        <option {% if cell_type=="unknown" %}selected{% endif %} value="unknown">unknown</option>
+    </select>
+</label>
+{% endmacro %}
+
+{% macro outputs_cell(cell, ID) %}
+{% for i, output in enumerate(cell.outputs) %}
+{% block output scoped %}{% block output_prompt %}{% endblock %}{{super()}}{% endblock %}
+{% endfor %}
+{% endmacro %}
+
+
+{% macro cell_toolbar(cell, ID) %}
+<menu class="cell toolbar">
+    <input class="run" type="submit" form="{{ID}}" for="{{ID}}-source" value="run" title="run the cell"
+        tabindex="0">
+    <button onclick="document.querySelector('#{{ID}}-metadata').showModal()" title="show metadata">🛈</button>
+</menu>
+{% endmacro %}
+
+{% macro hide(x) %}{% if not x %}hidden{% endif %}{% endmacro %}

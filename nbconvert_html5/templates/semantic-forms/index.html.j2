@@ -1,0 +1,30 @@
+{%- extends 'semantic-forms/base.html.j2' -%}
+{% from 'mathjax.html.j2' import mathjax %}
+{% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
+
+{% block body_header %}
+<body>
+    <header class="site">
+        {% block skip_links %}<a class="visually-hidden" tabindex="0" href="#/cells">Skip to Main Content</a>{% endblock skip_links %}
+        {% block site_header %}<nav id="toc"></nav>{% endblock site_header %}
+        <!-- search and site navigation would go here -->
+        <!-- links go to the original content -->
+    </header>
+    <main>
+        <header>{% block nb_header %}<nav id="toc"></nav>{% endblock nb_header %}</header>
+{% endblock body_header %}
+
+
+{% block body_footer %}
+        <footer>{% block site_footer %}<!-- site license -->{% endblock site_footer %}</footer>
+    </main>
+</body>
+{% endblock body_footer %}
+
+{% block footer %}
+{% block footer_js %}
+{% endblock footer_js %}
+{{ super() }}
+</html>
+{% endblock footer %}
+

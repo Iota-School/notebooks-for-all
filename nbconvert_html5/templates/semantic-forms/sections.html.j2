@@ -1,0 +1,10 @@
+{%- extends 'semantic-forms/index.html.j2' -%}
+{% from 'mathjax.html.j2' import mathjax %}
+{% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
+
+
+{% block any_cell %}
+<section aria-label="Cell {{count}}" class="cell {{cell.cell_type}} {{celltags(cell)}}" id="/cells/{{count}}">
+{{cell_form(cell, nb)}}
+</section>
+{% endblock any_cell %}
