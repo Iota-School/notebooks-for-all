@@ -175,7 +175,10 @@ Bugs, issues, and other specific feedback or discussions from this round of test
 * [Additional comment on Page title and notebook title do not match](https://github.com/Iota-School/notebooks-for-all/issues/10#issuecomment-1540950862)
 * [Additional comment on Explore landmark options in rendered notebook](https://github.com/Iota-School/notebooks-for-all/issues/5#issuecomment-1540967184)
 * [Syntax highlighting feedback](https://github.com/Iota-School/notebooks-for-all/issues/54)
-* More issues to be added.
+* [Improve color contrast in rendered notebook](https://github.com/Iota-School/notebooks-for-all/issues/57)
+* [Improve errow/warning cell outputs](https://github.com/Iota-School/notebooks-for-all/issues/58)
+* [Improve video output experiences](https://github.com/Iota-School/notebooks-for-all/issues/60)
+* [Cell navigation feedback](https://github.com/Iota-School/notebooks-for-all/issues/61)
 
 ## Questions for future tests
 
