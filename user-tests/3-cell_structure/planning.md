@@ -22,12 +22,12 @@
 
 - [ ] Task 2: Find and read the Introduction. Who is the author of this notebook?
     - [ ] I could find the Introduction. The author is:
-    - [ ] I could not find the Introdcution.
+    - [ ] I could not find the Introdcution
     - [ ] Something else (please describe)
 
 - What controls did you use? (ie. mouse, keyboard shortcut, dictation)
 
-- [ ] Task 3: Reflect on how the notebooks worked for you.
+- [ ] Task 3: Reflect on how the notebooks worked for you
 
 - Did you prefer notebook 1 or 2? Why?
 - How do wish cell navigation worked in these notebooks? What would be the ideal steps for you?
@@ -36,10 +36,10 @@
 
 ## Other test logistics
 
-- This is meant to be run as a asynchronous test where we send a list of tasks for participants to complete in an hour on thwir own.
+- This is meant to be run as a asynchronous test where we send a list of tasks for participants to complete in an hour on their own.
 - How do we want to compare cell structures? 
     - Because we have a small sample with very different means of traversing notebooks, a traditional A/B test where only you split the sample between two different experiences seems unfeasible.
     - Could each participant complete the same tasks in two versions of the same notebook then compare?
     - Could each participant complete the same tasks in two notebooks with two different cell structures?
-    - Could each particpant complete the same tasks in the two notebooks made my reshuffling the cells from the same notebook with different cell structures? This could help remove familiarity of completing the tasks in the same notebook the second time.
+    - Could each particpant complete the same tasks in the two notebooks made my reshuffling the cells from the same notebook with different cell structures? This could help remove familiarity of completing the tasks in the same notebook a second time.
 - We can account for the factors of self-reported feedback by providing options for participants to choose from then add to rather than asking all open questions like we do synchronously. 
