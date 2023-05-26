@@ -1,0 +1,68 @@
+{%- extends 'semantic-forms/index.html.j2' -%}
+
+{%- macro cell_textarea(cell, nb) -%}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+<textarea name="source" id="{{ID}}/source" readonly aria-label="{{cell.cell_type}} source">{{cell.source}}</textarea>
+{%- endmacro -%}
+
+
+{%- macro cell_forms(cell, nb, body) -%}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+<form id="{{ID}}" name="{{ID}}" method="POST">
+{{body}}
+</form>
+{%- endmacro -%}
+
+{%- macro cell_submit(cell, nb) -%}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+<button form="{{ID}}" type="submit" disabled>Run</button>
+{%- endmacro -%}
+
+{%- macro cell_toolbars(cell, nb, body) -%}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+<ul role="toolbar" aria-labelledby="{{ID}}/execution_count">{%- for part in body -%}<li>{{part}}</li>{%- endfor -%}</ul>
+{%- endmacro -%}
+
+{%- macro cell_type(cell, nb) -%}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+{%- set cell_type = cell.cell_type -%}
+<select name="cell_type" aria-label="Cell Type" form="{{ID}}" disabled>
+    <option {% if cell_type=="code" %}selected{% endif %} value="code">code</option>
+    <option {% if cell_type=="markdown" %}selected{% endif %} value="markdown">markdown</option>
+    <option {% if cell_type=="raw" %}selected{% endif %} value="raw">raw</option>
+    <option {% if cell_type=="unknown" %}selected{% endif %} value="unknown">unknown</option>
+</select>
+{%- endmacro -%}
+
+{%- macro cell_execution_count(cell, nb, body) -%}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+{% if cell.cell_type == "code" %}
+<output form={{ID}} for="{{ID}}/source" name=execution_count id="{{ID}}/execution_count" title="Execution count">Out: {{cell.execution_count or ""}}</output>
+{% else %}
+<output form={{ID}} for="{{ID}}/source" name=execution_count id="{{ID}}/execution_count" title="Execution count">Cell {{count}}</output>
+{% endif %}
+{%- endmacro -%}
+
+{%- macro cell_outputs(cell, nb, parts) -%}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+<fieldset name="outputs" id="{{ID}}/outputs">{{cell_display_priority(cell, ID)}}</fieldset>
+{%- endmacro -%}
+
+{%- macro cell_render(cell, nb, parts) -%}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+{% set CODE = cell.cell_type=="code" %}
+<output class="render" for="{{ID}}/source" form={{ID}} aria-labelledby="{{ID}}/execution_count">
+{%- if CODE -%}{{ cell.source | highlight_code(metadata=cell.metadata) }}{% else %}{{markdown(cell.source) | strip_files_prefix}}{%- endif -%}
+</output>
+{%- endmacro -%}
+
+{%- macro cell_display_priority(cell, ID) -%}
+{%- for i, output in enumerate(cell.outputs) -%}
+{%- block output scoped -%}<output name="outputs/{{i}}" id="{{ID}}/outputs/{{i}}" form="{{ID}}" for="{{ID}}/source" aria-labelledby="{{ID}}/execution_count">{%- block output_prompt -%}{%- endblock -%}{{super()}}</output>{%- endblock -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+{%- macro highlight(body, type) -%}
+{{markdown("```{{type}}\n" + json.dumps(nb.metadata, indent=2) + "\n```\n")}}
+{%- endmacro -%}
