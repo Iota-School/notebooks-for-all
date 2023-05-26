@@ -1,10 +1,32 @@
-{%- extends 'semantic-forms/index.html.j2' -%}
+{%- extends 'semantic-forms/cell.html.j2' -%}
 {% from 'mathjax.html.j2' import mathjax %}
 {% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
 
 
+{% block css %}
+<style>
+section.cell [role=toolbar]:has(button[type="submit"]:disabled),
+section.cell :is(fieldset:empty, textarea:read-only),
+section.markdown [name="execution_count"] {
+    display: none;
+}
+[name=execution_count] {
+    font-family: monospace;
+}
+section.cell > fieldset {
+   border: none;
+}
+</style>{% endblock css %}
+
 {% block any_cell %}
-<section aria-label="Cell {{count}}" class="cell {{cell.cell_type}} {{celltags(cell)}}" id="/cells/{{count}}">
-{{cell_form(cell, nb)}}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+{%- set CODE = cell.cell_type == "code" -%}
+
+<section {% if CODE %}aria-labelledby="{{ID}}/execution_count"{% endif %} class="cell {{cell.cell_type}} {{celltags(cell)}}" id="{{count}}">
+{{ cell_execution_count(cell, nb) }}
+{{ cell_forms(cell, nb, cell_textarea(cell, nb))}}
+{{ cell_render(cell, nb) }}
+{{ cell_toolbars(cell, nb, [cell_submit(cell, nb), cell_type(cell, nb)]) }}
+{{ cell_outputs(cell, nb) }}
 </section>
 {% endblock any_cell %}
