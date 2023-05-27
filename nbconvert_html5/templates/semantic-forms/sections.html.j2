@@ -6,15 +6,13 @@
 {% block css %}
 <style>
 section.cell [role=toolbar]:has(button[type="submit"]:disabled),
-section.cell :is(fieldset:empty, textarea:read-only),
+section.cell fieldset:empty, 
+section.cell textarea:read-only,
 section.markdown [name="execution_count"] {
     display: none;
 }
 [name=execution_count] {
     font-family: monospace;
-}
-section.cell > fieldset {
-   border: none;
 }
 </style>{% endblock css %}
 

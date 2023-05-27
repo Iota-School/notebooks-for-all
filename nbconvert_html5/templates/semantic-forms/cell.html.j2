@@ -37,9 +37,9 @@
 {%- macro cell_execution_count(cell, nb, body) -%}
 {%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
 {% if cell.cell_type == "code" %}
-<output form={{ID}} for="{{ID}}/source" name=execution_count id="{{ID}}/execution_count" title="Execution count">Out: {{cell.execution_count or ""}}</output>
+<label for="{{ID}}/source" name=execution_count id="{{ID}}/execution_count">Out: {{cell.execution_count or ""}}</label>
 {% else %}
-<output form={{ID}} for="{{ID}}/source" name=execution_count id="{{ID}}/execution_count" title="Execution count">Cell {{count}}</output>
+<label for="{{ID}}/source" name=execution_count id="{{ID}}/execution_count">Cell {{count}}</label>
 {% endif %}
 {%- endmacro -%}
 
