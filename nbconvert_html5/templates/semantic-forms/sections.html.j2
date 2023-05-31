@@ -58,7 +58,7 @@
 {%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
 {{ cell_form_element(cell, nb)}}
 <fieldset for="{{ID}}" name="input" disabled>
-    <legend aria-hidden="true">{{ cell_execution_count_in(cell, nb) }}</legend>
+    <legend>{{ cell_execution_count_in(cell, nb) }}</legend>
     {{ cell_textarea(cell, nb) }}
     {{ cell_render(cell, nb) }}
 </fieldset>
