@@ -87,7 +87,7 @@ of the execution count label on different elements with different roles.
 {%- macro cell_render(cell, nb, parts) -%}
 {%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
 {% set CODE = cell.cell_type=="code" %}
-<output role="presentation" class="render" for="{{ID}}/source" form={{ID}} aria-labelledby="{{ID}}/execution_count">
+<output role="presentation" class="render" form={{ID}} aria-labelledby="{{ID}}/execution_count">
     {%- if CODE -%}{{ cell.source | highlight_code(metadata=cell.metadata) }}{% else %}{{markdown(cell.source) |
     strip_files_prefix}}{%- endif -%}
 </output>
@@ -95,8 +95,7 @@ of the execution count label on different elements with different roles.
 
 {%- macro cell_display_priority(cell, ID) -%}
 {%- for i, output in enumerate(cell.outputs) -%}
-{%- block output scoped -%}<output role="presentation" name="outputs/{{i}}" id="{{ID}}/outputs/{{i}}" form="{{ID}}"
-    for="{{ID}}/source" aria-labelledby="{{ID}}/execution_count">{%- block output_prompt -%}{%- endblock
+{%- block output scoped -%}<output role="presentation" name="outputs/{{i}}" id="{{ID}}/outputs/{{i}}" form="{{ID}}" aria-labelledby="{{ID}}/execution_count">{%- block output_prompt -%}{%- endblock
     -%}{{super()}}</output>{%- endblock -%}
 {%- endfor -%}
 {%- endmacro -%}
