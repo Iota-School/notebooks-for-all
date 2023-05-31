@@ -1,8 +1,18 @@
 {%- extends 'semantic-forms/index.html.j2' -%}
 
+{# cell is a tough analogy, it is an ambiguous signifier dependent on context. 
+the analogy to a biologic cell asks "what is the nucleus?" or "what encodes the objective?".
+the source input feels like it is the irreducible element of our computational cells.
+lines of text evolve over time. like dna they replicate, mutate, evolve, and cooperate.
+
+allied alphabets dancing on carefully organized sand emitting waves of sound, light, and hope.
+the lines in the source, the nucleus, freeze a sliver of a movement in hypermedia. 
+
+#}
 {%- macro cell_textarea(cell, nb) -%}
 {%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
-<textarea name="source" id="{{ID}}/source" readonly aria-label="{{cell.cell_type}} source">{{cell.source}}</textarea>
+<label for="{{ID}}/source"></label>{# https://www.w3.org/WAI/WCAG21/Techniques/general/G208 #}
+<textarea name="source" id="{{ID}}/source" readonly>{{cell.source}}</textarea>
 {%- endmacro -%}
 
 
@@ -15,7 +25,8 @@
 
 {%- macro cell_submit(cell, nb) -%}
 {%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
-<button form="{{ID}}" type="submit" disabled>Run</button>
+{# https://www.w3.org/TR/WCAG20-TECHS/H32.html #}
+<button form="{{ID}}" type="submit" disabled aria-label="Run Cell"></button>
 {%- endmacro -%}
 
 {%- macro cell_toolbars(cell, nb, body) -%}
@@ -34,7 +45,13 @@
 </select>
 {%- endmacro -%}
 
-{%- macro cell_execution_count(cell, nb, body) -%}
+{# the execution count has been one of the most confusing aspects of this journey. 
+it's meaning wasn't revealed until the very end of this rigorous study. 
+the result discovered labelable, interactive elements that describe the components of the cell.
+assistive technology requires labels for interactive objects and the semantic representation allows the re-use
+of the execution count label on different elements with different roles.
+ #}
+{%- macro cell_execution_count_out(cell, nb, body) -%}
 {%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
 {% if cell.cell_type == "code" %}
 <label for="{{ID}}/source" name=execution_count id="{{ID}}/execution_count">Out: {{cell.execution_count or ""}}</label>
@@ -43,22 +60,34 @@
 {% endif %}
 {%- endmacro -%}
 
+{%- macro cell_execution_count_in(cell, nb, body) -%}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+{% if cell.cell_type == "code" %}
+<label for="{{ID}}/source" name=execution_count id="{{ID}}/execution_count">In: {{cell.execution_count or ""}}</label>
+{% else %}
+<label for="{{ID}}/source" name=execution_count id="{{ID}}/execution_count">Cell {{count}}</label>
+{% endif %}
+{%- endmacro -%}
+
 {%- macro cell_outputs(cell, nb, parts) -%}
 {%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
-<fieldset name="outputs" id="{{ID}}/outputs">{{cell_display_priority(cell, ID)}}</fieldset>
+<fieldset name="outputs" id="{{ID}}/outputs" {%- if not cell.outputs %}hidden{% endif %}>
+    <legend>{{ cell_execution_count_out(cell, nb) }}</legend>
+    {{cell_display_priority(cell, ID)}}
+</fieldset>
 {%- endmacro -%}
 
 {%- macro cell_render(cell, nb, parts) -%}
 {%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
 {% set CODE = cell.cell_type=="code" %}
-<output class="render" for="{{ID}}/source" form={{ID}} aria-labelledby="{{ID}}/execution_count">
+<output role="presentation" class="render" for="{{ID}}/source" form={{ID}} aria-labelledby="{{ID}}/execution_count">
 {%- if CODE -%}{{ cell.source | highlight_code(metadata=cell.metadata) }}{% else %}{{markdown(cell.source) | strip_files_prefix}}{%- endif -%}
 </output>
 {%- endmacro -%}
 
 {%- macro cell_display_priority(cell, ID) -%}
 {%- for i, output in enumerate(cell.outputs) -%}
-{%- block output scoped -%}<output name="outputs/{{i}}" id="{{ID}}/outputs/{{i}}" form="{{ID}}" for="{{ID}}/source" aria-labelledby="{{ID}}/execution_count">{%- block output_prompt -%}{%- endblock -%}{{super()}}</output>{%- endblock -%}
+{%- block output scoped -%}<output role="presentation" name="outputs/{{i}}" id="{{ID}}/outputs/{{i}}" form="{{ID}}" for="{{ID}}/source" aria-labelledby="{{ID}}/execution_count">{%- block output_prompt -%}{%- endblock -%}{{super()}}</output>{%- endblock -%}
 {%- endfor -%}
 {%- endmacro -%}
 

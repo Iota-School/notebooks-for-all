@@ -5,25 +5,59 @@
 
 {% block css %}
 <style>
-section.cell [role=toolbar]:has(button[type="submit"]:disabled),
-section.cell fieldset:empty, 
-section.cell textarea:read-only,
-section.markdown [name="execution_count"] {
+main {
+    display: flex;
+    overflow-x: hidden;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+section.cell [role=toolbar],
+section.cell textarea[name=source]:read-only,
+section.markdown > fieldset[name=outputs],
+section.markdown > fieldset[name=input] > legend {
     display: none;
 }
 [name=execution_count] {
     font-family: monospace;
 }
+main > section {
+    display: flex;
+    flex-direction: column;
+    align-content: stretch;
+}
+
+main > section > fieldset[name=input] {
+    border: none;
+    display: flex;
+    flex-direction: row;
+
+}
+
+main > section > fieldset[name=input] legend {
+    display: inherit;
+
+}
+
+main > section {
+    overflow-x: auto;
+}
 </style>{% endblock css %}
+
+{% macro input_group(cell, nb) %}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+<fieldset for="{{ID}}" name="input">
+    <legend {% if cell.cell_type!="code" %}aria-hidden="true"{% endif %}>{{ cell_execution_count_in(cell, nb) }}</legend>
+    {{ cell_forms(cell, nb, cell_textarea(cell, nb))}}
+    {{ cell_render(cell, nb) }}
+</fieldset>
+{% endmacro %}
 
 {% block any_cell %}
 {%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
 {%- set CODE = cell.cell_type == "code" -%}
 
 <section {% if CODE %}aria-labelledby="{{ID}}/execution_count"{% endif %} class="cell {{cell.cell_type}} {{celltags(cell)}}" id="{{count}}">
-{{ cell_execution_count(cell, nb) }}
-{{ cell_forms(cell, nb, cell_textarea(cell, nb))}}
-{{ cell_render(cell, nb) }}
+{{ input_group(cell, nb) }}
 {{ cell_toolbars(cell, nb, [cell_submit(cell, nb), cell_type(cell, nb)]) }}
 {{ cell_outputs(cell, nb) }}
 </section>
