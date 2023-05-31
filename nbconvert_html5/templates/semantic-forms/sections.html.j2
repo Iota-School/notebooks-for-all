@@ -2,8 +2,8 @@
 {% from 'mathjax.html.j2' import mathjax %}
 {% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
 
-
 {% block css %}
+<meta name="color-scheme" content="dark light">
 <style>
     body {
         font-size: larger;
@@ -52,6 +52,12 @@
         white-space: nowrap;
         width: 1px;
     }
+
+{{formatter.get_formatter_by_name("html", style="github-light").get_style_defs(".highlight")}}
+@media (prefers-color-scheme: dark) { 
+    {{formatter.get_formatter_by_name("html", style="github-dark").get_style_defs(".highlight")}}
+ }
+
 </style>{% endblock css %}
 
 {% macro input_group(cell, nb) %}
