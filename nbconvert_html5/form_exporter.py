@@ -307,6 +307,7 @@ class FormExporter(HTMLExporter):
         import html
         self.environment.globals.update(json=json, markdown=markdown)
         self.environment.filters.update(escape_html=html.escape)
+        self.environment.globals.update(formatter=pygments.formatters)
 
 
     def from_notebook_node(self, nb, resources=None, **kw):
