@@ -78,7 +78,7 @@ of the execution count label on different elements with different roles.
 
 {%- macro cell_outputs(cell, nb, parts) -%}
 {%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
-<fieldset name="outputs" id="{{ID}}/outputs" {%- if not cell.outputs %}hidden{% endif %}>
+<fieldset name="outputs" id="{{ID}}/outputs" role="presentation" {%- if not cell.outputs %}hidden{% endif %}>
     <legend>{{ cell_execution_count_out(cell, nb) }}</legend>
     {{cell_display_priority(cell, ID)}}
 </fieldset>
