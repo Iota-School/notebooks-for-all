@@ -137,6 +137,7 @@ configurations = [
     # "tests/configurations/tab-to-code-nav-high-contrast.py",
     "tests/configurations/table-default.py",
     "tests/configurations/sections.py",
+    "tests/configurations/smol.py",
     "tests/configurations/ol.py",
     "tests/configurations/ul.py",
     "tests/configurations/feed.py",
