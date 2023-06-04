@@ -1,16 +1,5 @@
 {%- extends 'semantic-forms/cell.html.j2' -%}
 
-
-
-{# cell is a tough analogy, it is an ambiguous signifier dependent on context.
-the analogy to a biologic cell asks "what is the nucleus?" or "what encodes the objective?".
-the source input feels like it is the irreducible element of our computational cells.
-lines of text evolve over time. like dna they replicate, mutate, evolve, and cooperate.
-
-allied alphabets dancing on carefully organized sand emitting waves of sound, light, and hope.
-the lines in the source, the nucleus, freeze a sliver of a movement in hypermedia.
-
-#}
 {% from 'mathjax.html.j2' import mathjax %}
 {% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
 
@@ -98,15 +87,7 @@ the lines in the source, the nucleus, freeze a sliver of a movement in hypermedi
         <label id={{ID}}/cell_count>Cell&nbsp;<output name="cell_count" role="presentation">{{count + 1}}</output></label>
     </form>
     <fieldset name=input role=presentation disabled>
-        {# its recommended to use a legend, but we want the legend to name the textarea. it makes semantic sense to use a fieldset for the input
-        
-        the visual label doubles the content of the legend, but this is similar to a recommended  pattern from https://adrianroselli.com/2022/07/use-legend-and-fieldset.html 
-        
-        with fieldset[role=presentation] and legend[hidden] the In group not announced entering the group. 
-        instead the "In" is only announced in the textarea and the visual `label` is hidden from assistive tech.
-        #}
         <legend hidden id="{{ID}}/input_count">In&nbsp;<output name="input_count" role="presentation">{{cell.execution_count or ""}}</output></legend>
-        {# semantically a label with the same contents as the legend above. it only exists for visual purposes. #}
         <label aria-hidden=true>In&nbsp;<output name="input_count"  role="presentation">{{cell.execution_count or ""}}</output></label>
         <textarea name="source" id="{{ID}}/source" rows="{{cell.source.splitlines().__len__()}}" form="{{ID}}" aria-labelledby="{{ID}}/input_count">{{cell.source}}</textarea>
     </fieldset>
