@@ -31,31 +31,15 @@ the lines in the source, the nucleus, freeze a sliver of a movement in hypermedi
         flex-direction: column;
     }
 
-    {# cells have labels #}
-    output[name=cell_count]:before {
-        content: "Cell ";
-    }
-
-    output[name=input_count]:before {
-        content: "In ";
-    }
-    
-    {# computational cells have extra labels #}
-    output[name=execution_count]:before {
-        content: "Out ";
-    }
-
-
     section:focus-within {
         border: 2px solid;
     }
+
     section:hover {
         outline: 2px dashed;
         outline-offset: -3px; {# border offset plus a half #}
     }
 
-    {#  #}
-    
     section > form,
     fieldset[name=input]:disabled~ul[role=toolbar], 
     section.markdown>fieldset[name=input]:disabled,
@@ -110,40 +94,17 @@ the lines in the source, the nucleus, freeze a sliver of a movement in hypermedi
 {%- set tags = celltags(cell) -%}
 <section aria-labelledby="{{ID}}/cell_count" class="cell {{cell.cell_type}}{% if tags %} {{tags}}{% endif %}" id="{{count}}">
     <form id="{{ID}}" name="{{ID}}" method="POST">
-        <output name="cell_count" role="presentation" id={{ID}}/cell_count>{{count + 1}}</output>
+        <label id={{ID}}/cell_count>Cell&nbsp;<output name="cell_count" role="presentation">{{count + 1}}</output></label>
     </form>
     <fieldset name=input role=presentation disabled>
-        <legend>
-            <output name="input_count" role="presentation">{{cell.execution_count or ""}}</output>
-        </legend>
-        <label for="{{ID}}/source">{# https://www.w3.org/WAI/WCAG21/Techniques/general/G208 #}Source</label>
-        <textarea name="source" id="{{ID}}/source" rows="{{cell.source.splitlines().__len__()}}" form="{{ID}}">{{cell.source}}</textarea>
+        <label id="{{ID}}/input_count">In&nbsp;<output name="input_count"  role="presentation">{{cell.execution_count or ""}}</output></label>
+        <textarea name="source" id="{{ID}}/source" rows="{{cell.source.splitlines().__len__()}}" form="{{ID}}" aria-labelledby="{{ID}}/input_count">{{cell.source}}</textarea>
     </fieldset>
     {{ cell_toolbars(cell, nb, [cell_submit(cell, nb), cell_type(cell, nb)]) }}
     {{ cell_output(cell, nb) }}
 </section>
 {% endblock any_cell %}
 
-
-{# cell is a tough analogy, it is an ambiguous signifier dependent on context.
-the analogy to a biologic cell asks "what is the nucleus?" or "what encodes the objective?".
-the source input feels like it is the irreducible element of our computational cells.
-lines of text evolve over time. like dna they replicate, mutate, evolve, and cooperate.
-
-allied alphabets dancing on carefully organized sand emitting waves of sound, light, and hope.
-the lines in the source, the nucleus, freeze a sliver of a movement in hypermedia.
-
-#}
-{%- macro cell_textarea(cell, nb) -%}
-{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
-<label for="{{ID}}/source">{# https://www.w3.org/WAI/WCAG21/Techniques/general/G208 #}
-</label>
-<textarea name="source" id="{{ID}}/source" rows="{{cell.source.splitlines().__len__()}}" form="{{ID}}" readonly>{{cell.source}}</textarea>
-{%- endmacro -%}
-
-{%- macro cell_form_element(cell, nb) -%}
-{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
-{%- endmacro -%}
 
 {%- macro cell_submit(cell, nb) -%}
 {%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
@@ -193,9 +154,7 @@ of the execution count label on different elements with different roles.
 {% set CODE = cell.cell_type == "code" %}
 
 <fieldset name="outputs" id="{{ID}}/outputs" {% if CODE and not cell.outputs %}style="display: none;"{% endif %}>
-    <legend>
-        <output name="execution_count" id={{ID}}/execution_count role="presentation">{{cell.execution_count or ""}}</output>
-    </legend>
+    <legend id={{ID}}/execution_count>Out&nbsp;<output name="execution_count"  role="presentation">{{cell.execution_count or ""}}</output></legend>
     {{cell_display_priority(cell, ID)}}
     {% if cell.cell_type=="markdown" %}
     <output role="presentation" class="render" form={{ID}} aria-labelledby="{{ID}}/execution_count">
@@ -212,7 +171,3 @@ of the execution count label on different elements with different roles.
 {%- endfor -%}
 {%- endmacro -%}
 
-
-{%- macro highlight(body, type) -%}
-{{markdown("```{{type}}\n" + json.dumps(nb.metadata, indent=2) + "\n```\n")}}
-{%- endmacro -%}
