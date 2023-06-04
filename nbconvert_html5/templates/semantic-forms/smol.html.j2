@@ -67,6 +67,7 @@ the lines in the source, the nucleus, freeze a sliver of a movement in hypermedi
     textarea[name=source]:disabled {
         color: inherit;
     }
+
     textarea[name=source], fieldset[name$=put]>output {
         width: 100%;
     }
@@ -115,9 +116,8 @@ the lines in the source, the nucleus, freeze a sliver of a movement in hypermedi
         <legend>
             <output name="input_count" role="presentation">{{cell.execution_count or ""}}</output>
         </legend>
-        <label for="{{ID}}/source">{# https://www.w3.org/WAI/WCAG21/Techniques/general/G208 #}
-        </label>
-        <textarea name="source" id="{{ID}}/source" rows="{{cell.source.splitlines().__len__()}}" form="{{ID}}" readonly>{{cell.source}}</textarea>
+        <label for="{{ID}}/source">{# https://www.w3.org/WAI/WCAG21/Techniques/general/G208 #}Source</label>
+        <textarea name="source" id="{{ID}}/source" rows="{{cell.source.splitlines().__len__()}}" form="{{ID}}">{{cell.source}}</textarea>
     </fieldset>
     {{ cell_toolbars(cell, nb, [cell_submit(cell, nb), cell_type(cell, nb)]) }}
     {{ cell_output(cell, nb) }}
