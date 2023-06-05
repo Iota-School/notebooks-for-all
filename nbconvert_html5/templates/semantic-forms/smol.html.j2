@@ -140,3 +140,14 @@
 {%- endfor -%}
 {%- endmacro -%}
 
+
+
+{% block body_header %}
+<body>
+    {% set title = nb.metadata.get('title', resources['metadata']['name']) | escape_html_keep_quotes %}
+    <header class="site">
+        <label id="title" aria-hidden="true">{{title}}</label>
+        {% block skip_links %}<a class="visually-hidden" tabindex="0" href="#/">Skip to content</a>{% endblock skip_links %}
+    </header>
+    <main id="/" aria-label="{{title}}">
+{% endblock body_header %}
