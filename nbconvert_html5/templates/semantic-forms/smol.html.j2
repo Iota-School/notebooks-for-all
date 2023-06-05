@@ -29,7 +29,7 @@
     fieldset[name=input]:disabled~ul[role=toolbar],
     fieldset[name=outputs]>legend,  
     form[action=markdown]+section>fieldset[name=input]:disabled,
-    main>section.markdown>fieldset[name=outputs]>legend+label {
+    form+section[data-outputs="0"]>fieldset[name=outputs] {
         display: none;
     }
 
@@ -84,7 +84,7 @@
 <form hidden id="{{ID}}" name="{{ID}}" method="POST" action="{{cell.cell_type}}" aria-labelledby={{ID}}/cell_count>
     <label id={{ID}}/cell_count>Cell&nbsp;<output name="cell_count" role="presentation">{{count + 1}}</output></label>
 </form>
-<section aria-labelledby="{{ID}}/cell_count" class="cell {{cell.cell_type}}{% if tags %} {{tags}}{% endif %}" id="{{count}}">
+<section aria-labelledby="{{ID}}/cell_count" class="cell {{cell.cell_type}}{% if tags %} {{tags}}{% endif %}" id="{{count}}" data-outputs="{{(cell.outputs or "").__len__()}}">
     <fieldset name=input role=presentation disabled>
         <legend hidden id="{{ID}}/input_count">In&nbsp;<output name="input_count" role="presentation">{{cell.execution_count or ""}}</output></legend>
         <label aria-hidden=true>In&nbsp;<output name="input_count"  role="presentation">{{cell.execution_count or ""}}</output></label>
@@ -124,14 +124,16 @@
 {%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
 {% set CODE = cell.cell_type == "code" %}
 
-<fieldset name="outputs" id="{{ID}}/outputs" {% if CODE and not cell.outputs %}hidden{% endif %} {% if not CODE %}role="presentation"{% endif %}>
+<fieldset name="outputs" id="{{ID}}/outputs">
+    {% if CODE and cell.outputs %}
     <legend id={{ID}}/execution_count>Out&nbsp;<output name="execution_count"  role="presentation">{{cell.execution_count or ""}}</output></legend>
     <label aria-hidden=true>Out&nbsp;<output name="execution_count"  role="presentation">{{cell.execution_count or ""}}</output></label>
     {{cell_display_priority(cell, ID)}}
-    {% if cell.cell_type=="markdown" %}
-    <output role="presentation" class="render">{{markdown(cell.source) | strip_files_prefix}}</output>
     {% endif %}
 </fieldset>
+{% if cell.cell_type=="markdown" %}
+{{ markdown(cell.source) | strip_files_prefix }}
+{% endif %}
 {%- endmacro -%}
 
 {%- macro cell_display_priority(cell, ID) -%}
