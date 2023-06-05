@@ -14,12 +14,8 @@
     }
 
     {# use flex to display the main area. each cell will be arranged according to the flex display, grid could be used instead. using flex generates new interactive elements when horizontal or vertical scroll is required. #}
-    main {
-        display: flex;
-        overflow-x: hidden;
-        flex-direction: column;
-    }
 
+    /** focus **/
     section:focus-within {
         border: 2px solid;
     }
@@ -29,23 +25,17 @@
         outline-offset: -3px; {# border offset plus a half #}
     }
 
-    fieldset[name=input]:disabled~ul[role=toolbar] 
-    section.markdown>fieldset[name=input]:disabled,
-    section.markdown>fieldset[name=input]:disabled ~ fieldset[name=outputs] legend,
-    section.markdown output[name$=_count] {
+    /** layout **/
+    fieldset[name=input]:disabled~ul[role=toolbar],
+    form[action=markdown]+section>fieldset[name=input]:disabled,
+    form[action=markdown]+section>fieldset[name=input]:disabled~fieldset[name=outputs] legend {
         display: none;
     }
 
-    textarea[name=source]:disabled {
-        color: inherit;
-    }
-
-    textarea[name=source], fieldset[name$=put]>output {
-        width: 100%;
-    }
-
-    output[name$=_count] {
-        font-family: monospace;
+    main {
+        display: flex;
+        overflow-x: hidden;
+        flex-direction: column;
     }
 
     main>section {
@@ -62,10 +52,20 @@
         flex-direction: row;
     }
 
+    textarea[name=source], fieldset[name$=put]>output {
+        width: 100%;
+    }
+
     main>section {
         overflow-x: auto;
     }
 
+    /** fix the color constrast on disabled textareas **/
+    fieldset[name=input]:disabled>textarea {
+        color: unset;
+    }
+
+    /** skip links **/
     .visually-hidden:not(:focus):not(:active) {
         clip: rect(0 0 0 0);
         clip-path: inset(50%);
@@ -75,22 +75,22 @@
         white-space: nowrap;
         width: 1px;
     }
-
 </style>{% endblock css %}
 {% block any_cell scoped %}
 {%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
 {%- set CODE = cell.cell_type == "code" -%}
 {%- set tags = celltags(cell) -%}
+<form hidden id="{{ID}}" name="{{ID}}" method="POST" action="{{cell.cell_type}}">
+    <label id={{ID}}/cell_count>Cell&nbsp;<output name="cell_count" role="presentation">{{count + 1}}</output></label>
+</form>
 <section aria-labelledby="{{ID}}/cell_count" class="cell {{cell.cell_type}}{% if tags %} {{tags}}{% endif %}" id="{{count}}">
-    <form id="{{ID}}" name="{{ID}}" method="POST" hidden>
-        <label id={{ID}}/cell_count>Cell&nbsp;<output name="cell_count" role="presentation">{{count + 1}}</output></label>
-    </form>
-    {{ cell_toolbars(cell, nb, [cell_submit(cell, nb), cell_type(cell, nb)]) }}
     <fieldset name=input role=presentation disabled>
         <legend hidden id="{{ID}}/input_count">In&nbsp;<output name="input_count" role="presentation">{{cell.execution_count or ""}}</output></legend>
         <label aria-hidden=true>In&nbsp;<output name="input_count"  role="presentation">{{cell.execution_count or ""}}</output></label>
         <textarea name="source" id="{{ID}}/source" rows="{{cell.source.splitlines().__len__()}}" form="{{ID}}" aria-labelledby="{{ID}}/input_count">{{cell.source}}</textarea>
     </fieldset>
+    {# things need to follow this input in dom order so that we can use css selectors off fieldset:disabled #}
+    {{ cell_toolbars(cell, nb, [cell_submit(cell, nb), cell_type(cell, nb)]) }}
     {{ cell_output(cell, nb) }}
 </section>
 {% endblock any_cell %}
@@ -136,8 +136,7 @@
 
 {%- macro cell_display_priority(cell, ID) -%}
 {%- for i, output in enumerate(cell.outputs) -%}
-{%- block output scoped -%}<output role="presentation" name="outputs/{{i}}" id="{{ID}}/outputs/{{i}}" form="{{ID}}" aria-labelledby="{{ID}}/execution_count">{%- block output_prompt -%}{%- endblock
-    -%}{{super()}}</output>{%- endblock -%}
+{%- block output scoped -%}{%- block output_prompt -%}{%- endblock-%}{{super()}}{%- endblock -%}
 {%- endfor -%}
 {%- endmacro -%}
 
