@@ -29,8 +29,7 @@
         outline-offset: -3px; {# border offset plus a half #}
     }
 
-    section > form,
-    fieldset[name=input]:disabled~ul[role=toolbar], 
+    fieldset[name=input]:disabled~ul[role=toolbar] 
     section.markdown>fieldset[name=input]:disabled,
     section.markdown>fieldset[name=input]:disabled ~ fieldset[name=outputs] legend,
     section.markdown output[name$=_count] {
@@ -83,15 +82,15 @@
 {%- set CODE = cell.cell_type == "code" -%}
 {%- set tags = celltags(cell) -%}
 <section aria-labelledby="{{ID}}/cell_count" class="cell {{cell.cell_type}}{% if tags %} {{tags}}{% endif %}" id="{{count}}">
-    <form id="{{ID}}" name="{{ID}}" method="POST">
+    <form id="{{ID}}" name="{{ID}}" method="POST" hidden>
         <label id={{ID}}/cell_count>Cell&nbsp;<output name="cell_count" role="presentation">{{count + 1}}</output></label>
     </form>
+    {{ cell_toolbars(cell, nb, [cell_submit(cell, nb), cell_type(cell, nb)]) }}
     <fieldset name=input role=presentation disabled>
         <legend hidden id="{{ID}}/input_count">In&nbsp;<output name="input_count" role="presentation">{{cell.execution_count or ""}}</output></legend>
         <label aria-hidden=true>In&nbsp;<output name="input_count"  role="presentation">{{cell.execution_count or ""}}</output></label>
         <textarea name="source" id="{{ID}}/source" rows="{{cell.source.splitlines().__len__()}}" form="{{ID}}" aria-labelledby="{{ID}}/input_count">{{cell.source}}</textarea>
     </fieldset>
-    {{ cell_toolbars(cell, nb, [cell_submit(cell, nb), cell_type(cell, nb)]) }}
     {{ cell_output(cell, nb) }}
 </section>
 {% endblock any_cell %}
