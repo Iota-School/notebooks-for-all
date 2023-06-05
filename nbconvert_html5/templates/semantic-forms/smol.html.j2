@@ -27,8 +27,7 @@
 
     /** layout **/
     fieldset[name=input]:disabled~ul[role=toolbar],
-    form[action=markdown]+section>fieldset[name=input]:disabled,
-    form[action=markdown]+section>fieldset[name=input]:disabled~fieldset[name=outputs] legend {
+    form[action=markdown]+section>fieldset[name=input]:disabled {
         display: none;
     }
 
@@ -124,7 +123,7 @@
 {% set CODE = cell.cell_type == "code" %}
 
 <fieldset name="outputs" id="{{ID}}/outputs" {% if CODE and not cell.outputs %}hidden{% endif %} {% if not CODE %}role="presentation"{% endif %}>
-    <legend id={{ID}}/execution_count>Out&nbsp;<output name="execution_count"  role="presentation">{{cell.execution_count or ""}}</output></legend>
+    <legend id={{ID}}/execution_count {% if not CODE %}hidden{% endif %}>Out&nbsp;<output name="execution_count"  role="presentation">{{cell.execution_count or ""}}</output></legend>
     {{cell_display_priority(cell, ID)}}
     {% if cell.cell_type=="markdown" %}
     <output role="presentation" class="render">{{markdown(cell.source) | strip_files_prefix}}</output>
