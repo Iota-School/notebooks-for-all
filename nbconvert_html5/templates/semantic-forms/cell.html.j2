@@ -95,8 +95,7 @@ of the execution count label on different elements with different roles.
 
 {%- macro cell_display_priority(cell, ID) -%}
 {%- for i, output in enumerate(cell.outputs) -%}
-{%- block output scoped -%}<output role="presentation" name="outputs/{{i}}" id="{{ID}}/outputs/{{i}}" form="{{ID}}" aria-labelledby="{{ID}}/execution_count">{%- block output_prompt -%}{%- endblock
-    -%}{{super()}}</output>{%- endblock -%}
+{%- block output scoped -%}{%- block output_prompt -%}{%- endblock-%}{{super()}}{%- endblock -%}
 {%- endfor -%}
 {%- endmacro -%}
 

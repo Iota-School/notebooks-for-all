@@ -127,16 +127,15 @@
     <legend id={{ID}}/execution_count>Out&nbsp;<output name="execution_count"  role="presentation">{{cell.execution_count or ""}}</output></legend>
     {{cell_display_priority(cell, ID)}}
     {% if cell.cell_type=="markdown" %}
-    <output role="presentation" class="render" form={{ID}} aria-labelledby="{{ID}}/execution_count">
-    {{markdown(cell.source) | strip_files_prefix}}
-    </output>
+    <output role="presentation" class="render">{{markdown(cell.source) | strip_files_prefix}}</output>
     {% endif %}
 </fieldset>
 {%- endmacro -%}
 
 {%- macro cell_display_priority(cell, ID) -%}
 {%- for i, output in enumerate(cell.outputs) -%}
-{%- block output scoped -%}{%- block output_prompt -%}{%- endblock-%}{{super()}}{%- endblock -%}
+{%- block output scoped -%}<output role="presentation" name="outputs/{{i}}" id="{{ID}}/outputs/{{i}}" form="{{ID}}">{%- block output_prompt -%}{%- endblock
+    -%}{{super()}}</output>{%- endblock -%}
 {%- endfor -%}
 {%- endmacro -%}
 
@@ -151,3 +150,4 @@
     </header>
     <main id="/" aria-label="{{title}}">
 {% endblock body_header %}
+
