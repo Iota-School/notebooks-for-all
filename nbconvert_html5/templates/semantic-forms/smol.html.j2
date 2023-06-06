@@ -79,7 +79,7 @@
 {%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
 {%- set CODE = cell.cell_type == "code" -%}
 {%- set tags = celltags(cell) -%}
-<form hidden id="{{ID}}" name="{{ID}}" method="POST" action="{{cell.cell_type}}">
+<form hidden id="{{ID}}" name="{{ID}}" method="POST" action="{{cell.cell_type}}" aria-labelledby={{ID}}/cell_count>
     <label id={{ID}}/cell_count>Cell&nbsp;<output name="cell_count" role="presentation">{{count + 1}}</output></label>
 </form>
 <section aria-labelledby="{{ID}}/cell_count" class="cell {{cell.cell_type}}{% if tags %} {{tags}}{% endif %}" id="{{count}}">
