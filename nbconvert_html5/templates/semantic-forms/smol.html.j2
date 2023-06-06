@@ -123,7 +123,8 @@
 {% set CODE = cell.cell_type == "code" %}
 
 <fieldset name="outputs" id="{{ID}}/outputs" {% if CODE and not cell.outputs %}hidden{% endif %} {% if not CODE %}role="presentation"{% endif %}>
-    <legend id={{ID}}/execution_count {% if not CODE %}hidden{% endif %}>Out&nbsp;<output name="execution_count"  role="presentation">{{cell.execution_count or ""}}</output></legend>
+    <legend id={{ID}}/execution_count hidden>Out&nbsp;<output name="execution_count"  role="presentation">{{cell.execution_count or ""}}</output></legend>
+    <label aria-hidden=true>Out&nbsp;<output name="execution_count"  role="presentation">{{cell.execution_count or ""}}</output></label>
     {{cell_display_priority(cell, ID)}}
     {% if cell.cell_type=="markdown" %}
     <output role="presentation" class="render">{{markdown(cell.source) | strip_files_prefix}}</output>
