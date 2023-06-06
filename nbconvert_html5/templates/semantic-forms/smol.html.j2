@@ -37,6 +37,7 @@
         display: flex;
         overflow-x: hidden;
         flex-direction: column;
+        margin: 1rem;
     }
 
     main>section {
@@ -46,19 +47,24 @@
         gap: 1rem 1rem;
     }
 
-    main>section>fieldset[name=input],
-    main>section.markdown>fieldset[name=outputs] {
+    main>section>fieldset[name=input] {
         border: none;
-        display: flex;
-        flex-direction: row;
+    }
+   
+    fieldset[name=outputs] {
+        overflow: auto;
+        border: 0;
+        padding: 0.01em 0 0 0;
+        margin: 0;
+        min-width: 0;
+    }
+
+    body:not(:-moz-handler-blocked) fieldset[name=outputs] {
+        display: table-cell;
     }
 
     textarea[name=source], fieldset[name$=put]>output {
         width: 100%;
-    }
-
-    main>section {
-        overflow-x: auto;
     }
 
     /** fix the color constrast on disabled textareas **/
