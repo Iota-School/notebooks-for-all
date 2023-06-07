@@ -16,16 +16,25 @@
     {# use flex to display the main area. each cell will be arranged according to the flex display, grid could be used instead. using flex generates new interactive elements when horizontal or vertical scroll is required. #}
 
     /** focus **/
+    section {
+        outline-width: .2em;
+        outline-offset: -.1em;
+    }
+
     section:focus-within {
-        border: 2px solid;
+        outline-style: solid;
     }
 
     section:hover {
-        outline: 2px dashed;
-        outline-offset: -3px; {# border offset plus a half #}
+        outline-style: dotted;
+    }
+    
+    section:hover:focus-within {
+        outline-style: double;
     }
 
     /** layout **/
+    main>form>label>span,
     fieldset[name=input]:disabled~ul[role=toolbar],
     fieldset[name=outputs]>legend,  
     form[action=markdown]+section>fieldset[name=input]:disabled,
@@ -33,37 +42,39 @@
         display: none;
     }
 
-    main {
-        display: flex;
+    body {
         overflow-x: hidden;
-        flex-direction: column;
-        margin: 1rem;
+        padding: 0 1em 0 1em;
+    }
+
+    main>form {
+        float: right;
+        border-left: solid transparent;
+        padding: .5em 0 0 0;`
     }
 
     main>section {
         display: flex;
         flex-direction: column;
         align-items: stretch;
-        gap: 1rem 1rem;
+        padding: .5em;
     }
 
-    main>section>fieldset[name=input] {
+    main>section>[name=input] {
         border: none;
     }
-   
-    fieldset[name=outputs] {
+
+    textarea[name=source], [name=outputs] {
         overflow: auto;
-        border: 0;
-        padding: 0.01em 0 0 0;
-        margin: 0;
         min-width: 0;
     }
 
-    body:not(:-moz-handler-blocked) fieldset[name=outputs] {
+    body:not(:-moz-handler-blocked) [name=outputs],
+    body:not(:-moz-handler-blocked) [name=input] {
         display: table-cell;
     }
 
-    textarea[name=source], fieldset[name$=put]>output {
+    textarea[name=source], [name=outputs]>output {
         width: 100%;
     }
 
@@ -87,8 +98,9 @@
 {%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
 {%- set CODE = cell.cell_type == "code" -%}
 {%- set tags = celltags(cell) -%}
-<form hidden id="{{ID}}" name="{{ID}}" method="POST" action="{{cell.cell_type}}" aria-labelledby={{ID}}/cell_count>
-    <label id={{ID}}/cell_count>Cell&nbsp;<output name="cell_count" role="presentation">{{count + 1}}</output></label>
+<form id="{{ID}}" name="{{ID}}" method="POST" action="{{cell.cell_type}}" aria-labelledby={{ID}}/cell_count>
+    <label id={{ID}}/cell_count>
+    <span>Cell</span><output name="cell_count" title="Cell {{count + 1}}" role="presentation">{{count + 1}}</output></label>
 </form>
 <section aria-labelledby="{{ID}}/cell_count" class="cell {{cell.cell_type}}{% if tags %} {{tags}}{% endif %}" id="{{count}}" data-outputs="{{(cell.outputs or "").__len__()}}">
     <fieldset name=input role=presentation disabled>
