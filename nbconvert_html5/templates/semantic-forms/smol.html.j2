@@ -7,50 +7,19 @@
 <meta name="color-scheme" content="dark light">
 
 <style>
-    {# use the system ui and a larger font #}
     body {
         font-size: larger;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        overflow-x: hidden;
+        padding: 0 1em 0 1em;
     }
 
-    {# use flex to display the main area. each cell will be arranged according to the flex display, grid could be used instead. using flex generates new interactive elements when horizontal or vertical scroll is required. #}
-
-    /** focus **/
-    section {
-        outline-width: .2em;
-        outline-offset: -.1em;
-    }
-
-    section:focus-within {
-        outline-style: solid;
-    }
-
-    section:hover {
-        outline-style: dotted;
-    }
-    
-    section:hover:focus-within {
-        outline-style: double;
-    }
-
-    /** layout **/
-    main>form>label>span,
+    main>form,
     fieldset[name=input]:disabled~ul[role=toolbar],
     fieldset[name=outputs]>legend,  
     form[action=markdown]+section>fieldset[name=input]:disabled,
     form+section[data-outputs="0"]>fieldset[name=outputs] {
         display: none;
-    }
-
-    body {
-        overflow-x: hidden;
-        padding: 0 1em 0 1em;
-    }
-
-    main>form {
-        float: right;
-        border-left: solid transparent;
-        padding: .5em 0 0 0;`
     }
 
     main>section {
@@ -83,7 +52,23 @@
         color: unset;
     }
 
-    /** skip links **/
+    main>section {
+        outline-width: .2em;
+        outline-offset: -.1em;
+    }
+
+    main>section:focus-within {
+        outline-style: solid;
+    }
+
+    main>section:hover {
+        outline-style: dotted;
+    }
+    
+    main>section:hover:focus-within {
+        outline-style: double;
+    }
+
     .visually-hidden:not(:focus):not(:active) {
         clip: rect(0 0 0 0);
         clip-path: inset(50%);
@@ -100,7 +85,7 @@
 {%- set tags = celltags(cell) -%}
 <form id="{{ID}}" name="{{ID}}" method="POST" action="{{cell.cell_type}}" aria-labelledby={{ID}}/cell_count>
     <label id={{ID}}/cell_count>
-    <span>Cell</span><output name="cell_count" title="Cell {{count + 1}}" role="presentation">{{count + 1}}</output></label>
+    Cell&nbsp;<output name="cell_count" role="presentation">{{count + 1}}</output></label>
 </form>
 <section aria-labelledby="{{ID}}/cell_count" class="cell {{cell.cell_type}}{% if tags %} {{tags}}{% endif %}" id="{{count}}" data-outputs="{{(cell.outputs or "").__len__()}}">
     <fieldset name=input role=presentation disabled>
@@ -160,8 +145,6 @@
     -%}{{super()}}</output>{%- endblock -%}
 {%- endfor -%}
 {%- endmacro -%}
-
-
 
 {% block body_header %}
 <body>
