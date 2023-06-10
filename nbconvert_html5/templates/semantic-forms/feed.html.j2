@@ -1,0 +1,13 @@
+{%- extends 'semantic-forms/index.html.j2' -%}
+{% from 'mathjax.html.j2' import mathjax %}
+{% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
+
+{% block body_loop %}
+<section role="feed">{{super()}}</section>
+{% endblock body_loop %}
+
+{% block any_cell %}
+<article class="cell {{cell.cell_type}} {{celltags(cell)}}">
+{{cell_form(cell, nb)}}
+</article>
+{% endblock any_cell %}

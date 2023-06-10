@@ -15,6 +15,7 @@ import json
 import builtins
 import bs4
 import pygments
+from traitlets import Unicode
 import nbconvert_html5
 import pydantic
 import nbformat.v4
@@ -289,7 +290,7 @@ class FormExporter(HTMLExporter):
         pass
     A/B testing with out requiring `nbconvert` or notebook knowleldge."""
 
-    template_file = "semantic-forms/table.html.j2"
+    template_file = Unicode("semantic-forms/table.html.j2").tag(config=True)
     exclude_anchor_links = True
 
     def __init__(self, *args, **kwargs):
@@ -306,6 +307,7 @@ class FormExporter(HTMLExporter):
         import html
         self.environment.globals.update(json=json, markdown=markdown)
         self.environment.filters.update(escape_html=html.escape)
+        self.environment.globals.update(formatter=pygments.formatters)
 
 
     def from_notebook_node(self, nb, resources=None, **kw):

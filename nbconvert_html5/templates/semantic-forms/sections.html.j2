@@ -1,0 +1,86 @@
+{%- extends 'semantic-forms/cell.html.j2' -%}
+{% from 'mathjax.html.j2' import mathjax %}
+{% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
+
+{% block css %}
+<meta name="color-scheme" content="dark light">
+<style>
+    body {
+        font-size: larger;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    }
+
+    main {
+        display: flex;
+        overflow-x: hidden;
+        flex-direction: column;
+    }
+
+    fieldset[name=input]:disabled~form,
+    fieldset[name=input]:disabled~ul[role=toolbar],
+    fieldset[name=input]:disabled>label[for$="\/source"],
+    section.markdown>fieldset[name=input]>legend,
+    section.markdown>fieldset[name=outputs] {
+        display: none;
+    }
+
+    fieldset[name$=put] > output {
+        width: 100%
+    }
+
+    [name=execution_count] {
+        font-family: monospace;
+    }
+
+    main>section {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    main>section>fieldset[name=input] {
+        border: none;
+        display: flex;
+        flex-direction: row;
+    }
+
+    main>section {
+        overflow-x: auto;
+    }
+
+    .visually-hidden:not(:focus):not(:active) {
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        height: 1px;
+        overflow: hidden;
+        position: absolute;
+        white-space: nowrap;
+        width: 1px;
+    }
+
+{{formatter.get_formatter_by_name("html", style="github-light").get_style_defs(".highlight")}}
+@media (prefers-color-scheme: dark) { 
+    {{formatter.get_formatter_by_name("html", style="github-dark").get_style_defs(".highlight")}}
+ }
+
+</style>{% endblock css %}
+
+{% macro input_group(cell, nb) %}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+{{ cell_form_element(cell, nb)}}
+<fieldset for="{{ID}}" name="input" disabled {% if cell.cell_type == "markdown" %}role="presentation"{% endif %}>
+    <legend>{{ cell_execution_count_in(cell, nb) }}</legend>
+    {{ cell_textarea(cell, nb) }}
+    {{ cell_render(cell, nb) }}
+</fieldset>
+{% endmacro %}
+
+{% block any_cell scoped %}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+{%- set CODE = cell.cell_type == "code" -%}
+<section {% if CODE %}aria-labelledby="{{ID}}/execution_count" {% endif %} class="cell {{cell.cell_type}} {{celltags(cell)}}" id="{{count}}">
+    {{ input_group(cell, nb) }}
+    {{ cell_toolbars(cell, nb, [cell_submit(cell, nb), cell_type(cell, nb)]) }}
+    {{ cell_outputs(cell, nb) }}
+</section>
+{% endblock any_cell %}

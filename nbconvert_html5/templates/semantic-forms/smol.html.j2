@@ -1,0 +1,158 @@
+{%- extends 'semantic-forms/cell.html.j2' -%}
+
+{% from 'mathjax.html.j2' import mathjax %}
+{% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
+
+{% block css %}
+<meta name="color-scheme" content="dark light">
+
+<style>
+    body {
+        font-size: larger;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        overflow-x: hidden;
+        padding: 0 1em 0 1em;
+    }
+
+    main>form,
+    fieldset[name=input]:disabled~ul[role=toolbar],
+    fieldset[name=outputs]>legend,  
+    form[action=markdown]+section>fieldset[name=input]:disabled,
+    form+section[data-outputs="0"]>fieldset[name=outputs] {
+        display: none;
+    }
+
+    main>section {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: .5em;
+    }
+
+    main>section>[name=input] {
+        border: none;
+    }
+
+    textarea[name=source], [name=outputs] {
+        overflow: auto;
+        min-width: 0;
+    }
+
+    body:not(:-moz-handler-blocked) [name=outputs],
+    body:not(:-moz-handler-blocked) [name=input] {
+        display: table-cell;
+    }
+
+    textarea[name=source], [name=outputs]>output {
+        width: 100%;
+    }
+
+    /** fix the color constrast on disabled textareas **/
+    fieldset[name=input]:disabled>textarea {
+        color: unset;
+    }
+
+    main>section {
+        outline-width: .2em;
+        outline-offset: -.1em;
+    }
+
+    main>section:focus-within {
+        outline-style: solid;
+    }
+
+    main>section:hover {
+        outline-style: dotted;
+    }
+    
+    main>section:hover:focus-within {
+        outline-style: double;
+    }
+
+    .visually-hidden:not(:focus):not(:active) {
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        height: 1px;
+        overflow: hidden;
+        position: absolute;
+        white-space: nowrap;
+        width: 1px;
+    }
+</style>{% endblock css %}
+{% block any_cell scoped %}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+{%- set CODE = cell.cell_type == "code" -%}
+{%- set tags = celltags(cell) -%}
+<form id="{{ID}}" name="{{ID}}" method="POST" action="{{cell.cell_type}}" aria-labelledby={{ID}}/cell_count>
+    <label id={{ID}}/cell_count>
+    Cell&nbsp;<output name="cell_count" role="presentation">{{count + 1}}</output></label>
+</form>
+<section aria-labelledby="{{ID}}/cell_count" class="cell {{cell.cell_type}}{% if tags %} {{tags}}{% endif %}" id="{{count}}" data-outputs="{{(cell.outputs or "").__len__()}}">
+    <fieldset name=input role=presentation disabled>
+        <legend hidden id="{{ID}}/input_count">In&nbsp;<output name="input_count" role="presentation">{{cell.execution_count or ""}}</output></legend>
+        <label aria-hidden=true>In&nbsp;<output name="input_count"  role="presentation">{{cell.execution_count or ""}}</output></label>
+        <textarea name="source" id="{{ID}}/source" rows="{{cell.source.splitlines().__len__()}}" form="{{ID}}" aria-labelledby="{{ID}}/input_count">{{cell.source}}</textarea>
+    </fieldset>
+    {# things need to follow this input in dom order so that we can use css selectors off fieldset:disabled #}
+    {{ cell_toolbars(cell, nb, [cell_submit(cell, nb), cell_type(cell, nb)]) }}
+    {{ cell_output(cell, nb) }}
+</section>
+{% endblock any_cell %}
+
+
+{%- macro cell_submit(cell, nb) -%}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+{# https://www.w3.org/TR/WCAG20-TECHS/H32.html #}
+<button form="{{ID}}" type="submit" disabled aria-label="Run Cell"></button>
+{%- endmacro -%}
+
+{%- macro cell_toolbars(cell, nb, body) -%}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+<ul role="toolbar" aria-labelledby="{{ID}}/execution_count">{%- for part in body -%}<li>{{part}}</li>{%- endfor -%}</ul>
+{%- endmacro -%}
+
+{%- macro cell_type(cell, nb) -%}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+{%- set cell_type = cell.cell_type -%}
+<select name="cell_type" aria-label="Cell Type" form="{{ID}}" disabled>
+    <option {% if cell_type=="code" %}selected{% endif %} value="code">code</option>
+    <option {% if cell_type=="markdown" %}selected{% endif %} value="markdown">markdown</option>
+    <option {% if cell_type=="raw" %}selected{% endif %} value="raw">raw</option>
+    <option {% if cell_type=="unknown" %}selected{% endif %} value="unknown">unknown</option>
+</select>
+{%- endmacro -%}
+
+
+{%- macro cell_output(cell, nb, parts) -%}
+{%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
+{% set CODE = cell.cell_type == "code" %}
+
+<fieldset name="outputs" id="{{ID}}/outputs">
+    {% if CODE and cell.outputs %}
+    <legend id={{ID}}/execution_count>Out&nbsp;<output name="execution_count"  role="presentation">{{cell.execution_count or ""}}</output></legend>
+    <label aria-hidden=true>Out&nbsp;<output name="execution_count"  role="presentation">{{cell.execution_count or ""}}</output></label>
+    {{cell_display_priority(cell, ID)}}
+    {% endif %}
+</fieldset>
+{% if cell.cell_type=="markdown" %}
+{{ markdown(cell.source) | strip_files_prefix }}
+{% endif %}
+{%- endmacro -%}
+
+{%- macro cell_display_priority(cell, ID) -%}
+{%- for i, output in enumerate(cell.outputs) -%}
+{%- block output scoped -%}<output role="presentation" name="outputs/{{i}}" id="{{ID}}/outputs/{{i}}" form="{{ID}}">{%- block output_prompt -%}{%- endblock
+    -%}{{super()}}</output>{%- endblock -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+{% block body_header %}
+<body>
+    {% set title = nb.metadata.get('title', resources['metadata']['name']) | escape_html_keep_quotes %}
+    <header class="site">
+        <label id="title" aria-hidden="true">{{title}}</label>
+        {% block skip_links %}<a class="visually-hidden" tabindex="0" href="#/">Skip to content</a>{% endblock skip_links %}
+    </header>
+    <main id="/" aria-label="{{title}}">
+{% endblock body_header %}
+

@@ -114,12 +114,12 @@ window.addEventListener('load', function () {
     slider.addEventListener("input", (event) => {
         var id = `#/cells/${event.target.value}`;
         event.target.nextElementSibling.value = event.target.value;
-        document.getElementById(id.substring(1)).scrollIntoView();
     });
 
     // the cell slider updates the page history
     slider.addEventListener("change", (event) => {
         var id = `#/cells/${event.target.value}`;
+        document.getElementById(id.substring(1)).scrollIntoView();
         history.replaceState({}, `Cell ${event.target.value}`, id);
     })
 
