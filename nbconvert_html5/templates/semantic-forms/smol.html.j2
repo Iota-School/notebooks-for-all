@@ -83,15 +83,19 @@
 {%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
 {%- set CODE = cell.cell_type == "code" -%}
 {%- set tags = celltags(cell) -%}
+{%- set ct = namespace(sloc=0, loc=0)%}
+{% for line in "".join(cell.source).splitlines() %}{% set ct.loc = ct.loc + 1 %}{% if line.strip() %}{% set ct.sloc = ct.sloc + 1 %}{% endif %}{% endfor %}
 <form id="{{ID}}" name="{{ID}}" method="POST" action="{{cell.cell_type}}" aria-labelledby={{ID}}/cell_count>
     <label id={{ID}}/cell_count>
     Cell&nbsp;<output name="cell_count" role="presentation">{{count + 1}}</output></label>
 </form>
-<section aria-labelledby="{{ID}}/cell_count" class="cell {{cell.cell_type}}{% if tags %} {{tags}}{% endif %}" id="{{count}}" data-outputs="{{(cell.outputs or "").__len__()}}">
+{% if cell.cell_type == "raw" %}{{cell.source}}{% endif %}
+<section aria-labelledby="{{ID}}/cell_count" {% if not ct.sloc and not cell.outputs %}role="separator"{% endif %}
+    class="cell {{cell.cell_type}}{% if tags %} {{tags}}{% endif %}" id="{{count}}" data-sloc="{{ct.sloc}}" data-outputs="{{(cell.outputs or "").__len__()}}">
     <fieldset name=input role=presentation disabled>
         <legend hidden id="{{ID}}/input_count">In&nbsp;<output name="input_count" role="presentation">{{cell.execution_count or ""}}</output></legend>
         <label aria-hidden=true>In&nbsp;<output name="input_count"  role="presentation">{{cell.execution_count or ""}}</output></label>
-        <textarea name="source" id="{{ID}}/source" rows="{{cell.source.splitlines().__len__()}}" form="{{ID}}" aria-labelledby="{{ID}}/input_count">{{cell.source}}</textarea>
+        <textarea name="source" id="{{ID}}/source" rows="{{ct.loc}}" form="{{ID}}" aria-labelledby="{{ID}}/input_count">{{cell.source}}</textarea>
     </fieldset>
     {# things need to follow this input in dom order so that we can use css selectors off fieldset:disabled #}
     {{ cell_toolbars(cell, nb, [cell_submit(cell, nb), cell_type(cell, nb)]) }}
