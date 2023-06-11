@@ -13,6 +13,11 @@
 <title>{{nb_title}}</title>
 {% block css %}{% endblock css %}
 {%- endblock html_head -%}
+
+{%- block html_head_js_mathjax -%}
+{{ mathjax(resources.mathjax_url) }}
+{%- endblock html_head_js_mathjax -%}
+
 </head>
 {%- endblock  -%}
 
