@@ -14,6 +14,11 @@
         padding: 0 1em 0 1em;
     }
 
+    section>[name=cell_count] {
+        right: 0;
+        position: absolute;
+    }
+
     main>form,
     fieldset[name=input]:disabled~ul[role=toolbar],
     fieldset[name=outputs]>legend,  
@@ -92,6 +97,8 @@
 {% if cell.cell_type == "raw" %}{{cell.source}}{% endif %}
 <section aria-labelledby="{{ID}}/cell_count" {% if not ct.sloc and not cell.outputs %}role="separator"{% endif %}
     class="cell {{cell.cell_type}}{% if tags %} {{tags}}{% endif %}" id="{{count}}" data-sloc="{{ct.sloc}}" data-outputs="{{(cell.outputs or "").__len__()}}">
+    <output name="cell_count" role="presentation" aria-hidden="true">{{count + 1}}</output></label>
+
     <fieldset name=input role=presentation disabled>
         <legend hidden id="{{ID}}/input_count">In&nbsp;<output name="input_count" role="presentation">{{cell.execution_count or ""}}</output></legend>
         <label aria-hidden=true>In&nbsp;<output name="input_count"  role="presentation">{{cell.execution_count or ""}}</output></label>
