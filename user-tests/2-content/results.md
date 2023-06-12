@@ -32,61 +32,71 @@ Participants did not display any major issues working with Markdown content. Som
 
 #### Code cells
 
-Like other cells, code cells continue to have unclear divisions, though they do have the boon of execution numbers, borders, and shading that provide visual hints. Formally, though, assistive tech did not present them as split sections. Only participants familiar with notebooks searched for these as a means of determining cell divisions. Because code often has syntax that is distinctive from non-code, the most code-savy participants recognized code cells exclusively because they were familiar with the different words/commands/content. For the most part, this did not inhibit participants. It only became a factor when participants were trying to navigate by cell.
+Like other cells, code cells continue to have unclear divisions, though they do have the boon of execution numbers, borders, and shading that provide visual hints. Formally, though, assistive tech did not present them as separate sections. Only participants familiar with notebooks searched for these as a means of determining cell divisions. Because code often has syntax that is distinctive from non-code, the most code-savy participants recognized code cells exclusively because they were familiar with the different words/commands/content. For the most part, this did not inhibit participants. It only became a factor when participants were trying to navigate by cell.
 
 With structural changes made to the notebook before this test, screen readers did pick up cells like code cells as an [HTML `article`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/article). Some screen readers allow users to navigate by article. The issue was that all code cells were referred to as “article” alone without any unique descriptions (including no mention of execution number) or mention of it being code at all. While it was good to find the change surfacing, it was not yet useful to users.
 
 The way participants read code cells varied widely based on their set up (ie. operating systems, settings, assistive tech) and personal preference. Options included
 
-* Reading code as any other default text, meaning word by word. This was done by participants using their vision and some screen reader users. With this option, it was possible to miss a switch between Markdown and other code cells, though most participants noticed within the first few seconds because their contents are typically distinct. 
-    * Those using vision mentioned that reading code requires more active reading than recognizing word shapes because code often uses made-up or conjoined words rather than familiar ones; modifying font/font choice becomes critical in allowing participants to manage the strain active reading puts on them.
-* Reading code character by character. This was mentioned by participants using screen readers, though it seems probable that participants using their vision would do the same to identify unfamiliar words. For some participants this was their default screen reader setting when they know they are planning to code, for some this is a preset assigned to a list of applications, and for others this would be a setting they manually adjust to when they feel reading word by word is not serving their needs.
-* Reading white space in addition to another setting. This means the white space character’s ( space, tab, etc.) name is read with each repetition. This was only mentioned by screen reader users. Participants that used this method said it can help them identify sections of code outright because the use and frequency of white space is so different than in non-code. This can also help them gain relevant information in code languages where white space is meaningful.
-* Manually initiating a preset workflow to copy whole blocks of code—like notebook code cells—and paste them into another application that is more accessible to them. Here they may read, edit, and run code line by line. We did not discuss what they would do if they needed to get code back in the notebook. This was mentioned by the most code-savvy screen reader users, but the workflow is not done on a screen reader itself.
-* Reading in chunks by a set number of characters, including white space characters. These chunks do not split at words or other divisions, it is purely by number of character. This was mentioned by Braille reader users—the number of characters per chunk is determined by the Braille reader’s display.
+* Reading code as any other default text, meaning word by word.
+	* This was done by participants using their vision and some screen reader users. With this option, it was possible to miss a switch between Markdown and other code cells, though most participants noticed within the first few seconds because their contents are typically distinct. 
+	* Those using vision mentioned that **reading code requires more active reading than recognizing word shapes because code often uses made-up or conjoined words rather than familiar ones;** modifying font/font choice becomes critical in allowing participants to manage the strain active reading puts on them.
+* Reading code character by character.
+	* This was mentioned by participants using screen readers, though it seems probable that participants using their vision would do the same to identify unfamiliar words.
+ 	* Some participants switch to this screen reader setting when they code, others assign this as a preset to a list of applications, and others manually adjust this setting when they feel reading word by word is not serving their needs.
+* Reading white space in addition to another setting.
+	* This means the white space character’s ( space, tab, etc.) name is read with each repetition.
+ 	* This was only mentioned by screen reader users.
+  	* Participants that used this method said it can help them identify sections of code outright because the use and frequency of white space is so different than in non-code. This can also help them gain relevant information in code languages where white space is meaningful.
+* Manually initiating a preset workflow to copy whole blocks of code—like notebook code cells—and paste them into another application that is more accessible to them.
+	* Here they may read, edit, and run code line by line.
+ 	* We did not discuss what they would do if they needed to get code back in the notebook.
+  	* This was mentioned by the most code-savvy screen reader users, but the workflow is not done on a screen reader itself.
+* Reading in chunks by a set number of characters, including white space characters.
+	* These chunks do not split at words or other divisions; it is purely by number of character.
+ 	* This was mentioned by Braille reader users—the number of characters per chunk is determined by the Braille reader’s display.
 
 #### Output errors and warnings
 
-Error and warning information appears as additional cell outputs in Jupyter notebooks—additional because they are a grouped separate from an intended run cell output. For brevity, we’ll refer to both errors and warnings simply as errors for the rest of this section. 
+Error and warning information appears as additional cell outputs in Jupyter notebooks, they are grouped separately from an intended run cell output. For brevity, we’ll refer to both errors and warnings simply as errors for the rest of this section. 
 
-Errors provided a challenge for most participants; those not using vision were impacted most severely. That’s because error  information in notebooks is almost entirely visual. Other than the error text, they rely exclusively on low contrast color coding: a light red or orange background. They also appear directly against other output types, so they can be obscured by having a standard text output and and error text back to back. Participants using vision, like those with screen magnifiers or high zoom, were usually able to notice that errors were a separate group and thus find an error quickly. Participants with screen readers consistently had their screen readers pick up and share the error message, but as there was no break between the initial input text, the error message, and any following text it was frequently missed. Screen readers read them as one long paragraph rather than as the separate text areas they appear visually. In summary, assistive tech could completely access errors, but it was communicated ineffectively to its users. 
+Finding and identifying errors was a challenge for most participants and extremely difficult for those not using vision. Error information is almost entirely visual. Other than the error text itself, errors are differianted with padding: a visual break between the section above and below, and low-contrast color coding: a light red or orange background. The color coding was not discernable to those using color inversion or screenreaders. Errors syntax melds directly with the outputs above and below them, so they can be obscured by having a standard text output and error text back to back. Participants using vision, like those with screen magnifiers or high zoom, usually noticed the visual break and thus found errors quickly. Participants with screen readers consistently heard the error message read, but since there was no syntactic break between the error and the other code cells, it was frequently missed. Screen readers read them as one long paragraph rather than as the separate text sections. 
 
-Most participants recognized errors because of their familiarity with the message; this means that they were relying on the contents of the message rather than message or notebook structure. As useful as this was, it also meant a delay in recognition because words like “error” or “warning” often appear in the middle of the message rather than the start. This recognition also relies on user expertise and prior familiarity with the notebook itself, something that users newer to the field might not have or that might be downright inaccessible to people with different cognitive abilities. Some participants with more comfort in notebooks also used their expectations that an error would appear after the cell to search in depth.
+Most participants recognized errors because of their familiarity with the message; they were forced to rely on the content rather than organizational structure, a much slower reading experience. Because words like “error” or “warning” often appear in the middle of the message rather than the start, this meant a delay in recognition. This recognition relied on user expertise and prior familiarity with the notebook itself, biasing readability against users newer to the field and those with different cognitive abilities. Some participants with more notebook experience used their knowledge of notebook layout, errors appear after the cell, to search in depth.
 
-Perhaps the most damning was the comment from a screen reader user: their sighted colleagues can find errors and similar unexpected feedback quicky, but they have to be vigilant and intentionally search to make sure they are receiving necessary and important information.
+This comment from a screen reader user summarizes the inaccessible error design's impact: my sighted colleagues can find errors and similar unexpected feedback quicky, but I have to be vigilant and intentionally search to make sure I receive necessary and important information.
 
-Participants handled the challenge in a few ways
+Participants handled the challenge in a few ways:
 
-* Reading all text very carefully and stopping over any area they recognized a key word (usually “error,” “warning,” or a specific name of an error if they knew the code language).
+* Reading all text very carefully and stopping over any area they recognized a key word (“error,” “warning,” or a specific name of an error if they knew the code language).
 * Rereading cells and their outputs when they noticed elsewhere that something was amiss in the notebook.
-* Using the browser find tool to search the notebook’s contents, usually with key words like “error” or “warning.” They would navigate through the option using the keyboard.
-* Using a screen reader’s feature to read aloud the background color of a region. This only helps when users first suspect an area is worth investigating. It is not a passive feature.
+* Using the browser find tool to search the notebook’s contents, usually with key words like “error” or “warning.” They navigated using the keyboard.
+* Using a screen reader’s feature to read aloud the background color of a region. This only helps when users first suspect an area is worth investigating. It is not a passive feature, and must be intentionally activated by the user.
 
-While participants using their vision did have a comparatively easier time locating and identifying errors, they often could not see the low contrast background color. Participants using inverted colors did not see the background colors at all.
 
 ### Images
 
 #### PNG images
 
-PNG images proved an obstacle for most participants. Fortunately, most of the obstacles were created by notebook authoring choices where there is clear room for improvement.
+PNG images proved an obstacle for most participants. Different notebook authoring choices can be employed to fix many of these issues.
 
-The primary issue with images is that they provide information in an inflexible way. Participants using their vision can magnify or otherwise zoom into an image (though browser zoom does not apply), but that is the only control participants were able to exercise over images. If these same participants cannot get information because the image has areas that are too low contrast, there is nothing they can do; any theme changes or color inversions they may apply elsewhere will not apply to an image. Because of this, low contrast is an extreme blocker for participants to complete tasks related to images.
+The primary issue with images is that they provide information in an inflexible way. Participants using vision can magnify or zoom into an image (though browser zoom does not apply), but that is the only control participants were able to exercise over images. If these same participants cannot get information because the image has areas that are too low contrast, there is nothing they can do; any theme changes or color inversions they may apply elsewhere will not apply to an image. Because of this, low contrast is an extreme blocker for participants to complete tasks related to images.
 
-This provides absolutely zero support for participants not using vision, like screen reader or Braille reader users. Because the images in this notebook had no alt text or other image descriptions, were not described in surrounding context, and provided no ways to access the source information, screen reader and Braille reader users could not complete any image-related tasks in these tests. At most, participants would try and guess based on the information that it was an image and that image file’s name—the only information their assistive tech could access. 
+This notebook provides absolutely no support for participants not using vision. Because the images in this notebook had no alt text or image descriptions, were not described in surrounding context, and provided no ways to access the source information, screen reader and Braille reader users could not complete any image-related tasks in these tests. At most, participants would take a guess based on the image file’s name—the only information their assistive tech could access. 
 
-To manage this poor experience, all participants
+To manage this poor experience, all participants:
 
 * Would read before and after the image to try and glean the image’s surrounding context.
 * Would search for any links that might send them to an image source, related data, or provide other context.
 
-Participants using their vision also
+Participants using their vision also:
 
-* Tried to magnify or zoom in on the image. Which methods of magnification or zoom they tired first depended on their personal preference and amount needed. Remember that browser zoom does not zoom the image in a rendered notebook.
+* Tried to magnify or zoom in on the image. Which methods of magnification or zoom they tired first depended on their personal preference and amount of zoom needed. Remember that browser zoom does not zoom the image in a rendered notebook.
 * Would adjust their display settings, like using a high contrast mode or inverting colors. These did not successfully impact images.
 
-Participants using screen readers of Braille readers also
+Participants using screen readers or Braille readers also:
 
-* Would explore more aggressively when searching for image information and often noted there was no other recourse. They were effectively locked out from the information in an undescribed image.
+* Would explore more aggressively when searching for image information and often noted there was no other recourse. They were locked out from the information in an undescribed image.
 
 #### SVG images
 
@@ -94,28 +104,32 @@ With a default—meaning not manually tagged or otherwise modified—SVG image, 
 
 #### Chart/visualization feedback
 
-In the notebook used for these tests, a majority of the images were charts or other kinds of visualizations. We received the following feedback on charts used during the test.
+In the notebook used for these tests, a majority of the images were charts or other kinds of visualizations. We received the following feedback on charts used during the test:
 
-* Missing chart information is confusing at best and misleading at worst. Participants often struggled to make sense of what the charts were trying to explain to them because several were missing titles or axis labels. These may seem like the basics to expert chart makers, but neglecting them has clear a negative impact.
-* In most cases, summarizing or including a description of the information a chart is meant to convey can help participants dive into the information faster and more deeply. If it is done as a text description, this may also serve as support for screen reader and Braille users as well.
-* Plots with default styling made some of the biggest contrast obstacles for participants engaging with the notebook visually. Because they are images, colors and lines and text are not customizable or restylable even for participants who wanted to try. In this case, the default styling often had low contrast color choices representing the data, thin and low opacity lines for trend lines and axes, and small and thin text.
+* Missing chart information is confusing at best and misleading at worst. Participants often struggled to make sense of what the charts were trying to explain to them because several were missing titles or axis labels. Not including these fundamental aspects has direct negative impact on readability.
+* In most cases, summarizing or including a description of the information a chart is meant to convey can help participants dive into the information faster and more deeply. If done as a text description, this may also serve as support for screen reader and Braille users.
+* Default styling of plots were some of the biggest contrast obstacles for participants engaging with the notebook visually. The default styling often had low contrast color choices representing the data, thin and low opacity lines for trend-lines and axes, and small and thin text. Because they are images, colors and lines and text are not customizable or restylable even for participants who wanted to try editing them using developer tools. 
 * Use grid lines in charts. When using high magnification, zoom, or otherwise handling a limited field of vision, participants using their vision often could not see both the axes and the data at the same time. Without gridlines, they had nothing to follow to orient that data point in relation to the axes.
-* Tables as an alternative for complex content like charts were often responded to as being unpleasant but reliable. This was the same answer whether tables were suggested in the notebook already or if users would have to generate one themselves. For the more confident participants, having access to the source notebook and data was consistently preferable.
+* Including the tables of data used to create complex charts was an unpleasant but reliable way of accessing the information in the plot. This was the same answer whether tables were included in the notebook already or if users would have to generate one themselves. For participants more experienced with data analysis, having access to the source notebook and data was consistently preferable.
 
 ### Videos
 
-For the most part, the [`iframe`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe) linked video in our test notebook was usable by participants. Participants were able to complete tasks relating to the video more often than not. When asked to reflect on the experience participants credited the fact that the video and its interface were easier for them to use because it followed video patterns they expected and experienced elsewhere on the internet. 
+The [`iframe`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe) linked video in our test notebook was mostly usable by participants who completed tasks relating to the video more often than not. When asked to reflect on the experience participants credited the fact that the video and its interface were easier to use because it followed video patterns they expected and experienced elsewhere on the internet. 
 
-Video feedback included
+Video feedback included:
 
-* The video did not immediately appear to be a video. For participants using vision, they noted they mistook it for an image because the video player around it does not appear until a user interacts with it. For participants using screen readers, they commented that the video did not have any kind of labeling that told them it was a video; they figured it out when they found the familiar play button (though it did not tell them whether that would be audio or video). This is likely a result of the `iframe` and no additional labeling.
+* The video did not immediately appear to be a video.
+	* Participants using vision mistook it for an image because the video player around it does not appear until a user interacts with it.
+ 	* Participants using screen readers commented that the video did not have any kind of labeling that told them it was a video; they figured it out when they found the familiar play button (though it did not tell them whether that would be audio or video). This is likely a result of the `iframe` and no additional labeling.
 * Participants would like closed caption and/or transcription options.
-* The area the video took up was unclear. This became an issue for participants using their vision when they were trying to figure out where they could click to pause and play the video. When magnified or zoomed in, it could also become difficult to tell which parts were video and which parts were notebook background. 
+* The area the video took up was unclear.
+	* This became an issue for participants using their vision when they were trying to figure out where they could click to pause and play the video.
+ 	* When magnified or zoomed in, it could also become difficult to tell which parts were video and which parts were notebook background. 
 * Because the video player does not appear around the video until the video is played, its controls are unclear. The initial play button that appears as an overlay of the video thumbnail does not seem to be labeled as a play button; screen reader users were guessing when they activated the button.
 
 ### Content types not covered
 
-While we aimed to cover a breadth of commonly used content types in these tests, we did not (and could not) cover everything that could possibly be put in a notebook’s cells. For this round of tests, we intentionally did not focus on
+While we aimed to cover a breadth of commonly used content types in these tests, we could not cover everything that could possibly be put in a notebook’s cells. For this round of tests, we intentionally did not focus on
 
 * External links
 * Tables
