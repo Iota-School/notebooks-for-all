@@ -45,7 +45,15 @@ nav:
     - exports/resources/event-hackathon/accessibility-tips-for-jupyter-notebooks.md
     - exports/resources/event-hackathon/notebook-authoring-checklist.md
   - User Tests: 
-    - Structure & Navigation in Rendered Notebooks:
+    - Content:
+      - Script: exports/user-tests/2-content/Test-script.md
+      - Results: 
+        - Summary: exports/user-tests/2-content/results/README.md
+        - Cell contents: exports/user-tests/2-content/results/cell-contents.md
+        - Rich outputs: exports/user-tests/2-content/results/rich-outputs.md
+        - Navigation: exports/user-tests/2-content/results/navigation.md
+        - Conclusions: exports/user-tests/2-content/results/conclusions.md
+    - Structure & Navigation:
       - Script: exports/user-tests/1-navigation/test-script.md
       - Results: exports/user-tests/1-navigation/results.md
     - General Testing Resources:
