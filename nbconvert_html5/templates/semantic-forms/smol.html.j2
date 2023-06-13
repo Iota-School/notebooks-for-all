@@ -7,16 +7,22 @@
 <meta name="color-scheme" content="dark light">
 
 <style>
+    :root {
+        --cell-padding: .5em;
+        --focus-width: .2em;
+    }
     body {
         font-size: larger;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
         overflow-x: hidden;
-        padding: 0 1em 0 1em;
+        padding: 0 2em 0 2em;
     }
 
-    section>[name=cell_count] {
+    section>a {
         right: 0;
         position: absolute;
+        padding-top: var(--cell-padding);
+        padding-right: 16px;
     }
 
     main>form,
@@ -31,7 +37,7 @@
         display: flex;
         flex-direction: column;
         align-items: stretch;
-        padding: .5em;
+        padding: var(--cell-padding);
     }
 
     main>section>[name=input] {
@@ -58,8 +64,8 @@
     }
 
     main>section {
-        outline-width: .2em;
-        outline-offset: -.1em;
+        outline-width: var(--focus-width);
+        outline-offset: calc(-1 - var(--focus-width));
     }
 
     main>section:focus-within {
@@ -97,8 +103,7 @@
 {% if cell.cell_type == "raw" %}{{cell.source}}{% endif %}
 <section aria-labelledby="{{ID}}/cell_count" {% if not ct.sloc and not cell.outputs %}role="separator"{% endif %}
     class="cell {{cell.cell_type}}{% if tags %} {{tags}}{% endif %}" id="{{count}}" data-sloc="{{ct.sloc}}" data-outputs="{{(cell.outputs or "").__len__()}}">
-    <output name="cell_count" role="presentation" aria-hidden="true">{{count + 1}}</output></label>
-
+    <a aria-hidden="true" href="#{{count + 1}}" alt="Cell {{count + 1}}" title="Cell {{count + 1}}">{{count + 1}}</a>
     <fieldset name=input role=presentation disabled>
         <legend hidden id="{{ID}}/input_count">In&nbsp;<output name="input_count" role="presentation">{{cell.execution_count or ""}}</output></legend>
         <label aria-hidden=true>In&nbsp;<output name="input_count"  role="presentation">{{cell.execution_count or ""}}</output></label>
