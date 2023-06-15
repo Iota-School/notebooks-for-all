@@ -1,6 +1,7 @@
 # Issues
 
 Bugs, issues, and other specific feedback or discussions from this round of tests can be found throughout the repository in issues. Listed below, they are
+
 * [Additional comment on Page title and notebook title do not match](https://github.com/Iota-School/notebooks-for-all/issues/10#issuecomment-1540950862)
 * [Additional comment on Explore landmark options in rendered notebook](https://github.com/Iota-School/notebooks-for-all/issues/5#issuecomment-1540967184)
 * [Syntax highlighting feedback](https://github.com/Iota-School/notebooks-for-all/issues/54)
