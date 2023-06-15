@@ -52,7 +52,7 @@ nav:
         - Cell contents: exports/user-tests/2-content/results/cell-contents.md
         - Rich outputs: exports/user-tests/2-content/results/rich-outputs.md
         - Navigation: exports/user-tests/2-content/results/navigation.md
-        - Conclusions: exports/user-tests/2-content/results/conclusions.md
+        - Conclusions: exports/user-tests/2-content/results/conclusion.md
     - Structure & Navigation:
       - Script: exports/user-tests/1-navigation/test-script.md
       - Results: exports/user-tests/1-navigation/results.md
