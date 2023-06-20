@@ -101,7 +101,7 @@
 <article {% if not ct.sloc and not cell.outputs %}role="separator"{% endif %}
     class="cell {{cell.cell_type}}{% if tags %} {{tags}}{% endif %}" id="{{count}}" 
     data-sloc="{{ct.sloc}}" data-outputs="{{(cell.outputs or "").__len__()}}"
-    aria-labelledby={{ID}}/cell_count
+    aria-labelledby={{ID}}/form_label
     aria-posinset="{{count + 1}}" aria-setsize="{{nb.cells.__len__()}}">
     <form id="{{ID}}" name="{{ID}}" method="POST" action="{{cell.cell_type}}" aria-labelledby={{ID}}/form_label>
     </form>
