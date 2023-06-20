@@ -25,8 +25,9 @@
         padding-right: 16px;
     }
 
-    label[id$=\/cell_count],    
+    label[id$=\/form_label],    
     fieldset[name=input]:disabled~ul[role=toolbar],
+    fieldset[name=input]>legend,  
     fieldset[name=outputs]>legend,  
     article>form[action=markdown]~fieldset[name=input]:disabled,
     article[data-outputs="0"]>fieldset[name=outputs] {
@@ -40,7 +41,7 @@
         padding: var(--cell-padding);
     }
 
-    main>article>[name=input] {
+    [role=feed]>article>[name=input] {
         border: none;
     }
 
@@ -102,12 +103,12 @@
     data-sloc="{{ct.sloc}}" data-outputs="{{(cell.outputs or "").__len__()}}"
     aria-labelledby={{ID}}/cell_count
     aria-posinset="{{count + 1}}" aria-setsize="{{nb.cells.__len__()}}">
-    <form id="{{ID}}" name="{{ID}}" method="POST" action="{{cell.cell_type}}" aria-labelledby={{ID}}/cell_count>
+    <form id="{{ID}}" name="{{ID}}" method="POST" action="{{cell.cell_type}}" aria-labelledby={{ID}}/form_label>
     </form>
-    <label id={{ID}}/cell_count>Cell&nbsp;<output name="cell_count" role="presentation">{{count + 1}}</output></label>
+    <label id={{ID}}/form_label>{{cell.cell_type}}<span>Cell</span><output id={{ID}}/cell_count name="cell_count" role="presentation">{{count + 1}}</output></label>
     <a aria-hidden="true" href="#{{count + 1}}" tabindex="-1" alt="Cell {{count + 1}}" title="Cell {{count + 1}}">{{count + 1}}</a>
     <fieldset name=input role=presentation disabled>
-        <legend hidden id="{{ID}}/input_count">In&nbsp;<output name="input_count" role="presentation">{{cell.execution_count or ""}}</output></legend>
+        <legend id={{ID}}/input_count>In&nbsp;<output name="input_count"  role="presentation">{{cell.execution_count or ""}}</output></legend>
         <label aria-hidden=true>In&nbsp;<output name="input_count"  role="presentation">{{cell.execution_count or ""}}</output></label>
         <textarea name="source" id="{{ID}}/source" rows="{{ct.loc}}" form="{{ID}}" aria-labelledby="{{ID}}/input_count">{{cell.source}}</textarea>
     </fieldset>
