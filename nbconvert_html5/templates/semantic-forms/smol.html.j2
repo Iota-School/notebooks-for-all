@@ -18,29 +18,30 @@
         padding: 0 2em 0 2em;
     }
 
-    section>a {
+    article>a {
         right: 0;
         position: absolute;
         padding-top: var(--cell-padding);
         padding-right: 16px;
     }
 
-    main>form,
+    label[id$=\/form_label],    
     fieldset[name=input]:disabled~ul[role=toolbar],
+    fieldset[name=input]>legend,  
     fieldset[name=outputs]>legend,  
-    form[action=markdown]+section>fieldset[name=input]:disabled,
-    form+section[data-outputs="0"]>fieldset[name=outputs] {
+    article>form[action=markdown]~fieldset[name=input]:disabled,
+    article[data-outputs="0"]>fieldset[name=outputs] {
         display: none;
     }
 
-    main>section {
+    main>[role=feed]>article {
         display: flex;
         flex-direction: column;
         align-items: stretch;
         padding: var(--cell-padding);
     }
 
-    main>section>[name=input] {
+    [role=feed]>article>[name=input] {
         border: none;
     }
 
@@ -63,20 +64,20 @@
         color: unset;
     }
 
-    main>section {
+    [role=feed]>article {
         outline-width: var(--focus-width);
         outline-offset: calc(-1 - var(--focus-width));
     }
 
-    main>section:focus-within {
+    [role=feed]>article:focus-within {
         outline-style: solid;
     }
 
-    main>section:hover {
+    [role=feed]>article:hover {
         outline-style: dotted;
     }
     
-    main>section:hover:focus-within {
+    [role=feed]>article:hover:focus-within {
         outline-style: double;
     }
 
@@ -96,23 +97,25 @@
 {%- set tags = celltags(cell) -%}
 {%- set ct = namespace(sloc=0, loc=0)%}
 {% for line in "".join(cell.source).splitlines() %}{% set ct.loc = ct.loc + 1 %}{% if line.strip() %}{% set ct.sloc = ct.sloc + 1 %}{% endif %}{% endfor %}
-<form id="{{ID}}" name="{{ID}}" method="POST" action="{{cell.cell_type}}" aria-labelledby={{ID}}/cell_count>
-    <label id={{ID}}/cell_count>
-    Cell&nbsp;<output name="cell_count" role="presentation">{{count + 1}}</output></label>
-</form>
 {% if cell.cell_type == "raw" %}{{cell.source}}{% endif %}
-<section aria-labelledby="{{ID}}/cell_count" {% if not ct.sloc and not cell.outputs %}role="separator"{% endif %}
-    class="cell {{cell.cell_type}}{% if tags %} {{tags}}{% endif %}" id="{{count}}" data-sloc="{{ct.sloc}}" data-outputs="{{(cell.outputs or "").__len__()}}">
-    <a aria-hidden="true" href="#{{count + 1}}" alt="Cell {{count + 1}}" title="Cell {{count + 1}}">{{count + 1}}</a>
+<article {% if not ct.sloc and not cell.outputs %}role="separator"{% endif %}
+    class="cell {{cell.cell_type}}{% if tags %} {{tags}}{% endif %}" id="{{count}}" 
+    data-sloc="{{ct.sloc}}" data-outputs="{{(cell.outputs or "").__len__()}}"
+    aria-labelledby={{ID}}/form_label
+    aria-posinset="{{count + 1}}" aria-setsize="{{nb.cells.__len__()}}">
+    <form id="{{ID}}" name="{{ID}}" method="POST" action="{{cell.cell_type}}" aria-labelledby={{ID}}/form_label>
+    </form>
+    <label id={{ID}}/form_label>{{cell.cell_type}}<span>Cell</span><output id={{ID}}/cell_count name="cell_count" role="presentation">{{count + 1}}</output></label>
+    <a aria-hidden="true" href="#{{count + 1}}" tabindex="-1" alt="Cell {{count + 1}}" title="Cell {{count + 1}}">{{count + 1}}</a>
     <fieldset name=input role=presentation disabled>
-        <legend hidden id="{{ID}}/input_count">In&nbsp;<output name="input_count" role="presentation">{{cell.execution_count or ""}}</output></legend>
+        <legend id={{ID}}/input_count>In&nbsp;<output name="input_count"  role="presentation">{{cell.execution_count or ""}}</output></legend>
         <label aria-hidden=true>In&nbsp;<output name="input_count"  role="presentation">{{cell.execution_count or ""}}</output></label>
         <textarea name="source" id="{{ID}}/source" rows="{{ct.loc}}" form="{{ID}}" aria-labelledby="{{ID}}/input_count">{{cell.source}}</textarea>
     </fieldset>
     {# things need to follow this input in dom order so that we can use css selectors off fieldset:disabled #}
     {{ cell_toolbars(cell, nb, [cell_submit(cell, nb), cell_type(cell, nb)]) }}
     {{ cell_output(cell, nb) }}
-</section>
+</article>
 {% endblock any_cell %}
 
 
@@ -169,6 +172,11 @@
         <label id="title" aria-hidden="true">{{title}}</label>
         {% block skip_links %}<a class="visually-hidden" tabindex="0" href="#/">Skip to content</a>{% endblock skip_links %}
     </header>
-    <main id="/" aria-label="{{title}}">
+    <main id="/" aria-labelledby=title>
+        <section role=feed aria-setsize={{nb.cells.__len__()}} aria-label="Cells">
 {% endblock body_header %}
 
+{% block body_footer %}
+</section>
+{{super()}}
+{% endblock body_footer %}
