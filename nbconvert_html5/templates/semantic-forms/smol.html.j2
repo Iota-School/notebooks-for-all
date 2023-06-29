@@ -103,18 +103,21 @@
     data-sloc="{{ct.sloc}}" data-outputs="{{(cell.outputs or "").__len__()}}"
     aria-labelledby={{ID}}/form_label
     aria-posinset="{{count + 1}}" aria-setsize="{{nb.cells.__len__()}}">
-    <form id="{{ID}}" name="{{ID}}" method="POST" action="{{cell.cell_type}}" aria-labelledby={{ID}}/form_label>
-    </form>
-    <label id={{ID}}/form_label>{{cell.cell_type}}<span>Cell</span><output id={{ID}}/cell_count name="cell_count" role="presentation">{{count + 1}}</output></label>
-    <a aria-hidden="true" href="#{{count + 1}}" tabindex="-1" alt="Cell {{count + 1}}" title="Cell {{count + 1}}">{{count + 1}}</a>
-    <fieldset name=input role=presentation disabled>
-        <legend id={{ID}}/input_count>In&nbsp;<output name="input_count"  role="presentation">{{cell.execution_count or ""}}</output></legend>
-        <label aria-hidden=true>In&nbsp;<output name="input_count"  role="presentation">{{cell.execution_count or ""}}</output></label>
-        <textarea name="source" id="{{ID}}/source" rows="{{ct.loc}}" form="{{ID}}" aria-labelledby="{{ID}}/input_count">{{cell.source}}</textarea>
-    </fieldset>
-    {# things need to follow this input in dom order so that we can use css selectors off fieldset:disabled #}
-    {{ cell_toolbars(cell, nb, [cell_submit(cell, nb), cell_type(cell, nb)]) }}
-    {{ cell_output(cell, nb) }}
+    <section aria-labelledby={{ID}}/cell_label>
+        {# the form doubles as an anchor #}
+        <form id="{{ID}}" name="{{ID}}" method="POST" action="{{cell.cell_type}}">
+        </form>
+        <label id={{ID}}/cell_label>{{cell.cell_type}}<span>Cell</span><output id={{ID}}/cell_count name="cell_count" role="presentation">{{count + 1}}</output></label>
+        <a aria-hidden="true" href="#{{count + 1}}" tabindex="-1" alt="Cell {{count + 1}}" title="Cell {{count + 1}}">{{count + 1}}</a>
+        <fieldset name=input role=presentation disabled>
+            <legend id={{ID}}/input_count>In&nbsp;<output name="input_count"  role="presentation">{{cell.execution_count or ""}}</output></legend>
+            <label aria-hidden=true>In&nbsp;<output name="input_count"  role="presentation">{{cell.execution_count or ""}}</output></label>
+            <textarea name="source" id="{{ID}}/source" rows="{{ct.loc}}" form="{{ID}}" aria-labelledby="{{ID}}/input_count">{{cell.source}}</textarea>
+        </fieldset>
+        {# things need to follow this input in dom order so that we can use css selectors off fieldset:disabled #}
+        {{ cell_toolbars(cell, nb, [cell_submit(cell, nb), cell_type(cell, nb)]) }}
+        {{ cell_output(cell, nb) }}
+    </section>
 </article>
 {% endblock any_cell %}
 
