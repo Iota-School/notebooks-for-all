@@ -103,7 +103,7 @@
     aria-labelledby={{ID}}/cell_label
     aria-posinset="{{count + 1}}" aria-setsize="{{nb.cells.__len__()}}">
     <label id={{ID}}/cell_label>{{cell.cell_type}}<span>Cell</span><output id={{ID}}/cell_count name="cell_count" role="presentation">{{count + 1}}</output></label>
-    <a aria-hidden="true" href="#{{count + 1}}" tabindex="-1" alt="Cell {{count + 1}}" title="Cell {{count + 1}}">{{count + 1}}</a>
+    <a aria-hidden="true" href="#{{count + 1}}" tabindex="-1" title="Cell {{count + 1}}">{{count + 1}}</a>
     <section aria-labelledby={{ID}}/cell_label data-sloc="{{ct.sloc}}" data-outputs="{{(cell.outputs or "").__len__()}}">
         {# the form doubles as an anchor #}
         <form id="{{ID}}" name="{{ID}}" method="POST" action="{{cell.cell_type}}">
@@ -129,7 +129,7 @@
 
 {%- macro cell_toolbars(cell, nb, body) -%}
 {%- set count = nb["cells"].index(cell)-%}{%- set ID = "/cells/" + str(count) -%}
-<ul role="toolbar" aria-labelledby="{{ID}}/execution_count">{%- for part in body -%}<li>{{part}}</li>{%- endfor -%}</ul>
+<ul role="toolbar" aria-labelledby="{ID}}/cell_label>{%- for part in body -%}<li>{{part}}</li>{%- endfor -%}</ul>
 {%- endmacro -%}
 
 {%- macro cell_type(cell, nb) -%}
@@ -175,7 +175,7 @@
         {% block skip_links %}<a class="visually-hidden" tabindex="0" href="#/">Skip to content</a>{% endblock skip_links %}
     </header>
     <main id="/" aria-labelledby=title>
-        <section role=feed aria-setsize={{nb.cells.__len__()}} aria-label="Cells">
+        <section role=feed aria-busy=false aria-label="Cells">
 {% endblock body_header %}
 
 {% block body_footer %}
