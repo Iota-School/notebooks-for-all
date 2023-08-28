@@ -6,7 +6,7 @@ A collection of multimedia references to Notebooks for All.
 
 * [Making Jupyter Notebooks More Accessible]
 * referenced in [Data Driven Understanding of Data
-Science Notebook (In)Accessibility]
+Science Notebook Inaccessibility]
 
 ## Videos
 
@@ -26,5 +26,4 @@ Science Notebook (In)Accessibility]
 [Hearing the Light - Astronomy Data Sonification]: https://www.youtube.com/watch?v=-MBpGKoULyc&list=PLCPZgcYzVpj_WHHCTUpec8THYEMzXZnR1&index=5&t=10s&pp=iAQB
 [Learn to Use a Screen Reader]: https://www.youtube.com/watch?v=F189lurxSbs&list=PLCPZgcYzVpj_WHHCTUpec8THYEMzXZnR1&index=6&pp=iAQB
 [Making Jupyter Notebooks More Accessible]: https://astrobites.org/2023/06/10/notebooks-for-all/
-[Data Driven Understanding of Data
-Science Notebook (In)Accessibility]: https://arxiv.org/pdf/2308.03241.pdf
+[Data Driven Understanding of Data Science Notebook Inaccessibility]: https://arxiv.org/pdf/2308.03241.pdf
