@@ -23,6 +23,7 @@ import markupsafe
 import bs4
 import nbconvert_html5
 import bs4
+from bs4 import BeautifulSoup
 
 singleton = lru_cache(1)
 
@@ -35,8 +36,10 @@ TEMPLATE = TEMPLATES / "html-templates.html"
 formatter = pygments.formatters.find_formatter_class("html")(style="a11y-light")
 lex = pygments.lexers.find_lexer_class("IPython3")()
 
+
 def get_highlighted(x):
     return pygments.highlight(x, lex, formatter)
+
 
 def strip_comments(tag):
     for child in getattr(tag, "children", ()):
@@ -45,7 +48,6 @@ def strip_comments(tag):
                 child.extract()
         strip_comments(child)
     return tag
-
 
 
 class Base(pydantic.BaseModel):
@@ -117,7 +119,6 @@ class Notebook(T.Notebook):
         return doc
 
 
-
 class Cell(T.Notebook.Cell):
     def __new__(cls, cell_type=None, **kwargs):
         cls = {
@@ -136,10 +137,9 @@ class Cell(T.Notebook.Cell):
     def _repr_html_(self):
         return str(self.get_article())
 
-    
     def set_cell_article(self):
         pass
-    
+
     def get_article(self, count: int = 0, max: int = -1):
         # no captions on markdown cells
         article = self.get_template()
@@ -165,7 +165,7 @@ class Cell(T.Notebook.Cell):
         input.select_one("legend").attrs["id"] = ID("name")
         input.select_one("label.index").string = str(count)
         input.select_one("label.total").string = str(max)
-        
+
         article.select_one("textarea[name=description]").attrs.update(id=ID("description"))
 
         output = article.select_one("fieldset[name=input] output")
@@ -256,7 +256,8 @@ def load_cell_template():
 @singleton
 def get_display_data_priority() -> list:
     """>>> get_display_data_priority()
-    ['application/vnd.jupyter.widget-view+json', 'application/javascript', 'text/html', 'text/markdown', 'image/svg+xml', 'text/latex', 'image/png', 'image/jpeg', 'text/plain']"""
+    ['application/vnd.jupyter.widget-view+json', 'application/javascript', 'text/html', 'text/markdown', 'image/svg+xml', 'text/latex', 'image/png', 'image/jpeg', 'text/plain']
+    """
 
     return __import__("nbconvert").get_exporter("html")().config.NbConvertBase.display_data_priority
 
@@ -274,7 +275,6 @@ def get_markdown(str, **kwargs):
 
 def get_soup(x):
     return bs4.BeautifulSoup(x, features="html.parser")
-
 
 
 class FormExporter(HTMLExporter):
@@ -296,6 +296,7 @@ class FormExporter(HTMLExporter):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         from nbconvert.filters import strings
+
         for k, v in vars(strings).items():
             if callable(v):
                 if not k.startswith("_"):
@@ -303,30 +304,42 @@ class FormExporter(HTMLExporter):
         self.environment.globals.update(vars(builtins))
         from markdown_it import MarkdownIt
         from mdit_py_plugins.anchors import anchors_plugin
+
         markdown = MarkdownIt("gfm-like").use(anchors_plugin).render
         import html
+
         self.environment.globals.update(json=json, markdown=markdown)
         self.environment.filters.update(escape_html=html.escape)
         self.environment.globals.update(formatter=pygments.formatters)
-
 
     def from_notebook_node(self, nb, resources=None, **kw):
         html, resources = super().from_notebook_node(nb, resources, **kw)
         html = self.post_process_html(html)
         return html, resources
-    
+
     def post_process_html(self, body):
-        return body
+        soup = soupify(body)
+        heading_links(soup)
+        toc_ = soupify(toc(soup))
+        soup.select_one("details#toc").extend(toc_)
+        return soup.prettify()
+
+
+def soupify(body: str) -> BeautifulSoup:
+    """convert a string of html to an beautiful soup object"""
+    return BeautifulSoup(body, features="html.parser")
+
 
 def mdtoc(html):
     import io
+
     toc = io.StringIO()
     for header in html.select("h1,h2,h3,h4,h5,h6"):
-        id =header.attrs.get('id')
-        if id:
-            l = int(header.name[-1])
-            toc.write("  "*(l-1) + F"* [{header.string}](#{header.attrs.get('id')})\n")
+        id = header.attrs.get("id")
+        l = int(header.name[-1])
+        toc.write("  " * (l - 1) + f"* [{header.string}](#{header.attrs.get('id')})\n")
     return toc.getvalue()
+
 
 def toc(html):
     return get_markdown(mdtoc(html))
@@ -334,9 +347,13 @@ def toc(html):
 
 def heading_links(html):
     for header in html.select("h1,h2,h3,h4,h5,h6"):
-        id =header.attrs.get('id')
+        id = header.attrs.get("id")
+        if not id:
+            from slugify import slugify
+
+            id = slugify(header.string)
         if id:
-            link = soupify(F"""<a href="#{id}">{header.encode_contents().decode()}</a>""")
+            link = soupify(f"""<a href="#{id}">{header.encode_contents().decode()}</a>""")
             header.clear()
             header.append(link)
 
