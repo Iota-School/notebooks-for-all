@@ -18,6 +18,7 @@ CONFIGS = EXPORTS / "configs"
 HTML = EXPORTS / "html"
 AUDITS = EXPORTS / "audits"
 REPORTS = EXPORTS / "reports"
+TEMPLATES = Path("nbconvert_html5/templates/semantic-forms")
 
 def do(cmd, *args):
     from doit.cmd_base import CmdAction
@@ -49,6 +50,7 @@ def task_copy(notebooks, configurations, target):
     CONFIGS = target / "configs"
     notebooks = list(map(Path, notebooks))
     configurations = list(map(Path, configurations))
+    styles = list(TEMPLATES.glob("*.css"))
     targets = [NB / x.name for x in notebooks]
     def readme(target, ext, title):
         body = F"""# {title}\n\n"""
@@ -61,6 +63,13 @@ def task_copy(notebooks, configurations, target):
         clean=True,
         actions=[(cp, (x, NB /x.name )) for x in notebooks],
         targets=targets,
+        uptodate=list(map(Path.exists, targets))
+    )
+    yield dict(
+        name="styles",
+        clean=True,
+        actions=[(cp, (x, HTML /x.name )) for x in styles],
+        targets=[HTML /x.name  for x in styles],
         uptodate=list(map(Path.exists, targets))
     )
     targets = [CONFIGS / x.name for x in configurations]

@@ -22,13 +22,11 @@
 {%- endblock stream_stderr %}
 
 {% block data_svg scoped -%}
-{# <figure class="svg"> #}
-{%- if output.svg_filename %}
-<img src="{{ output.svg_filename | posix_path | escape_html }}">
-{%- else %}
-{{ output.data['image/svg+xml'].encode("utf-8") | clean_html }}
-{%- endif %}
-{# </figure> #}
+    {%- if output.svg_filename %}
+    <img src="{{ output.svg_filename | posix_path | escape_html }}">
+    {%- else %}
+    {{ output.data['image/svg+xml'].encode("utf-8") | clean_html }}
+    {%- endif %}
 {%- endblock data_svg %}
 
 {% block data_html scoped -%}
@@ -38,11 +36,7 @@
 {%- set html_value=output.data['text/html'] -%}
 {%- endif %}
 {%- if output.get('metadata', {}).get('text/html', {}).get('isolated') -%}
-<iframe
-    class="isolated-iframe"
-    style="height:520px; width:100%; margin:0; padding: 0"
-    frameborder="0"
-    scrolling="auto"
+<iframe class="isolated-iframe" style="height:520px; width:100%; margin:0; padding: 0" frameborder="0" scrolling="auto"
     src="data:text/html;base64,{{ html_value | text_base64 }}">
 </iframe>
 {%- else -%}
@@ -61,60 +55,36 @@
 
 {% block data_png scoped %}
 {# <figure class="png"> #}
-{%- if 'image/png' in output.metadata.get('filenames', {}) %}
-<img src="{{ output.metadata.filenames['image/png'] | posix_path | escape_html }}"
-{%- else %}
-<img src="data:image/png;base64,{{ output.data['image/png'] | escape_html }}"
-{%- endif %}
-{%- set width=output | get_metadata('width', 'image/png') -%}
-{%- if width is not none %}
-width={{ width | escape_html }}
-{%- endif %}
-{%- set height=output | get_metadata('height', 'image/png') -%}
-{%- if height is not none %}
-height={{ height | escape_html }}
-{%- endif %}
-{%- if output | get_metadata('unconfined', 'image/png') %}
-class="unconfined"
-{%- endif %}
-{%- set alttext=(output | get_metadata('alt', 'image/png')) or (cell | get_metadata('alt')) -%}
-{%- if alttext is not none %}
-alt="{{ alttext | escape_html }}"
-{%- endif %}
->
-{# </figure> #}
+    {%- if 'image/png' in output.metadata.get('filenames', {}) %}
+    <img src="{{ output.metadata.filenames['image/png'] | posix_path | escape_html }}" {%- else %} <img
+        src="data:image/png;base64,{{ output.data['image/png'] | escape_html }}" {%- endif %} {%- set width=output |
+        get_metadata('width', 'image/png' ) -%} {%- if width is not none %} width={{ width | escape_html }} {%- endif %}
+        {%- set height=output | get_metadata('height', 'image/png' ) -%} {%- if height is not none %} height={{ height |
+        escape_html }} {%- endif %} {%- if output | get_metadata('unconfined', 'image/png' ) %} class="unconfined" {%-
+        endif %} {%- set alttext=(output | get_metadata('alt', 'image/png' )) or (cell | get_metadata('alt')) -%} {%- if
+        alttext is not none %} alt="{{ alttext | escape_html }}" {%- endif %}>
+    {#
+</figure> #}
 {%- endblock data_png %}
 
 {% block data_jpg scoped %}
 {# <figure class="jpeg jpg"> #}
-{%- if 'image/jpeg' in output.metadata.get('filenames', {}) %}
-<img src="{{ output.metadata.filenames['image/jpeg'] | posix_path | escape_html }}"
-{%- else %}
-<img src="data:image/jpeg;base64,{{ output.data['image/jpeg'] | escape_html }}"
-{%- endif %}
-{%- set width=output | get_metadata('width', 'image/jpeg') -%}
-{%- if width is not none %}
-width={{ width | escape_html }}
-{%- endif %}
-{%- set height=output | get_metadata('height', 'image/jpeg') -%}
-{%- if height is not none %}
-height={{ height | escape_html }}
-{%- endif %}
-{%- if output | get_metadata('unconfined', 'image/jpeg') %}
-class="unconfined"
-{%- endif %}
-{%- set alttext=(output | get_metadata('alt', 'image/jpeg')) or (cell | get_metadata('alt')) -%}
-{%- if alttext is not none %}
-alt="{{ alttext | escape_html }}"
-{%- endif %}
->
-{# </figure> #}
+    {%- if 'image/jpeg' in output.metadata.get('filenames', {}) %}
+    <img src="{{ output.metadata.filenames['image/jpeg'] | posix_path | escape_html }}" {%- else %} <img
+        src="data:image/jpeg;base64,{{ output.data['image/jpeg'] | escape_html }}" {%- endif %} {%- set width=output |
+        get_metadata('width', 'image/jpeg' ) -%} {%- if width is not none %} width={{ width | escape_html }} {%- endif
+        %} {%- set height=output | get_metadata('height', 'image/jpeg' ) -%} {%- if height is not none %} height={{
+        height | escape_html }} {%- endif %} {%- if output | get_metadata('unconfined', 'image/jpeg' ) %}
+        class="unconfined" {%- endif %} {%- set alttext=(output | get_metadata('alt', 'image/jpeg' )) or (cell |
+        get_metadata('alt')) -%} {%- if alttext is not none %} alt="{{ alttext | escape_html }}" {%- endif %}>
+    {#
+</figure> #}
 {%- endblock data_jpg %}
 
 {% block data_latex scoped %}
 {# <figure class="latex"> #}
-{{ output.data['text/latex'] | e }}
-{# </figure> #}
+    {{ output.data['text/latex'] | e }}
+    {# </figure> #}
 {%- endblock data_latex %}
 
 {% block error -%}
@@ -136,12 +106,12 @@ alt="{{ alttext | escape_html }}"
 {%- block data_javascript scoped %}
 {% set div_id = uuid4() %}
 <div id="{{ div_id }}" class="output_subarea output_javascript {{ extra_class }}">
-{%- if not resources.should_sanitize_html %}
-<script type="text/javascript">
-var element = $('#{{ div_id }}');
-{{ output.data['application/javascript'] }}
-</script>
-{%- endif %}
+    {%- if not resources.should_sanitize_html %}
+    <script type="text/javascript">
+        var element = $('#{{ div_id }}');
+        { { output.data['application/javascript'] } }
+    </script>
+    {%- endif %}
 </div>
 {%- endblock -%}
 
@@ -151,10 +121,10 @@ var element = $('#{{ div_id }}');
 {% set datatype_list = output.data | filter_data_type %}
 {% set datatype = datatype_list[0]%}
 <div id="{{ div_id }}" class="output_subarea output_widget_view {{ extra_class }}">
-<script type="text/javascript">
-var element = $('#{{ div_id }}');
-</script>
-<script type="{{ datatype }}">
+    <script type="text/javascript">
+        var element = $('#{{ div_id }}');
+    </script>
+    <script type="{{ datatype }}">
 {{ output.data[datatype] | json_dumps | escape_html }}
 </script>
 </div>
@@ -172,3 +142,81 @@ var element = $('#{{ div_id }}');
 {%- endif %}
 {{ super() }}
 {%- endblock footer-%}
+
+{% macro cell_section(cell, loop) %}
+<section class="cell {{cell.cell_type}}" aria-labelledby="cell-{{loop.index}}-cell_type {{loop.index}}"
+    data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %}
+    data-outputs="{{cell.outputs.__len__()}}" {% endif %}>
+    {{cell_anchor(loop.index)}}
+    {{cell_form(i)}}
+    {{cell_execution_count(loop.index, cell.execution_count)}}
+    {{cell_cell_type(loop.index, cell.cell_type)}}
+    {{cell_source(loop.index, cell.source, cell.execution_count)}}
+    {{cell_output(loop.index, cell, cell.source, cell.outputs, cell.cell_type, cell.execution_count)}}
+    {{cell_metadata(loop.index, cell.metadata)}}
+</section>
+{% endmacro%}
+
+{% macro cell_anchor(i) %}
+<a href="#{{i}}" id="{{i}}" aria-describedby="cell-{{i}}-input"><span class="visually-hidden">Cell</span>#{{i}}</a>
+{% endmacro %}
+
+{% macro cell_cell_type(i, cell_type) %}
+<select form="cell-{{i}}" name="cell_type" disabled>
+    <option value="markdown" {%- if cell_type=="markdown" %} selected{% endif%}>markdown</option>
+    <option value="code" {%- if cell_type=="code" %} selected{% endif%}>code</option>
+    <option value="raw" {%- if cell_type=="raw" %} selected{% endif%}>raw</option>
+</select>
+<span id="cell-{{i}}-cell_type">{{cell_type}}</span>
+{% endmacro %}
+
+{% macro cell_execution_count(i, execution_count) %}
+<output form="cell-{{i}}" name="execution_count">{{execution_count}}</output>
+{% endmacro %}
+
+{% macro cell_form(i) %}
+<form id="cell-{{i}}" name="/cells/{{i}}" aria-labelledby="cell-{{i}}-cell_type">
+    <button type="submit">Run Cell</button>
+</form>
+{% endmacro %}
+
+{% macro cell_source(i, source, execution_count) %}
+<fieldset name="input" disabled>
+    <legend id="cell-{{i}}-input">In<span aria-hidden="true">[</span>{{execution_count}}<span
+            aria-hidden="true">]</span></legend>
+    <textarea form="cell-{{i}}" id="cell-{{i}}-source" name="source"
+        rows="{{source.splitlines().__len__()}}" aria-labelledby="cell-{{i}}-input">{{source}}</textarea>
+</fieldset>
+{% endmacro %}
+
+{% macro cell_metadata(i, metadata) %}
+<button name="metadata" form="cell-{{i}}">Metadata</button>
+<dialog id="cell-{{i}}-metadata">
+    <pre><code>
+    {{metadata}}
+    </code></pre>
+    <form method="dialog">
+        <button>Close</button>
+    </form>
+</dialog>
+{% endmacro %}
+
+{%- macro cell_output(i, cell, source, outputs, cell_type, execution_count) -%}
+{% set CODE = cell_type == "code" %}
+<span hidden id="cell-{{i}}-outputs-len">{{outputs.__len__()}} outputs</span>
+<fieldset name="outputs" id="cell-{{i}}-outputs" aria-describedby="cell-{{i}}-outputs-len">
+    <legend>Out{% if CODE and outputs %}<span aria-hidden="true">[</span>{{execution_count}}<span
+            aria-hidden="true">]</span>{% endif %}</legend>
+    {% if CODE and outputs %}
+    {{cell_display_priority(i, outputs, cell)}}
+    {% elif cell_type=="markdown" %}
+    {{ markdown(source) | strip_files_prefix }}
+    {% endif %}
+</fieldset>
+{%- endmacro -%}
+
+{%- macro cell_display_priority(i, outputs, cell) -%}
+{%- for i, output in enumerate(outputs) -%}
+{%- block output scoped -%}{{super()}}{%- endblock -%}
+{%- endfor -%}
+{%- endmacro -%}

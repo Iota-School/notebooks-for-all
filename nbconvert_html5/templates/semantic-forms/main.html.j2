@@ -15,19 +15,10 @@
     <link rel="stylesheet" href="style.css">
     {%- endblock head -%}
     {%- block html_head_js_mathjax -%}{%- endblock html_head_js_mathjax -%}
-
 </head>
-{%- endblock -%}
+{%- endblock header -%}
 
-
-{% block body_loop %}
-<ol>{{super() }}</ol> {% endblock body_loop %}
-
-{% block any_cell %}
-<li class="cell {{cell.cell_type}} {{celltags(cell)}}">
-    {{cell_section(cell, loop)}}
-</li>
-{% endblock any_cell %}
+{% block any_cell %}{{cell_section(cell, loop)}}{% endblock any_cell %}
 
 {% block body_header %}
 
@@ -38,10 +29,17 @@
         {% endblock skip_links %}
     </header>
     <main id="/" aria-labelledby=title>
-        <form name="notebook"></form>
+        {% block main_header scoped %}
+        <form name="notebook" aria-labelledby="nb-controls-label">
+            <fieldset>
+                <legend id="nb-controls-label">Notebook Controls</legend>
+                <button type="submit">Run All</button>
+            </fieldset>
+        </form>
         <details id="toc">
             <summary id="title">{{title}}</summary>
         </details>
+        {% endblock main_header %}
         {% endblock body_header %}
 
         {% block body_footer %}

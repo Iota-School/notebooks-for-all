@@ -1,0 +1,138 @@
+/* style for the accessible themes */
+
+/* style variables */
+:root {
+    --cell-padding: .5em;
+    --focus-width: .2em;
+}
+
+/* the main and textareas occupy the entire width. */
+main,
+textarea[name="source"] {
+    width: 100%;
+}
+
+main>form {
+    display: none;
+}
+
+/* the input and output become interactive when there is overflow.*/
+textarea[name=source],
+[name=outputs] {
+    overflow: auto;
+    min-width: 0;
+}
+
+/* the standard disabled styles have inaccessible color contrast. */
+fieldset[name=input]:disabled>textarea {
+    color: unset;
+}
+
+/* hide the display group when there are no outputs */
+section[data-outputs="0"]>[name="outputs"] {
+    display: none;
+}
+
+
+/* layout for the cells using a grid display. */
+tr.cell,
+section.cell {
+    display: grid;
+
+    /* style the markdown cell to only show the output area */
+    &.markdown {
+        grid-template-areas: "outputs";
+        grid-template-columns: auto;
+
+        td.source,
+        >[name=input],
+        td.anchor>a,
+        td.execution_count,
+        >[name=execution_count],
+        td.metadata,
+        >[name=metadata],
+        td.cell_type,
+        [name=cell_type]+span,
+        [name=outputs]>legend {
+            display: none;
+        }
+
+        fieldset[name=outputs] {
+            border: none;
+        }
+    }
+
+    /* layout for code cells. */
+    &.code {
+        grid-template-areas: "index input" ". input" ". outputs";
+        grid-template-columns: 2rem auto;
+
+        &[data-outputs="0"] fieldset[name=outputs] {
+            display: none;
+        }
+    }
+
+    >a {
+        grid-area: index;
+    }
+
+    >td.cell_type,
+    >[name=cell_type] {
+        grid-area: cell_type;
+        display: none;
+
+        +span {
+            display: none;
+        }
+    }
+
+    >td.source,
+    >[name=input] {
+        grid-area: input;
+
+        legend+label {
+            display: none;
+        }
+    }
+
+    >td.output,
+    >[name=outputs] {
+        grid-area: outputs;
+    }
+
+    >td.metadata,
+    >[name=metadata] {
+        grid-area: metadata;
+        display: none;
+    }
+
+    >td.execution_count,
+    >[name=execution_count] {
+        grid-area: execution_count;
+        display: none;
+    }
+
+    >td.toolbar,
+    >form {
+        grid-area: form;
+        display: none;
+    }
+}
+
+main>table[role=document]>thead {
+    display: none;
+}
+
+main>ol>li {
+    list-style: none;
+}
+
+.visually-hidden:not(:focus):not(:active) {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}

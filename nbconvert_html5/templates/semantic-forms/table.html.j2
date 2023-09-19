@@ -1,113 +1,41 @@
-{%- extends 'semantic-forms/index.html.j2' -%}
-{% from 'mathjax.html.j2' import mathjax %}
-{% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
+{%- extends 'semantic-forms/main.html.j2' -%}
+{% set title = nb.metadata.get('title', resources['metadata']['name']) | escape_html_keep_quotes %}
 
-
-{% block body_loop %}
-<table class="notebook cells" aria-label="cells" aria-rowcount="{{len(nb.cells)}}">
-    <colgroup>
-        <col class="execution_count">
-        <col class="source">
-        <col class="outputs">
-        <col class="cell_type">
-        <col class="metadata">
-        <col class="toolbar">
-    </colgroup>
-    <thead>
-        <tr class="cell">
-            <th scope="col">execution count</th>
-            <th scope="col">source</th>
-            <th scope="col">outputs</th>
-            <th scope="col">cell type</th>
-            <th scope="col">metadata</th>
-            <th scope="col">toolbar</th>
-        </tr>
-    </thead>
-    <tbody id="/cells">
-    {{super()}}
-    </tbody>
-    <tfoot>
-        <td class="execution count"></td>
-        <td class="source"></td>
-        <td class="outputs"></td>
-        <td class="cell type"></td>
-        <td class="metadata"></td>
-        <td class="toolbar"></td>
-    </tfoot>
-</table>
-{% endblock body_loop %}
-
-
-{% block any_cell %}
-{{cell_row(cell, nb, resources)}}
-{% endblock any_cell %}
-
-{% macro highlight(body, type) %}
-{{markdown("```{{type}}\n" + json.dumps(nb.metadata, indent=2) + "\n```\n")}}
-{% endmacro %}
-
-
-{% macro cell_row(cell, nb, resources={}) %}
-{% set count = nb.cells.index(cell) %}
-{% set ID = "cell-" + str(cell.id or count) %}
-<tr class="cell {{cell.cell_type}} {{celltags(cell)}}" id="/cells/{{count}}" draggable="false" aria-busy="false"
-    aria-rowindex="{{nb.cells.index(cell)+1}}">
-    <td class="execution_count" {{hide(cell.execution_count)}}><label for="{{ID}}-source"
-            id="{{ID}}-exec">{{cell.execution_count or ""}}</label></td>
-    <td class="source" {{hide(resources.global_content_filter.include_input)}}>
-        {{source_cell(cell, nb, ID)}}</td>
-    <td class="outputs">
-        {{outputs_cell(cell, ID)}}</td>
-    <td class="cell_type">{{cell_type_cell(cell)}}</td>
-    <td class="metadata">
-        <script id="/cells/{{count}}/metadata"
-            type="application/json">{{json.dumps(cell.metadata, indent=2) | escape_html}}</script>
-    </td>
-    <td class="toolbar">{{cell_toolbar(cell, ID)}}</td>
+{% macro cell_row(cell, loop) %}
+<tr role="region" class="cell {{cell.cell_type}}" aria-labelledby="cell-{{loop.index}}-cell_type {{loop.index}}"
+    data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %}
+    data-outputs="{{cell.outputs.__len__()}}" {% endif %}>
+    <td role="none" class="anchor">{{cell_anchor(loop.index)}}</td>
+    <td role="none" class="toolbar">{{cell_form(loop.index)}}</td>
+    <td role="none" class="execution_count">{{cell_execution_count(loop.index, cell.execution_count)}}</td>
+    <td role="none" class="cell_type">{{cell_cell_type(loop.index, cell.cell_type)}}</td>
+    <td role="none" class="source">{{cell_source(loop.index, cell.source, cell.execution_count)}}</td>
+    <td role="none" class="output">{{cell_output(loop.index, cell, cell.source, cell.outputs, cell.cell_type,
+        cell.execution_count)}}</td>
+    <td role="none" class="metadata">{{cell_metadata(loop.index, cell.metadata)}}</td>
 </tr>
 {% endmacro %}
 
+{% block body_header %}
+{{super()}}
+<table role="document">
+    <caption>Notebook</caption>
+    <thead>
+        <th class="anchor">index</th>
+        <th class="toolbar">toolbar</th>
+        <th class="execution_count">execution_count</th>
+        <th class="cell_type">cell_type</th>
+        <th class="source">source</th>
+        <th class="output">output</th>
+        <th class="metadata">metadata</th>
+    </thead>
+    <tbody>
+        {% endblock body_header %}
 
-{% macro cell_type_cell(cell) %}
-{% set cell_type = cell.cell_type %}
-<label class="cell_type">
-    <select name="cell_type" disabled>
-        <option {% if cell_type=="code" %}selected{% endif %} value="code">code</option>
-        <option {% if cell_type=="markdown" %}selected{% endif %} value="markdown">markdown</option>
-        <option {% if cell_type=="raw" %}selected{% endif %} value="raw">raw</option>
-        <option {% if cell_type=="unknown" %}selected{% endif %} value="unknown">unknown</option>
-    </select>
-</label>
-{% endmacro %}
+        {% block body_footer %}
+    </tbody>
+</table>
+{{super()}}
+{% endblock body_footer %}
 
-{% macro source_cell(cell, nb, ID) %}
-{% set count = nb["cells"].index(cell) +1%}
-{% set source = cell.source %}
-<form id="{{ID}}" aria-label="{{cell.cell_type}} cell {{count}}">
-    <textarea readonly class="visually-hidden" name="source" id="{{ID}}-source" aria-hidden="false" autocomplete="off"
-        autocorrect="off" placeholder="" spellcheck="default" rows="{{len(source.rstrip().splitlines())}}"
-        aria-labelledby="{{ID}}-exec" wrap="soft">{{source}}</textarea>
-    <output class="render" for="{{ID}}-source" aria-hidden="{% if cell.cell_type == "markdown" %}false{% else %}true{% endif
-        %}">
-        {% if cell.cell_type=="markdown" %}{{markdown(cell.source) | strip_files_prefix}}{% endif %}
-        {% if cell.cell_type=="code" %}{{ cell.source | highlight_code(metadata=cell.metadata) }}{% endif %}
-    </output>
-</form>
-{% endmacro %}
-
-{% macro outputs_cell(cell, ID) %}
-{% for i, output in enumerate(cell.outputs) %}
-{% block output scoped %}{% block output_prompt %}{% endblock %}{{super()}}{% endblock %}
-{% endfor %}
-{% endmacro %}
-
-
-{% macro cell_toolbar(cell, ID) %}
-<div role="toolbar">
-    <input class="run" type="submit" form="{{ID}}" for="{{ID}}-source" value="run" title="run the cell"
-        tabindex="0">
-    <button onclick="document.querySelector('#{{ID}}-metadata').showModal()" title="show metadata">🛈</button>
-</div>
-{% endmacro %}
-
-{% macro hide(x) %}{% if not x %}hidden{% endif %}{% endmacro %}
+{% block any_cell %}{{cell_row(cell, loop)}}{% endblock any_cell %}
