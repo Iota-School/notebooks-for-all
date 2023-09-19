@@ -139,7 +139,6 @@ configurations = [
     "tests/configurations/sections.py",
     "tests/configurations/smol.py",
     "tests/configurations/ol.py",
-    "tests/configurations/ul.py",
     "tests/configurations/feed.py",
     # "tests/configurations/notebook-list.py",
 ]
