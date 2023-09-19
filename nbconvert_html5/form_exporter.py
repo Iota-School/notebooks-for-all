@@ -320,8 +320,9 @@ class FormExporter(HTMLExporter):
     def post_process_html(self, body):
         soup = soupify(body)
         heading_links(soup)
-        toc_ = soupify(toc(soup))
-        soup.select_one("details#toc").extend(toc_)
+        details = soup.select_one("details#toc")
+        if details:
+            details.extend(soupify(toc(soup)))
         return soup.prettify()
 
 
