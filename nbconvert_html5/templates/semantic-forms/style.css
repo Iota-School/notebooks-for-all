@@ -47,6 +47,7 @@ section.cell {
         td.source,
         >[name=input],
         td.anchor>a,
+        >a,
         td.execution_count,
         >[name=execution_count],
         td.metadata,
