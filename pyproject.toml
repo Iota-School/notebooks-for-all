@@ -23,7 +23,14 @@ classifiers = [
     "Programming Language :: Python",
     "License :: OSI Approved :: BSD License",
 ]
-dependencies = ["nbconvert", "accessible-pygments", "pydantic < 2", "IPython", "markdown-it-py[plugins,linkify]", ]
+dependencies = [
+    "nbconvert",
+    "accessible-pygments",
+    "pydantic < 2",
+    "IPython",
+    "markdown-it-py[plugins,linkify]",
+    "python-slugify",
+]
 dynamic = ["version"]
 
 [project.optional-dependencies]
