@@ -25,7 +25,7 @@
 <body>
     <header class="site">
         {% block skip_links %}
-        <a class="visually-hidden" tabindex="0" href="#/">Skip to content</a>
+        <a class="visually-hidden" tabindex="0" href="#/" >Skip to content</a>
         {% endblock skip_links %}
     </header>
     <main id="/" aria-labelledby=title>
@@ -37,7 +37,7 @@
             </fieldset>
         </form>
         <details id="toc">
-            <summary id="title">{{title}}</summary>
+            <summary id="title" accesskey="0">{{title}}</summary>
         </details>
         {% endblock main_header %}
         {% endblock body_header %}
