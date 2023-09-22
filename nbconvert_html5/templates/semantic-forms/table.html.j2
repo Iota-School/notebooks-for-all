@@ -1,11 +1,11 @@
-{%- extends 'semantic-forms/main.html.j2' -%}
+{%- extends 'semantic-forms/base.html.j2' -%}
 {% set title = nb.metadata.get('title', resources['metadata']['name']) | escape_html_keep_quotes %}
 
 {% macro cell_row(cell, loop) %}
-<tr role="region" class="cell {{cell.cell_type}}" aria-labelledby="cell-{{loop.index}}-cell_type {{loop.index}}"
+<tr role="listitem" class="cell {{cell.cell_type}}" aria-labelledby="cell-{{loop.index}}-cell_type {{loop.index}}"
     data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %}
     data-outputs="{{cell.outputs.__len__()}}" {% endif %}>
-    <td role="none" class="anchor">{{cell_anchor(loop.index)}}</td>
+    <th role="none" class="anchor" scope="row">{{cell_anchor(loop.index)}}</th>
     <td role="none" class="toolbar">{{cell_form(loop.index)}}</td>
     <td role="none" class="execution_count">{{cell_execution_count(loop.index, cell.execution_count)}}</td>
     <td role="none" class="cell_type">{{cell_cell_type(loop.index, cell.cell_type)}}</td>
@@ -18,23 +18,47 @@
 
 {% block body_header %}
 {{super()}}
-<table role="document">
-    <caption>Notebook</caption>
-    <thead>
-        <th class="anchor">index</th>
-        <th class="toolbar">toolbar</th>
-        <th class="execution_count">execution_count</th>
-        <th class="cell_type">cell_type</th>
-        <th class="source">source</th>
-        <th class="output">output</th>
-        <th class="metadata">metadata</th>
-    </thead>
-    <tbody>
-        {% endblock body_header %}
+<fieldset name="cells" form="notebook" role="presentation" disabled>
+    <legend aria-hidden="true" id="nb-cells-label">cells</legend>
+    <table role="group" id="cells" class="full-width" aria-labelledby="nb-cells-label">
+        <caption hidden>cells</caption>
+        <thead>
+            <th class="anchor" scope="col">index</th>
+            <th class="toolbar" scope="col">toolbar</th>
+            <th class="execution_count" scope="col">execution_count</th>
+            <th class="cell_type" scope="col">cell_type</th>
+            <th class="source" scope="col">source</th>
+            <th class="output" scope="col">output</th>
+            <th class="metadata" scope="col">metadata</th>
+        </thead>
+        <tbody role="list" aria-labelledby="nb-cells-label">
+            {% endblock body_header %}
 
-        {% block body_footer %}
-    </tbody>
-</table>
+            {% block body_footer %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th id="nb-cells-label">cells</th>
+                <th id="nb-code-cells-label">code cells</th>
+                <th id="nb-ordered-label">state</th>
+                <th class="cell_type"></th>
+                <th id="nb-loc-label"><abbr title="lines of code" aria-hidden="true">LOC</abbr><span hidden>lines of
+                        code</span></th>
+                <th id="nb-outputs-label">outputs</th>
+                <th class="metadata"></th>
+            </tr>
+            <tr>
+                <td id="nb-cells-count-label">{{nb.cells.__len__()}}</td>
+                <td id="nb-code-cells-count">{{count_code_cells(nb)}}</td>
+                <td id="nb-ordered">{{ordered(nb)}}</td>
+                <td class="cell_type"></td>
+                <td id="nb-loc">{{count_loc(nb)}}</td>
+                <td id="nb-outputs">{{count_outputs(nb)}}</td>
+                <td class="metadata"></td>
+            </tr>
+        </tfoot>
+        </table>
+</fieldset>
 {{super()}}
 {% endblock body_footer %}
 

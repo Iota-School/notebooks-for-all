@@ -4,16 +4,42 @@
 :root {
     --cell-padding: .5em;
     --focus-width: .2em;
+    --font-size: medium;
 }
 
 /* the main and textareas occupy the entire width. */
-main,
 textarea[name="source"] {
     width: 100%;
 }
 
-main>form {
-    display: none;
+fieldset[name=cells]>table {
+    display: block;
+    /* width: 100%; */
+}
+
+fieldset[name=cells]:disabled {
+    width: 100%;
+
+    /* the standard disabled styles have inaccessible color contrast. */
+    textarea {
+        color: unset;
+    }
+
+    /* hide cell toolbars */
+    td.toolbar,
+    form[name="/cells/"] {
+        display: none;
+    }
+
+    /* hide empty cells */
+    .cell[data-outputs="0"] {
+
+        &[data-loc="0"],
+        fieldset[name=outputs] {
+            display: none;
+        }
+    }
+
 }
 
 /* the input and output become interactive when there is overflow.*/
@@ -23,54 +49,65 @@ textarea[name=source],
     min-width: 0;
 }
 
-/* the standard disabled styles have inaccessible color contrast. */
-fieldset[name=input]:disabled>textarea {
-    color: unset;
-}
-
 /* hide the display group when there are no outputs */
-section[data-outputs="0"]>[name="outputs"] {
+.cell[data-outputs="0"]>[name="outputs"] {
     display: none;
 }
 
+table:not([role=table])>thead {
+    display: none;
+}
+table#cells > tbody {
+    display: block;
+}
+
+table#cells tfoot {
+    display: none;
+
+    td:empty,
+    th:empty {
+        visibility: collapse;
+    }
+}
 
 /* layout for the cells using a grid display. */
-tr.cell,
-section.cell {
+.cell {
     display: grid;
 
-    /* style the markdown cell to only show the output area */
+    /* layout for cells. */
+    &.code {
+        grid-template-areas: "index input" ". input" ". outputs";
+        grid-template-columns: 2rem auto;
+    }
+
     &.markdown {
         grid-template-areas: "outputs";
         grid-template-columns: auto;
+    }
 
-        td.source,
-        >[name=input],
-        td.anchor>a,
-        >a,
-        td.execution_count,
-        >[name=execution_count],
-        td.metadata,
+    &.markdown {
+
         >[name=metadata],
-        td.cell_type,
+        >td.metadata,
+        >td.cell_type,
+        >td.source,
+        >[name=input],
+        >th.anchor>a,
+        >a,
+        >td.execution_count,
+        >[name=execution_count],
         [name=cell_type]+span,
         [name=outputs]>legend {
             display: none;
         }
 
-        fieldset[name=outputs] {
-            border: none;
+        [name=outputs] {
+            border: unset;
         }
     }
 
-    /* layout for code cells. */
-    &.code {
-        grid-template-areas: "index input" ". input" ". outputs";
-        grid-template-columns: 2rem auto;
-
-        &[data-outputs="0"] fieldset[name=outputs] {
-            display: none;
-        }
+    >td {
+        display: block;
     }
 
     >a {
@@ -116,19 +153,15 @@ section.cell {
     >td.toolbar,
     >form {
         grid-area: form;
-        display: none;
     }
 }
 
-main>table[role=document]>thead {
-    display: none;
-}
 
-main>ol>li {
+[name=cells]>ol>li {
     list-style: none;
 }
 
-.visually-hidden:not(:focus):not(:active) {
+.visually-hidden:not(:focus-within):not(:active) {
     clip: rect(0 0 0 0);
     clip-path: inset(50%);
     height: 1px;
@@ -136,4 +169,13 @@ main>ol>li {
     position: absolute;
     white-space: nowrap;
     width: 1px;
+}
+
+.full-width {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
 }

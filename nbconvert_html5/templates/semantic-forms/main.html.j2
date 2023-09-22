@@ -1,50 +1,14 @@
 {%- extends 'semantic-forms/base.html.j2' -%}
 {% set title = nb.metadata.get('title', resources['metadata']['name']) | escape_html_keep_quotes %}
 
-{%- block header -%}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    {%- block head -%}
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{title}}</title>
-    <meta name="color-scheme" content="dark light">
+{% block main_header scoped %}
+{{super()}} 
+<fieldset name="cells" form="notebook" disabled>
+    <legend>cells</legend>
+    {% endblock main_header %}
 
-    <link rel="stylesheet" href="style.css">
-    {%- endblock head -%}
-    {%- block html_head_js_mathjax -%}{%- endblock html_head_js_mathjax -%}
-</head>
-{%- endblock header -%}
-
-{% block any_cell %}{{cell_section(cell, loop)}}{% endblock any_cell %}
-
-{% block body_header %}
-
-<body>
-    <header class="site">
-        {% block skip_links %}
-        <a class="visually-hidden" tabindex="0" href="#/" >Skip to content</a>
-        {% endblock skip_links %}
-    </header>
-    <main id="/" aria-labelledby=title>
-        {% block main_header scoped %}
-        <form name="notebook" aria-labelledby="nb-controls-label">
-            <fieldset>
-                <legend id="nb-controls-label">Notebook Controls</legend>
-                <button type="submit">Run All</button>
-            </fieldset>
-        </form>
-        <details id="toc">
-            <summary id="title" accesskey="0">{{title}}</summary>
-        </details>
-        {% endblock main_header %}
-        {% endblock body_header %}
-
-        {% block body_footer %}
-    </main>
-</body>
-
-</html>
+    {% block body_footer %}
+</fieldset>
+{{super()}}
 {% endblock body_footer %}

@@ -310,7 +310,13 @@ class FormExporter(HTMLExporter):
 
         self.environment.globals.update(json=json, markdown=markdown)
         self.environment.filters.update(escape_html=html.escape)
-        self.environment.globals.update(formatter=pygments.formatters)
+        self.environment.globals.update(
+            formatter=pygments.formatters,
+            count_loc=count_loc,
+            count_outputs=count_outputs,
+            count_code_cells=count_code_cells,
+            ordered=ordered,
+        )
 
     def from_notebook_node(self, nb, resources=None, **kw):
         html, resources = super().from_notebook_node(nb, resources, **kw)
@@ -319,10 +325,14 @@ class FormExporter(HTMLExporter):
 
     def post_process_html(self, body):
         soup = soupify(body)
+        describe_main(soup)
         heading_links(soup)
-        details = soup.select_one("details#toc")
+        details = soup.select_one("#toc details")
         if details:
-            details.extend(soupify(toc(soup)))
+            details.extend(soupify(toc(soup)).children)
+        for x in details.select("ul"):
+            x.name = "ol"
+        details.select_one("ol").attrs["aria-labelledby"] = "nb-toc"
         return soup.prettify()
 
 
@@ -363,3 +373,37 @@ def heading_links(html):
 # * navigate headers
 # * navigate table
 # * navigate landmarks
+
+
+def count_loc(nb):
+    return sum(map(len, (x.source.splitlines() for x in nb.cells)))
+
+
+def count_outputs(nb):
+    return sum(map(len, (x.get("outputs", "") for x in nb.cells)))
+
+
+def count_code_cells(nb):
+    return len(list(None for x in nb.cells if x["cell_type"] == "code"))
+
+
+def describe_main(soup):
+    x = soup.select_one("#toc > details > summary")
+    x.attrs["aria-describedby"] = soup.select_one("main").attrs[
+        "aria-describedby"
+    ] = (
+        desc
+    ) = "nb-cells-count-label nb-cells-label nb-code-cells nb-code-cells-label nb-ordered nb-loc nb-loc-label"
+
+
+def ordered(nb):
+    start = 0
+    for cell in nb.cells:
+        if cell["cell_type"] == "code":
+            start += 1
+            if start != cell["execution_count"]:
+                if start:
+                    return "executed out of order"
+    if start:
+        return "executed in order"
+    return "unexecuted"

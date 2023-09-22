@@ -3,4 +3,4 @@
 c.CSSHTMLHeaderPreprocessor.style = "github-light-colorblind"
 c.NbConvertApp.export_format = "html5"
 c.CSSHTMLHeaderPreprocessor.style = "default"
-c.TemplateExporter.template_file = "semantic-forms/main.html.j2"
+c.TemplateExporter.template_file = "semantic-forms/table.html.j2"

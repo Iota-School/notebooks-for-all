@@ -1,0 +1,51 @@
+<dialog id="settings">
+    <h1>Settings</h1>
+    <label>Color scheme</label>
+    <select onchange="toggleColorScheme(this)">
+        <option value="dark">dark</option>
+        <option value="light">light</option>
+    </select>
+    <details open>
+        <summary>Labels</summary>
+        <label>Cell numbers.</label><input type="checkbox" checked />
+        <label>Line numbers</label><input type="checkbox" disabled />
+    </details>
+    <details open>
+        <summary>Text</summary>
+        <label>Font size</label>
+        <optgroup>
+            <select>small</select>
+            <select>medium</select>
+            <select>large</select>
+        </optgroup>
+        <label>Letter spacing</label><input type="checkbox" />
+        <label>Word spacing</label><input type="checkbox" />
+        <label>Line spacing</label><input type="checkbox" />
+        <label>Serif</label><input type="checkbox" />
+    </details>
+    <details open>
+        <summary>Assistive technology</summary>
+        <label>Cells landmarks</label><input type="checkbox" checked />
+        <label>Semantic code grouping</label><input type="checkbox" checked />
+        <label>Notebook layout</label>
+        <optgroup>
+            <select>document</select>
+            <select>feed</select>
+            <select>list</select>
+            <select>table</select>
+            <select disabled>grid</select>
+            <select disabled>treegrid</select>
+        </optgroup>
+    </details>
+    <details>
+        <summary>Custom css</summary>
+        <textarea disabled></textarea>
+    </details>
+    <form method="dialog">
+        <button type="submit">Close</button>
+    </form>
+    </form>
+</dialog>
+<button onclick="openDialog(this)" data-controls="settings">Settings</button>
+
+{# these settings should be updated from query parameters #}
