@@ -389,11 +389,13 @@ def count_code_cells(nb):
 
 def describe_main(soup):
     x = soup.select_one("#toc > details > summary")
-    x.attrs["aria-describedby"] = soup.select_one("main").attrs[
-        "aria-describedby"
-    ] = (
-        desc
-    ) = "nb-cells-count-label nb-cells-label nb-code-cells nb-code-cells-label nb-ordered nb-loc nb-loc-label"
+    main = soup.select_one("main")
+    if main:
+        x.attrs["aria-describedby"] = main.attrs[
+            "aria-describedby"
+        ] = (
+            desc
+        ) = "nb-cells-count-label nb-cells-label nb-code-cells nb-code-cells-label nb-ordered nb-loc nb-loc-label"
 
 
 def ordered(nb):
