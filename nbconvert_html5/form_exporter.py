@@ -330,9 +330,11 @@ class FormExporter(HTMLExporter):
         details = soup.select_one("#toc details")
         if details:
             details.extend(soupify(toc(soup)).children)
-        for x in details.select("ul"):
+        for x in details.select("ul") or []:
             x.name = "ol"
-        details.select_one("ol").attrs["aria-labelledby"] = "nb-toc"
+        ol = details.select_one("ol")
+        if ol:
+            ol.attrs["aria-labelledby"] = "nb-toc"
         return soup.prettify()
 
 
