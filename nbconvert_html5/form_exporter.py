@@ -389,9 +389,8 @@ def count_code_cells(nb):
 
 def describe_main(soup):
     x = soup.select_one("#toc > details > summary")
-    main = soup.select_one("main")
-    if main:
-        x.attrs["aria-describedby"] = main.attrs[
+    if x:
+        x.attrs["aria-describedby"] = soup.select_one("main").attrs[
             "aria-describedby"
         ] = (
             desc
