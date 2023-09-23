@@ -3,22 +3,61 @@
 /* style variables */
 :root {
     --cell-padding: .5em;
-    --focus-width: .2em;
+    --focus-width: 3px;
+
+    /* default browser values */
     --font-size: medium;
+    --nb-fieldset-margin: 2px;
+    --nb-fieldset-padding-horizontal: .75em;
+    --nb-fieldset-border: 2px;
+
+    --nb-body-margin: 8px;
+    --nb-table-border: 2px;
+    --nb-calc-fieldset-edge: var(--nb-fieldset-margin) + var(--nb-fieldset-padding-horizontal) + var(--nb-fieldset-border);
+    --nb-calc-cell-margin: calc(var(--nb-calc-fieldset-edge) + var(--nb-body-margin) + var(--nb-table-border));
+    --nb-calc-cell-width: calc(100vw - 2 * var(--nb-calc-cell-margin));
+    --nb-calc-cell-fieldset-width: calc(var(--nb-calc-cell-width) - 2 * var(--nb-calc-fieldset-edge));
+    /* --nb-calc-cell-margin: calc((100vw - var(--nb-calc-cell-width))/2 - var(--nb-fieldset-border) - var(--nb-table-border)) */
 }
 
-/* the main and textareas occupy the entire width. */
-textarea[name="source"] {
+body {
+    overflow-x: hidden;
+    margin: var(--nb-body-margin);
+}
+
+fieldset {
+    margin-left: var(--nb-fieldset-margin);
+    margin-right: var(--nb-fieldset-margin);
+    border: var(--nb-fieldset-border) groove;
+}
+
+textarea[name=source] {
     width: 100%;
+}
+
+main,
+main>fieldset[name=cells]>table,
+main>fieldset[name=cells]>table>tbody {
+    display: flex;
+    flex-direction: column;
+    align-content: stretch;
+}
+
+fieldset[name=cells] {
+    width: var(--nb-calc-fieldset-width);
+}
+
+.cell:focus-within,
+:focus-visible {
+    outline: var(--focus-width) solid;
+    box-shadow: 0 0 0 calc(2 * var(--focus-width));
 }
 
 fieldset[name=cells]>table {
     display: block;
-    /* width: 100%; */
 }
 
 fieldset[name=cells]:disabled {
-    width: 100%;
 
     /* the standard disabled styles have inaccessible color contrast. */
     textarea {
@@ -57,9 +96,6 @@ textarea[name=source],
 table:not([role=table])>thead {
     display: none;
 }
-table#cells > tbody {
-    display: block;
-}
 
 table#cells tfoot {
     display: none;
@@ -70,21 +106,31 @@ table#cells tfoot {
     }
 }
 
-/* layout for the cells using a grid display. */
-.cell {
+table#cells tr.cell {
     display: grid;
+    width: var(--nb-calc-cell-width);
+    box-sizing: border-box;
+    margin-left: var(--nb-calc-cell-margin);
+    margin-right: var(--nb-calc-cell-margin);
+    margin-top: var(--focus-width);
+    margin-bottom: var(--focus-width);
 
-    /* layout for cells. */
     &.code {
         grid-template-areas: "index input" ". input" ". outputs";
-        grid-template-columns: 2rem auto;
+        grid-template-columns: 4rem calc(var(--nb-calc-cell-width) - 4rem);
     }
 
     &.markdown {
         grid-template-areas: "outputs";
-        grid-template-columns: auto;
+        grid-template-columns: var(--nb-calc-cell-width);
     }
 
+}
+
+/* layout for the cells using a grid display. */
+.cell {
+
+    /* layout for cells. */
     &.markdown {
 
         >[name=metadata],
