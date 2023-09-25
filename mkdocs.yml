@@ -65,6 +65,7 @@ nav:
     - exports/reports/configs.md
   - nbconvert_html5 module:
     - nbconvert_html5.md
+  - Notebooks for all media: media.md
 
 hooks:
   - hooks.py
