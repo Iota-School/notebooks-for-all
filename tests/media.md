@@ -30,7 +30,8 @@ Science Notebook Inaccessibility]
 [Joshua Miele - Day of Accessibility Keynote]: https://www.youtube.com/watch?v=pR29v4-J6i0&list=PLCPZgcYzVpj_WHHCTUpec8THYEMzXZnR1&index=4&t=6s&pp=iAQB
 [Hearing the Light - Astronomy Data Sonification]: https://www.youtube.com/watch?v=-MBpGKoULyc&list=PLCPZgcYzVpj_WHHCTUpec8THYEMzXZnR1&index=5&t=10s&pp=iAQB
 [Learn to Use a Screen Reader]: https://www.youtube.com/watch?v=F189lurxSbs&list=PLCPZgcYzVpj_WHHCTUpec8THYEMzXZnR1&index=6&pp=iAQB
-[Making Jupyter Notebooks More Accessible]: https://astrobites.org/2023/06/10/notebooks-for-all/
-[Data Driven Understanding of Data Science Notebook Inaccessibility]: https://arxiv.org/pdf/2308.03241.pdf
+[Notebooks For All: Making Jupyter Notebooks More Accessible - Astrobites]: https://astrobites.org/2023/06/10/notebooks-for-all/
+[Notably Inaccessible -- Data Driven Understanding of Data
+Science Notebook Inaccessibility]: https://arxiv.org/pdf/2308.03241.pdf
 
-[Accessibility best practices for authoring Jupyter notebooks]: https://www.youtube.com/watch?v=onjRLjveGxk
+[Accessibility best practices for authoring Jupyter notebooks - SciPy 2023]: https://www.youtube.com/watch?v=onjRLjveGxk
