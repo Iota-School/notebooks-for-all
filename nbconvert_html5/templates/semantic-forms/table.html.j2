@@ -2,17 +2,17 @@
 {% set title = nb.metadata.get('title', resources['metadata']['name']) | escape_html_keep_quotes %}
 
 {% macro cell_row(cell, loop) %}
-<tr role="listitem" class="cell {{cell.cell_type}}" aria-labelledby="cell-{{loop.index}}-cell_type {{loop.index}}"
+<tr role="listitem" class="cell {{cell.cell_type}}" aria-labelledby="nb-def-cell {{loop.index}} cell-{{loop.index}}-cell_type"
     data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %}
     data-outputs="{{cell.outputs.__len__()}}" {% endif %}>
-    <th role="none" class="anchor" scope="row">{{cell_anchor(loop.index)}}</th>
-    <td role="none" class="toolbar">{{cell_form(loop.index)}}</td>
-    <td role="none" class="execution_count">{{cell_execution_count(loop.index, cell.execution_count)}}</td>
-    <td role="none" class="cell_type">{{cell_cell_type(loop.index, cell.cell_type)}}</td>
-    <td role="none" class="source">{{cell_source(loop.index, cell.source, cell.execution_count)}}</td>
-    <td role="none" class="output">{{cell_output(loop.index, cell, cell.source, cell.outputs, cell.cell_type,
+    <th role="none" class="nb-index" scope="row">{{cell_anchor(loop.index)}}</th>
+    <td role="none" class="nb-execution_count">{{cell_execution_count(loop.index, cell.execution_count)}}</td>
+    <td role="none" class="nb-cell_type">{{cell_cell_type(loop.index, cell.cell_type)}}</td>
+    <td role="none" class="nb-source">{{cell_source(loop.index, cell.source, cell.execution_count)}}</td>
+    <td role="none" class="nb-outputs">{{cell_output(loop.index, cell, cell.source, cell.outputs, cell.cell_type,
         cell.execution_count)}}</td>
-    <td role="none" class="metadata">{{cell_metadata(loop.index, cell.metadata)}}</td>
+    <td role="none" class="nb-metadata">{{cell_metadata(loop.index, cell.metadata)}}</td>
+    <td role="none" class="nb-toolbar">{{cell_form(loop.index)}}</td>
 </tr>
 {% endmacro %}
 
@@ -23,13 +23,13 @@
     <table role="group" id="cells" class="full-width" aria-labelledby="nb-cells-label">
         <caption hidden>cells</caption>
         <thead>
-            <th class="anchor" scope="col">index</th>
-            <th class="toolbar" scope="col">toolbar</th>
-            <th class="execution_count" scope="col">execution_count</th>
-            <th class="cell_type" scope="col">cell_type</th>
-            <th class="source" scope="col">source</th>
-            <th class="output" scope="col">output</th>
-            <th class="metadata" scope="col">metadata</th>
+            <th class="nb-anchor" scope="col">index</th>
+            <th class="nb-execution_count" scope="col">execution_count</th>
+            <th class="nb-cell_type" scope="col">cell_type</th>
+            <th class="nb-source" scope="col">source</th>
+            <th class="nb-output" scope="col">output</th>
+            <th class="nb-metadata" scope="col">metadata</th>
+            <th class="nb-toolbar" scope="col">toolbar</th>
         </thead>
         <tbody role="list" aria-labelledby="nb-cells-label">
             {% endblock body_header %}
@@ -38,7 +38,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <th id="nb-cells-label">cells</th>
+                <th>cells</th>
                 <th id="nb-code-cells-label">code cells</th>
                 <th id="nb-ordered-label">state</th>
                 <th class="cell_type"></th>

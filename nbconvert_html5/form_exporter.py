@@ -327,7 +327,7 @@ class FormExporter(HTMLExporter):
         soup = soupify(body)
         describe_main(soup)
         heading_links(soup)
-        details = soup.select_one("#toc details")
+        details = soup.select_one("""footer[aria-labelledby="nb-toc"] details""")
         if details:
             details.extend(soupify(toc(soup)).children)
             for x in details.select("ul"):

@@ -2,20 +2,23 @@
 
 /* style variables */
 :root {
-    --cell-padding: .5em;
-    --focus-width: 3px;
+    --nb-focus-width: 3px;
+    --nb-accent-color: auto;
+    --nb-line-height: 1.75;
 
     /* default browser values */
-    --font-size: medium;
+    --nb-font-size: medium;
     --nb-fieldset-margin: 2px;
-    --nb-fieldset-padding-horizontal: .75em;
+    --nb-fieldset-margin-top: .35em;
+    --nb-fieldset-padding: .75em;
     --nb-fieldset-border: 2px;
-
     --nb-body-margin: 8px;
     --nb-table-border: 2px;
-    --nb-calc-fieldset-edge: var(--nb-fieldset-margin) + var(--nb-fieldset-padding-horizontal) + var(--nb-fieldset-border);
+    --nb-calc-fieldset-edge: var(--nb-fieldset-margin) + var(--nb-fieldset-padding) + var(--nb-fieldset-border);
+    --nb-calc-fieldset-top: calc(var(--nb-fieldset-border) + var(--nb-fieldset-margin-top));
     --nb-calc-cell-margin: calc(var(--nb-calc-fieldset-edge) + var(--nb-body-margin) + var(--nb-table-border));
     --nb-calc-cell-width: calc(100vw - 2 * var(--nb-calc-cell-margin));
+    --nb-calc-table-width: calc(100vw - 2 * var(--nb-calc-cell-margin) - 2 * var(--nb-table-border));
     --nb-calc-cell-fieldset-width: calc(var(--nb-calc-cell-width) - 2 * var(--nb-calc-fieldset-edge));
     /* --nb-calc-cell-margin: calc((100vw - var(--nb-calc-cell-width))/2 - var(--nb-fieldset-border) - var(--nb-table-border)) */
 }
@@ -23,16 +26,9 @@
 body {
     overflow-x: hidden;
     margin: var(--nb-body-margin);
-}
-
-fieldset {
-    margin-left: var(--nb-fieldset-margin);
-    margin-right: var(--nb-fieldset-margin);
-    border: var(--nb-fieldset-border) groove;
-}
-
-textarea[name=source] {
-    width: 100%;
+    font-size: var(--nb-font-size);
+    accent-color: var(--nb-accent-color);
+    line-height: var(--nb-line-height);
 }
 
 main,
@@ -47,164 +43,104 @@ fieldset[name=cells] {
     width: var(--nb-calc-fieldset-width);
 }
 
-.cell:focus-within,
-:focus-visible {
-    outline: var(--focus-width) solid;
-    box-shadow: 0 0 0 calc(2 * var(--focus-width));
+/* hide cell components when execution is disabled. */
+fieldset[name="cells"]:disabled table#cells .nb-cell_type,
+fieldset[name="cells"]:disabled table#cells .nb-metadata,
+fieldset[name="cells"]:disabled table#cells .nb-toolbar,
+fieldset[name="cells"]:disabled table#cells .nb-execution_count,
+fieldset[name="cells"]:disabled table#cells .nb-toolbar,
+fieldset[name="cells"]:disabled table#cells textarea[name=source],
+fieldset[name=cells]:disabled .cell[data-outputs="0"][data-loc="0"],
+fieldset[name=cells]:disabled .cell[data-outputs="0"] fieldset[name=outputs] {
+    display: none;
 }
 
-fieldset[name=cells]>table {
-    display: block;
-}
-
-fieldset[name=cells]:disabled {
-
-    /* the standard disabled styles have inaccessible color contrast. */
-    textarea {
-        color: unset;
-    }
-
-    /* hide cell toolbars */
-    td.toolbar,
-    form[name="/cells/"] {
-        display: none;
-    }
-
-    /* hide empty cells */
-    .cell[data-outputs="0"] {
-
-        &[data-loc="0"],
-        fieldset[name=outputs] {
-            display: none;
-        }
-    }
-
-}
 
 /* the input and output become interactive when there is overflow.*/
 textarea[name=source],
+fieldset[name=input],
 [name=outputs] {
     overflow: auto;
     min-width: 0;
 }
 
-/* hide the display group when there are no outputs */
-.cell[data-outputs="0"]>[name="outputs"] {
-    display: none;
+textarea[name=source] {
+    width: 100%;
 }
 
-table:not([role=table])>thead {
-    display: none;
+
+table#cells {
+    width: var(--nb-calc-table-width);
 }
 
-table#cells tfoot {
-    display: none;
+table#cells,
+table#cells .cell>td,
+table#cells .cell>th {
+    display: block;
+}
 
-    td:empty,
-    th:empty {
-        visibility: collapse;
-    }
+
+table#cells>tfoot td:empty,
+table#cells>tfoot th:empty {
+    visibility: collapse;
 }
 
 table#cells tr.cell {
     display: grid;
     width: var(--nb-calc-cell-width);
     box-sizing: border-box;
-    margin-left: var(--nb-calc-cell-margin);
-    margin-right: var(--nb-calc-cell-margin);
-    margin-top: var(--focus-width);
-    margin-bottom: var(--focus-width);
+}
 
-    &.code {
-        grid-template-areas: "index input" ". input" ". outputs";
-        grid-template-columns: 4rem calc(var(--nb-calc-cell-width) - 4rem);
+table#cells .cell.code {
+    grid-template-areas: "nb-index nb-source" ". nb-source" ". nb-outputs";
+    grid-template-columns: 2rem calc(var(--nb-calc-cell-width) - 2rem);
+}
+
+/* small devices */
+@media (max-width: 576px) {
+    :root {
+        --nb-fieldset-margin: 0px;
+        --nb-fieldset-padding: 0em;
     }
 
-    &.markdown {
-        grid-template-areas: "outputs";
+    table#cells .cell.code {
+        grid-template-areas: "nb-index" "nb-source" "nb-outputs";
         grid-template-columns: var(--nb-calc-cell-width);
     }
 
 }
 
-/* layout for the cells using a grid display. */
-.cell {
-
-    /* layout for cells. */
-    &.markdown {
-
-        >[name=metadata],
-        >td.metadata,
-        >td.cell_type,
-        >td.source,
-        >[name=input],
-        >th.anchor>a,
-        >a,
-        >td.execution_count,
-        >[name=execution_count],
-        [name=cell_type]+span,
-        [name=outputs]>legend {
-            display: none;
-        }
-
-        [name=outputs] {
-            border: unset;
-        }
-    }
-
-    >td {
-        display: block;
-    }
-
-    >a {
-        grid-area: index;
-    }
-
-    >td.cell_type,
-    >[name=cell_type] {
-        grid-area: cell_type;
-        display: none;
-
-        +span {
-            display: none;
-        }
-    }
-
-    >td.source,
-    >[name=input] {
-        grid-area: input;
-
-        legend+label {
-            display: none;
-        }
-    }
-
-    >td.output,
-    >[name=outputs] {
-        grid-area: outputs;
-    }
-
-    >td.metadata,
-    >[name=metadata] {
-        grid-area: metadata;
-        display: none;
-    }
-
-    >td.execution_count,
-    >[name=execution_count] {
-        grid-area: execution_count;
-        display: none;
-    }
-
-    >td.toolbar,
-    >form {
-        grid-area: form;
+/* medium devices */
+@media (max-width: 768px) {
+    :root {
+        --nb-table-border: 0px;
+        --nb-body-margin: 0px;
     }
 }
 
+table#cells tr.cell.markdown {
+    grid-template-areas: "nb-outputs";
+    grid-template-columns: var(--nb-calc-cell-width);
+}
 
-[name=cells]>ol>li {
-    list-style: none;
+/* layout for the cells using a grid display. */
+table#cells:not([role=table])>thead,
+table#cells:not([role=table])>tfoot,
+table#cells .cell.markdown .nb-metadata,
+table#cells .cell.markdown .nb-toolbar,
+table#cells .cell.markdown .nb-cell_type,
+table#cells .cell.markdown .nb-source,
+table#cells .cell.markdown .nb-index,
+table#cells .cell.markdown .nb-execution_count,
+table#cells .cell.markdown .nb-outputs>fieldset>legend,
+table#cells .cell.markdown .nb-outputs>fieldset>legend+label {
+    display: none;
+}
+
+.cell:focus-within,
+:focus-visible {
+    outline: max(var(--nb-focus-width), 1px) solid;
+    box-shadow: 0 0 0 calc(2 * max(var(--nb-focus-width), 1px));
 }
 
 .visually-hidden:not(:focus-within):not(:active) {
@@ -217,11 +153,83 @@ table#cells tr.cell {
     width: 1px;
 }
 
-.full-width {
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
+/* default tag settings. */
+textarea {
+    line-height: var(--nb-line-height);
+    overflow: auto;
 }
+
+textarea:disabled {
+    color: unset;
+}
+
+fieldset {
+    border: var(--nb-fieldset-border) groove;
+    margin-left: var(--nb-fieldset-margin);
+    margin-right: var(--nb-fieldset-margin);
+    padding-left: var(--nb-fieldset-padding);
+    padding-right: var(--nb-fieldset-padding);
+}
+
+fieldset[name=outputs] {
+    border: unset;
+}
+
+
+/* hide legends and use labels instead. they increase the hit area.
+https://adrianroselli.com/2022/07/use-legend-and-fieldset.html */
+legend:not(:focus):not(:active) {
+    position: absolute;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    width: 1px;
+    height: 1px;
+    white-space: nowrap;
+}
+
+/* grid area labels for organizing cell parts */
+.nb-index {
+    grid-area: nb-index;
+    padding-top: var(--nb-calc-fieldset-top);
+}
+
+.nb-cell_type {
+    grid-area: nb-cell_type;
+}
+
+
+.nb-execution_count {
+    grid-area: nb-execution_count;
+}
+
+.nb-source {
+    grid-area: nb-source;
+}
+
+.nb-outputs {
+    grid-area: nb-outputs;
+}
+
+.nb-metadata {
+    grid-area: nb-metadata;
+}
+
+.nb-toolbar {
+    grid-area: nb-toolbar;
+}
+
+/* 
+
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) { ... }
+
+// Large devices (desktops, 992px and up)
+@media (min-width: 992px) { ... }
+
+// X-Large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) { ... }
+
+// XX-Large devices (larger desktops, 1400px and up)
+@media (min-width: 1400px) { ... } */

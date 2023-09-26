@@ -1,9 +1,9 @@
 <dialog id="settings">
     <h1>Settings</h1>
-    <label>Color scheme</label>
-    <select onchange="toggleColorScheme(this)">
-        <option value="dark">dark</option>
-        <option value="light">light</option>
+    <label for="nb-color-theme-switcher">Switch color scheme</label>
+    <select onchange="toggleColorScheme(this)" id="nb-color-theme-switcher">
+        <option value="dark">dark mode</option>
+        <option value="light">light mode</option>
     </select>
     <details open>
         <summary>Labels</summary>
@@ -44,7 +44,11 @@
     <form method="dialog">
         <button type="submit">Close</button>
     </form>
-    </form>
+    <h2>Terminology</h2>
+    <dl>
+        <dt id="nb-def-cell">cell</dt>
+        <dd>units of the notebooks that contain source code and output.</dd>
+    </dl>
 </dialog>
 <button onclick="openDialog(this)" data-controls="settings">Settings</button>
 

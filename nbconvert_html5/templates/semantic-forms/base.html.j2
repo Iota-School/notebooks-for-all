@@ -1,3 +1,10 @@
+{# # a base template for accessible notebook representations.
+
+the base template defines notebook independent components.
+an accessible base template provides a substrate to progressively enchance
+the notebook experiennce from browse to edit/focus mode.
+#}
+
 {%- extends 'semantic-forms/displays.j2.html' -%}
 {% from 'celltags.j2' import celltags %}
 
@@ -9,9 +16,14 @@
     {%- block head -%}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {# use technique [h25] to provide a title to satisfy [2.4.2A]. #}
     <title>{{title}}</title>
+    {# color scheme signals that notebooks can viewed in light and dark mode.
+    the html representation is used instead of the css representation so it is immediately avaiable.
+    https://css-tricks.com/almanac/properties/c/color-scheme/ #}
     <meta name="color-scheme" content="dark light">
 
+    {# non-html resources, css and javascript, are served as external resources to optimize load times. #}
     <link rel="stylesheet" href="style.css">
     {%- endblock head -%}
     {%- block html_head_js_mathjax -%}{%- endblock html_head_js_mathjax -%}
@@ -23,21 +35,16 @@
 {% block body_header %}
 
 <body>
-    <header class="site" aria-labelledby="nb-skip-links-label" class="visually-hidden">
+    <header class="site" aria-labelledby="nb-skip-links-label" class="visually-hidden" role="presentation">
         {% block skip_links %}
         <label aria-hidden="true" id="nb-skip-links-label">skip links</label>
-        <a accesskey="0" href="#cells">Skip to content</a>
+        <a accesskey="," href="#cells">Skip to content</a>
         {% endblock skip_links %}
+        {% include "semantic-forms/settings.html.j2" %}
     </header>
-    {% include "semantic-forms/settings.html.j2" %}
+    <header></header>
     <main id=notebook aria-labelledby="nb-title">
         {% block main_header scoped %}
-        <header id="toc" aria-labelledby="nb-toc" role="region">
-            <details>
-                <summary><span id="nb-title">{{title}}</span> <span id="nb-toc">table of contents</span>
-                </summary>
-            </details>
-        </header>
         {% endblock main_header %}
         {% endblock body_header %}
 
@@ -50,19 +57,37 @@
                 </ul>
             </fieldset>
         </form>
-        <dialog>
-            <fieldset name="metadata" form="notebook">
-            </fieldset>
-            <form method="dialog">
-                <button>Close</button>
-            </form>
-        </dialog>
-        <footer role="log">
+        <footer aria-labelledby="nb-toc" role="contentinfo">
+            <details open>
+                <summary><span id="nb-toc">table of contents</span></summary>
+                <header hidden>
+                    <i>press</i><a accesskey="." href="#nb-toc"><kbd>.</kbd></a><i id="nb-toc-description">skip to table
+                        of contents</i>
+                </header>
+            </details>
+        </footer>
+        <footer>
+            <dialog>
+                <fieldset name="metadata" form="notebook">
+                </fieldset>
+                <form method="dialog">
+                    <button>Close</button>
+                </form>
+            </dialog>
+        </footer>
+        <footer>
             <ol id="log" aria-relevant="additions"></ol>
         </footer>
     </main>
+    <footer></footer>
 </body>
 <script>
+    function setCookie(cname, cvalue, exdays) {
+        const d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        let expires = "expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
     function openDialog(x) {
         document.getElementById(x.dataset.controls).showModal();
     };
@@ -70,7 +95,7 @@
     function toggleColorScheme(x) {
         let scheme = document.querySelector(`head > meta[name="color-scheme"]`);
         scheme.content = x.value;
-        log(`${scheme.content} mode activated`);
+        setCookie("colorTheme", x.value, 30);
     }
 
     function log(x) {
@@ -97,8 +122,7 @@
 {% endmacro%}
 
 {% macro cell_anchor(i) %}
-<a href="#{{i}}" id="{{i}}" aria-describedby="cell-{{i}}-input"><span
-        class="visually-hidden">Cell</span>#{{i}}</a>
+<a href="#{{i}}" id="{{i}}" aria-labelledby="nb-def-cell {{i}}">{{i}}</a>
 {% endmacro %}
 
 {% macro cell_cell_type(i, cell_type) %}
@@ -121,13 +145,17 @@
 {% endmacro %}
 
 {% macro cell_source(i, source, execution_count) %}
-<fieldset name="input" disabled role="presentation">
-    <legend aria-hidden="true">
-        <span id="cell-{{i}}-input">In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span
-            aria-hidden="true">]</span>
+{% set label -%}
+In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span aria-hidden="true">]</span>
+{%- endset %}
+<fieldset name="input">
+    <legend hidden id="cell-{{i}}-input">
+        In {{execution_count}}
     </legend>
+    <label aria-hidden="true">{{label}}</label>
     <textarea form="cell-{{i}}" id="cell-{{i}}-source" name="source" rows="{{source.splitlines().__len__()}}"
-        aria-labelledby="cell-{{i}}-input cell-{{i}}-execution_count">{{source}}</textarea>
+        aria-labelledby="cell-{{i}}-input">{{source}}</textarea>
+    {{markdown("```python\n"+ source + "\n```")}}
 </fieldset>
 {% endmacro %}
 
@@ -145,10 +173,12 @@
 
 {%- macro cell_output(i, cell, source, outputs, cell_type, execution_count) -%}
 {% set CODE = cell_type == "code" %}
+{% set label %}{% if CODE and outputs %}Out<span aria-hidden="true">[</span>{{execution_count}}<span
+    aria-hidden="true">]</span>{% else %}Cell {{i}}{% endif %}{% endset %}
 <span hidden id="cell-{{i}}-outputs-len">{{outputs.__len__()}} outputs</span>
 <fieldset name="outputs" id="cell-{{i}}-outputs" aria-describedby="cell-{{i}}-outputs-len">
-    <legend>Out{% if CODE and outputs %}<span aria-hidden="true">[</span>{{execution_count}}<span
-            aria-hidden="true">]</span>{% endif %}</legend>
+    <legend hidden>Out {{execution_count}}</legend>
+    <label aria-hidden="true" for="cell-{{i}}-outputs">{{label}}</label>
     {% if CODE and outputs %}
     {{cell_display_priority(i, outputs, cell)}}
     {% elif cell_type=="markdown" %}
@@ -156,3 +186,10 @@
     {% endif %}
 </fieldset>
 {%- endmacro -%}
+
+{#
+
+[h25]: https://www.w3.org/WAI/WCAG21/Techniques/html/H25
+[2.4.2A]: https://www.w3.org/WAI/WCAG21/Understanding/page-titled
+
+#}
