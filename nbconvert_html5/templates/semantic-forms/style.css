@@ -7,6 +7,7 @@
     --nb-line-height: 1.75;
 
     /* default browser values */
+    --nb-ul-margin-top: 1em;
     --nb-font-size: medium;
     --nb-fieldset-margin: 2px;
     --nb-fieldset-margin-top: .35em;
@@ -33,7 +34,8 @@ body {
 
 main,
 main>fieldset[name=cells]>table,
-main>fieldset[name=cells]>table>tbody {
+main>fieldset[name=cells]>table>tbody,
+[role=toolbar]>ul {
     display: flex;
     flex-direction: column;
     align-content: stretch;
@@ -94,28 +96,6 @@ table#cells tr.cell {
 table#cells .cell.code {
     grid-template-areas: "nb-index nb-source" ". nb-source" ". nb-outputs";
     grid-template-columns: 2rem calc(var(--nb-calc-cell-width) - 2rem);
-}
-
-/* small devices */
-@media (max-width: 576px) {
-    :root {
-        --nb-fieldset-margin: 0px;
-        --nb-fieldset-padding: 0em;
-    }
-
-    table#cells .cell.code {
-        grid-template-areas: "nb-index" "nb-source" "nb-outputs";
-        grid-template-columns: var(--nb-calc-cell-width);
-    }
-
-}
-
-/* medium devices */
-@media (max-width: 768px) {
-    :root {
-        --nb-table-border: 0px;
-        --nb-body-margin: 0px;
-    }
 }
 
 table#cells tr.cell.markdown {
@@ -188,6 +168,29 @@ legend:not(:focus):not(:active) {
     white-space: nowrap;
 }
 
+header#skip-link {
+    display: inline-flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100vw;
+}
+
+header#skip-link>ul {
+    display: inline-flex;
+    justify-content: inherit;
+    align-items: inherit;
+    flex: 3;
+}
+
+header#skip-link>ul>li {
+    list-style: none;
+}
+
+
+header#skip-link:focus-within {
+    transform: translateY(0);
+}
+
 /* grid area labels for organizing cell parts */
 .nb-index {
     grid-area: nb-index;
@@ -233,3 +236,34 @@ legend:not(:focus):not(:active) {
 
 // XX-Large devices (larger desktops, 1400px and up)
 @media (min-width: 1400px) { ... } */
+
+/* small devices */
+@media (max-width: 576px) {
+    :root {
+        --nb-fieldset-margin: 0px;
+        --nb-fieldset-padding: 0em;
+    }
+
+    table#cells .cell.code {
+        grid-template-areas: "nb-index" "nb-source" "nb-outputs";
+        grid-template-columns: var(--nb-calc-cell-width);
+    }
+
+    header#skip-link {
+        display: block;
+        width: 100vw;
+    }
+
+    header#skip-link>ul {
+        display: block;
+    }
+
+}
+
+/* medium devices */
+@media (max-width: 768px) {
+    :root {
+        --nb-table-border: 0px;
+        --nb-body-margin: 0px;
+    }
+}

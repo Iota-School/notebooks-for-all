@@ -35,12 +35,19 @@ the notebook experiennce from browse to edit/focus mode.
 {% block body_header %}
 
 <body>
-    <header class="site" aria-labelledby="nb-skip-links-label" class="visually-hidden" role="presentation">
-        {% block skip_links %}
+    <header id="skip-link" role="group" aria-labelledby="nb-skip-links-label">
         <label aria-hidden="true" id="nb-skip-links-label">skip links</label>
-        <a accesskey="," href="#cells">Skip to content</a>
-        {% endblock skip_links %}
-        {% include "semantic-forms/settings.html.j2" %}
+        <ul role="toolbar">
+            <li>
+                <a href="#cells" tabindex="0">skip to content</a>
+            </li>
+            <li>
+                <a href="#nb-toc">table of contents</a>
+            </li>
+            <li>
+                <button>settings & accessibility</button>
+            </li>
+        </ul>
     </header>
     <header></header>
     <main id=notebook aria-labelledby="nb-title">
@@ -101,6 +108,45 @@ the notebook experiennce from browse to edit/focus mode.
     function log(x) {
         document.getElementById("log").innerHTML += `<li>${x}</li>`;
     }
+
+    function focusHandler(x) { }
+    function keyHandler(x) {
+        let parent = x.target.parentNode;
+        let toolbar = parent.parentNode;
+        let next = null;
+
+        if (x.keyCode == 37) {
+            next = parent.previousElementSibling;
+        } else if (x.keyCode == 39) {
+            next = parent.nextElementSibling;
+        }
+
+        if (next) {
+            toolbar.querySelectorAll("li").forEach(
+                (z) => {
+                    let tabindex = z === next ? 0 : -1;
+                    let a = z.querySelector(`a, button`);
+                    a.setAttribute("tabindex", tabindex);
+                    tabindex == 0 ? a.focus() : null;
+                }
+            )
+        }
+
+    }
+    function toolbar(x) {
+        let tools = x.querySelectorAll("a, button");
+
+        tools.forEach(
+            (y, i) => {
+                if (!y.hasAttribute("tabindex")) {
+                    y.setAttribute("tabindex", i == 0 ? 0 : -1);
+                }
+                y.addEventListener("keydown", keyHandler);
+                y.addEventListener("onfocus", focusHandler);
+            });
+    }
+
+    document.querySelectorAll("[role=toolbar]").forEach(toolbar)
 </script>
 
 </html>
