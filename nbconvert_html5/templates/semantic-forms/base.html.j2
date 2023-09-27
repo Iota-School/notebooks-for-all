@@ -39,13 +39,13 @@ the notebook experiennce from browse to edit/focus mode.
         <label aria-hidden="true" id="nb-skip-links-label">skip links</label>
         <ul role="toolbar">
             <li>
-                <a href="#cells" tabindex="0">skip to content</a>
+                <a href="#cells" tabindex="0" accesskey="1">skip to content</a>
             </li>
             <li>
-                <a href="#nb-toc">table of contents</a>
+                <a href="#nb-toc" accesskey="0">table of contents</a>
             </li>
             <li>
-                <button>settings & accessibility</button>
+            <button onclick="openDialog(this)" data-controls="nb-settings">Settings</button>
             </li>
         </ul>
     </header>
@@ -87,6 +87,7 @@ the notebook experiennce from browse to edit/focus mode.
         </footer>
     </main>
     <footer></footer>
+    {% include "semantic-forms/settings.html.j2" %}
 </body>
 <script>
     function setCookie(cname, cvalue, exdays) {
