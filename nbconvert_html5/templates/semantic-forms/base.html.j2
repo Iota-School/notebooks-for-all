@@ -25,6 +25,8 @@ the notebook experiennce from browse to edit/focus mode.
 
     {# non-html resources, css and javascript, are served as external resources to optimize load times. #}
     <link rel="stylesheet" href="style.css">
+    <link id="nb-dark-theme" media="screen" rel="stylesheet" href="dark-code.css">
+    <link id="nb-light-theme" media="none" rel="stylesheet" href="light-code.css">
     {%- endblock head -%}
     {%- block html_head_js_mathjax -%}{%- endblock html_head_js_mathjax -%}
 </head>
@@ -45,7 +47,7 @@ the notebook experiennce from browse to edit/focus mode.
                 <a href="#nb-toc" accesskey="0">table of contents</a>
             </li>
             <li>
-            <button onclick="openDialog(this)" data-controls="nb-settings">Settings</button>
+                <button onclick="openDialog(this)" data-controls="nb-settings">Settings</button>
             </li>
         </ul>
     </header>
@@ -101,8 +103,14 @@ the notebook experiennce from browse to edit/focus mode.
     };
 
     function toggleColorScheme(x) {
-        let scheme = document.querySelector(`head > meta[name="color-scheme"]`);
+        const scheme = document.querySelector(`head > meta[name="color-scheme"]`);
         scheme.content = x.value;
+
+        // handle code theme, will have to do this will meramid
+        document.getElementById(`nb-${x.value}-theme`).setAttribute("media", "all")
+        const opposite = x.value == "dark" ? "light" : "dark"
+        document.getElementById(`nb-${opposite}-theme`).setAttribute("media", "none")
+
         setCookie("colorTheme", x.value, 30);
     }
 
