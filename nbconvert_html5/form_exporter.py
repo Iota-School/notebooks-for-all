@@ -262,15 +262,34 @@ def get_display_data_priority() -> list:
     return __import__("nbconvert").get_exporter("html")().config.NbConvertBase.display_data_priority
 
 
-@singleton
+@lru_cache
 def get_markdown_renderer():
-    from mistune import markdown
+    from markdown_it import MarkdownIt
+    from mdit_py_plugins.anchors import anchors_plugin
 
-    return markdown
+    md = MarkdownIt("gfm-like", options_update=dict(inline_definitions=True, langPrefix=""))
+    md.use(anchors_plugin)
+    md.options.update(highlight=highlight)
+    return md
 
 
-def get_markdown(str, **kwargs):
-    return get_markdown_renderer()("".join(str), **kwargs)
+def get_markdown(md, **kwargs):
+    return get_markdown_renderer().render("".join(md), **kwargs)
+
+
+def highlight(code, lang="python", attrs=None):
+    import pygments, html
+    print("highlight")
+    # try:
+    return pygments.highlight(
+        code,
+        pygments.lexers.get_lexer_by_name(lang or "python"),
+        pygments.formatters.get_formatter_by_name(
+            "html", debug_token_types=True, title=f"{lang} code"
+        ),
+    )
+    # except:
+    #     return f"""<pre><code>{html.escape(code)}</code></pre>"""
 
 
 def get_soup(x):
@@ -302,13 +321,9 @@ class FormExporter(HTMLExporter):
                 if not k.startswith("_"):
                     self.environment.filters.setdefault(k, v)
         self.environment.globals.update(vars(builtins))
-        from markdown_it import MarkdownIt
-        from mdit_py_plugins.anchors import anchors_plugin
-
-        markdown = MarkdownIt("gfm-like").use(anchors_plugin).render
         import html
 
-        self.environment.globals.update(json=json, markdown=markdown)
+        self.environment.globals.update(json=json, markdown=get_markdown)
         self.environment.filters.update(escape_html=html.escape)
         self.environment.globals.update(
             formatter=pygments.formatters,
