@@ -44,7 +44,11 @@ def task_styles():
         import pygments.formatters
 
         target.write_text(
-            pygments.formatters.get_formatter_by_name(
+            """body {
+                background-color: var(--nb-background-color-%s);
+                color-scheme: %s;
+            }\n""" % (theme, theme)
+            + pygments.formatters.get_formatter_by_name(
                 "html", style=f"a11y-high-contrast-{theme}"
             ).get_style_defs()
         )

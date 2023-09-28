@@ -5,6 +5,8 @@
     --nb-focus-width: 3px;
     --nb-accent-color: auto;
     --nb-line-height: 1.75;
+    --nb-background-color-dark: #2b2a33;
+    --nb-background-color-light: #FFFFFF;
 
     /* default browser values */
     --nb-ul-margin-top: 1em;
@@ -117,6 +119,7 @@ table#cells .cell.markdown .nb-outputs>fieldset>legend+label {
     display: none;
 }
 
+header:focus-within,
 .cell:focus-within,
 :focus-visible {
     outline: max(var(--nb-focus-width), 1px) solid;
@@ -169,10 +172,23 @@ legend:not(:focus):not(:active) {
 }
 
 header#skip-link {
+    position: fixed;
+    transform: translateY(-100%);
     display: inline-flex;
     justify-content: space-evenly;
     align-items: center;
     width: 100vw;
+    background-color: inherit;
+}
+
+header#skip-link:focus-within {
+    transform: translateY(0);
+}
+
+header#skip-link::after {
+    content: "";
+    clear: both;
+    display: table;
 }
 
 header#skip-link>ul {
@@ -186,6 +202,16 @@ header#skip-link>ul>li {
     list-style: none;
 }
 
+header#skip-link>ul>li>kbd {
+    opacity: 0;
+    margin: calc(2*var(--nb-focus-width));
+    font-size: calc(2*var(--nb-font-size));
+    font-weight: bold;
+}
+
+header#skip-link>ul>li:focus-within>kbd {
+    opacity: 1;
+}
 
 header#skip-link:focus-within {
     transform: translateY(0);

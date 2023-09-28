@@ -2,10 +2,10 @@
     <h1>Settings</h1>
     <label for="nb-color-theme-switcher">Switch color scheme</label>
     <select onchange="toggleColorScheme(this)" id="nb-color-theme-switcher">
-        <option value="dark">dark mode</option>
         <option value="light">light mode</option>
+        <option value="dark">dark mode</option>
     </select>
-    <details open>
+    {# <details open>
         <summary>Labels</summary>
         <label>Cell numbers.</label><input type="checkbox" checked />
         <label>Line numbers</label><input type="checkbox" disabled />
@@ -43,7 +43,7 @@
     </details>
     <form method="dialog">
         <button type="submit">Close</button>
-    </form>
+    </form> #}
     <h2>Terminology</h2>
     <dl>
         <dt id="nb-def-cell">cell</dt>

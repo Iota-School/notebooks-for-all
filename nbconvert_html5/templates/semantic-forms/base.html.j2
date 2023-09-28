@@ -21,12 +21,12 @@ the notebook experiennce from browse to edit/focus mode.
     {# color scheme signals that notebooks can viewed in light and dark mode.
     the html representation is used instead of the css representation so it is immediately avaiable.
     https://css-tricks.com/almanac/properties/c/color-scheme/ #}
-    <meta name="color-scheme" content="dark light">
+    <meta name="color-scheme" content="light">
 
     {# non-html resources, css and javascript, are served as external resources to optimize load times. #}
     <link rel="stylesheet" href="style.css">
-    <link id="nb-dark-theme" media="screen" rel="stylesheet" href="dark-code.css">
-    <link id="nb-light-theme" media="none" rel="stylesheet" href="light-code.css">
+    <link id="nb-light-theme" media="screen" rel="stylesheet" href="light-code.css">
+    <link id="nb-dark-theme" media="none" rel="stylesheet" href="dark-code.css">
     {%- endblock head -%}
     {%- block html_head_js_mathjax -%}{%- endblock html_head_js_mathjax -%}
 </head>
@@ -41,13 +41,13 @@ the notebook experiennce from browse to edit/focus mode.
         <label aria-hidden="true" id="nb-skip-links-label">skip links</label>
         <ul role="toolbar">
             <li>
-                <a href="#cells" tabindex="0" accesskey="1">skip to content</a>
+                <a href="#cells" tabindex="0" accesskey="1">skip to content</a><kbd>›</kbd>
             </li>
             <li>
-                <a href="#nb-toc" accesskey="0">table of contents</a>
+                <kbd>‹</kbd><a href="#nb-toc" accesskey="0">table of contents</a><kbd>›</kbd>
             </li>
             <li>
-                <button onclick="openDialog(this)" data-controls="nb-settings">Settings</button>
+                <kbd>‹</kbd><button onclick="openDialog(this)" data-controls="nb-settings">Settings</button>
             </li>
         </ul>
     </header>
