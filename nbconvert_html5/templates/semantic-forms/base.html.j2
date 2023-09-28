@@ -157,7 +157,7 @@ the notebook experiennce from browse to edit/focus mode.
 
     document.querySelectorAll("[role=toolbar]").forEach(toolbar)
     function toggleOrientation(x) {
-        document.querySelector("header#skip-links ul").setAttribute("aria-orientation", x.matches ? "vertical" : "horizontal")
+        document.querySelector("header#skip-link ul").setAttribute("aria-orientation", x.matches ? "vertical" : "horizontal")
     }
 
     var x = window.matchMedia("(max-width: 576px)")
