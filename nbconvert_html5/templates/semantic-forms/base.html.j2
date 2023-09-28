@@ -39,15 +39,15 @@ the notebook experiennce from browse to edit/focus mode.
 <body>
     <header id="skip-link" role="group" aria-labelledby="nb-skip-links-label">
         <label aria-hidden="true" id="nb-skip-links-label">skip links</label>
-        <ul role="toolbar">
+        <ul role="toolbar" aria-orientation="horizontal">
             <li>
-                <a href="#cells" tabindex="0" accesskey="1">skip to content</a><kbd>›</kbd>
+                <a href="#cells" tabindex="0" accesskey="1">skip to content</a>
             </li>
             <li>
-                <kbd>‹</kbd><a href="#nb-toc" accesskey="0">table of contents</a><kbd>›</kbd>
+                <a href="#nb-toc" accesskey="0">table of contents</a>
             </li>
             <li>
-                <kbd>‹</kbd><button onclick="openDialog(this)" data-controls="nb-settings">Settings</button>
+                <button onclick="openDialog(this)" data-controls="nb-settings">Settings</button>
             </li>
         </ul>
     </header>
@@ -156,6 +156,13 @@ the notebook experiennce from browse to edit/focus mode.
     }
 
     document.querySelectorAll("[role=toolbar]").forEach(toolbar)
+    function toggleOrientation(x) {
+        document.querySelector("header#skip-links ul").setAttribute("aria-orientation", x.matches ? "vertical" : "horizontal")
+    }
+
+    var x = window.matchMedia("(max-width: 576px)")
+    toggleOrientation(x) // Call listener function at run time
+    x.addListener(toggleOrientation) // Attach listener function on state changes 
 </script>
 
 </html>

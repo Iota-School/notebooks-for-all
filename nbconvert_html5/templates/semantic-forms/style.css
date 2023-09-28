@@ -202,20 +202,42 @@ header#skip-link>ul>li {
     list-style: none;
 }
 
-header#skip-link>ul>li>kbd {
-    opacity: 0;
+header#skip-link>ul>li {
     margin: calc(2*var(--nb-focus-width));
+}
+
+header#skip-link>ul>li>:last-child::after,
+header#skip-link>ul>li>:first-child::before {
+    opacity: 0;
     font-size: calc(2*var(--nb-font-size));
     font-weight: bold;
 }
 
-header#skip-link>ul>li:focus-within>kbd {
+header#skip-link>ul>li:focus-within>:last-child::after,
+header#skip-link>ul>li:focus-within>:first-child::before {
     opacity: 1;
 }
 
 header#skip-link:focus-within {
     transform: translateY(0);
 }
+
+header#skip-link>ul[aria-orientation=horizontal]>li:not(:first-child)>:first-child::before {
+    content: "‹";
+}
+
+header#skip-link>ul[aria-orientation=horizontal]>li:not(:last-child)>:last-child::after {
+    content: "›";
+}
+
+header#skip-link>ul[aria-orientation=vertical]>li:not(:first-child)>:first-child::before {
+    content: "˄";
+}
+
+header#skip-link>ul[aria-orientation=vertical]>li:not(:last-child)>:last-child::after {
+    content: "⌄";
+}
+
 
 /* grid area labels for organizing cell parts */
 .nb-index {
