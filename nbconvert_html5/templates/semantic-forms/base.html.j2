@@ -37,132 +37,80 @@ the notebook experiennce from browse to edit/focus mode.
 {% block body_header %}
 
 <body>
-    <header id="skip-link" role="group" aria-labelledby="nb-skip-links-label">
-        <label aria-hidden="true" id="nb-skip-links-label">skip links</label>
-        <ul role="toolbar" aria-orientation="horizontal">
-            <li>
-                <a href="#cells" tabindex="0" accesskey="1">skip to content</a>
-            </li>
-            <li>
-                <a href="#nb-toc" accesskey="0">table of contents</a>
-            </li>
-            <li>
-                <button onclick="openDialog(this)" data-controls="nb-settings">Settings</button>
-            </li>
-        </ul>
+    <section id="skip-link">
+        <a href="#cells" tabindex="0" accesskey="1">skip to content</a>
+    </section>
+    <header aria-label="site header">
+        {# the skip link is the first tab stop in the site to skip repetitive information
+        and directly access the content. #}
+        {# site authors with include their site specific headers in this region. #}
+        {# a subsequent tab stop will indicate to keyboard and AT users that there are
+        accessibility settings that can be toggled. #}
+        <button onclick="openDialog(this)" aria-controls="nb-settings">Settings</button>
     </header>
-    <header></header>
-    <main id=notebook aria-labelledby="nb-title">
+    {# this is the main section, but we want landmark navigation to go to the first cell in
+    the notebook. the extending template will define the location of the main content. #}
+    <section id=notebook role="group">
+        <section aria-labelledby="nb-toc">
+            {# a notebook will provide visual structural navigation for a document.
+            this is a feature of screen readers that is not common to sighted users.
+            the implementation here is very naive. users will need to know to collapse the heading
+            to skip the link tree. the best implementation is a tree that will consume a single tab stop
+            and allow arrow key navigation. #}
+            <details open>
+                <summary><span id="nb-toc">table of contents</span></summary>
+                {# the table of contents is populated in python. #}
+            </details>
+        </section>
         {% block main_header scoped %}
         {% endblock main_header %}
         {% endblock body_header %}
 
         {% block body_footer %}
+        {# a notebook begins as a static document that can progressively
+        add features like run time computation. #}
         <form name="notebook" aria-labelledby="nb-controls-label">
-            <fieldset>
+            <fieldset disabled>
                 <legend id="nb-controls-label">Notebook Controls</legend>
-                <ul role="toolbar">
-                    <li><button type="submit">Run All</button></li>
-                </ul>
+                <button type="submit">Run</button>
             </fieldset>
         </form>
-        <footer aria-labelledby="nb-toc" role="contentinfo">
-            <details open>
-                <summary><span id="nb-toc">table of contents</span></summary>
-                <header hidden>
-                    <i>press</i><a accesskey="." href="#nb-toc"><kbd>.</kbd></a><i id="nb-toc-description">skip to table
-                        of contents</i>
-                </header>
-            </details>
-        </footer>
-        <footer>
-            <dialog>
-                <fieldset name="metadata" form="notebook">
-                </fieldset>
-                <form method="dialog">
-                    <button>Close</button>
-                </form>
-            </dialog>
-        </footer>
-        <footer>
-            <ol id="log" aria-relevant="additions"></ol>
-        </footer>
-    </main>
-    <footer></footer>
+        <dialog id="nb-metadata">
+            <fieldset name="metadata" form="notebook">
+            </fieldset>
+            <form method="dialog">
+                <button>Close</button>
+            </form>
+        </dialog>
+        {# skip to top is needed for long notebooks.
+        it is difficult to access for keyboard users. #}
+        <a href="#notebook">skip to top</a>
+    </section>
     {% include "semantic-forms/settings.html.j2" %}
+    <footer>
+        <fieldset>
+            <legend>application controls</legend>
+            <label for="nb-activate">edit mode</label>
+            <input id="nb-activate" type="checkbox">
+            <button onclick="openDialog(this)" aria-controls="nb-metadata">Metadata</button>
+        </fieldset>
+
+        <ol id="log" aria-relevant="additions"></ol>
+    </footer>
 </body>
 <script>
-    function setCookie(cname, cvalue, exdays) {
-        const d = new Date();
-        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-        let expires = "expires=" + d.toUTCString();
-        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    }
     function openDialog(x) {
-        document.getElementById(x.dataset.controls).showModal();
+        document.getElementById(x.getAttribute("aria-controls")).showModal();
     };
 
     function toggleColorScheme(x) {
         const scheme = document.querySelector(`head > meta[name="color-scheme"]`);
         scheme.content = x.value;
-
         // handle code theme, will have to do this will meramid
-        document.getElementById(`nb-${x.value}-theme`).setAttribute("media", "all")
-        const opposite = x.value == "dark" ? "light" : "dark"
-        document.getElementById(`nb-${opposite}-theme`).setAttribute("media", "none")
-
-        setCookie("colorTheme", x.value, 30);
+        document.getElementById(`nb-${x.value}-theme`).setAttribute("media", "all");
+        const opposite = x.value == "dark" ? "light" : "dark";
+        document.getElementById(`nb-${opposite}-theme`).setAttribute("media", "none");
     }
-
-    function log(x) {
-        document.getElementById("log").innerHTML += `<li>${x}</li>`;
-    }
-
-    function focusHandler(x) { }
-    function keyHandler(x) {
-        let parent = x.target.parentNode;
-        let toolbar = parent.parentNode;
-        let next = null;
-
-        if (x.keyCode == 37) {
-            next = parent.previousElementSibling;
-        } else if (x.keyCode == 39) {
-            next = parent.nextElementSibling;
-        }
-
-        if (next) {
-            toolbar.querySelectorAll("li").forEach(
-                (z) => {
-                    let tabindex = z === next ? 0 : -1;
-                    let a = z.querySelector(`a, button`);
-                    a.setAttribute("tabindex", tabindex);
-                    tabindex == 0 ? a.focus() : null;
-                }
-            )
-        }
-
-    }
-    function toolbar(x) {
-        let tools = x.querySelectorAll("a, button");
-
-        tools.forEach(
-            (y, i) => {
-                if (!y.hasAttribute("tabindex")) {
-                    y.setAttribute("tabindex", i == 0 ? 0 : -1);
-                }
-                y.addEventListener("keydown", keyHandler);
-                y.addEventListener("onfocus", focusHandler);
-            });
-    }
-
-    document.querySelectorAll("[role=toolbar]").forEach(toolbar)
-    function toggleOrientation(x) {
-        document.querySelector("header#skip-link ul").setAttribute("aria-orientation", x.matches ? "vertical" : "horizontal")
-    }
-
-    var x = window.matchMedia("(max-width: 576px)")
-    toggleOrientation(x) // Call listener function at run time
-    x.addListener(toggleOrientation) // Attach listener function on state changes 
 </script>
 
 </html>
@@ -214,7 +162,7 @@ In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span 
     <legend hidden id="cell-{{i}}-input">
         In {{execution_count}}
     </legend>
-    <label aria-hidden="true">{{label}}</label>
+    <label aria-hidden="true" for="cell-{{i}}-source">{{label}}</label>
     <textarea form="cell-{{i}}" id="cell-{{i}}-source" name="source" rows="{{source.splitlines().__len__()}}"
         aria-labelledby="cell-{{i}}-input">{{source}}</textarea>
     {{markdown("```python\n"+ source + "\n```")}}
@@ -240,7 +188,9 @@ In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span 
 <span hidden id="cell-{{i}}-outputs-len">{{outputs.__len__()}} outputs</span>
 <fieldset name="outputs" id="cell-{{i}}-outputs" aria-describedby="cell-{{i}}-outputs-len">
     <legend hidden>Out {{execution_count}}</legend>
-    <label aria-hidden="true" for="cell-{{i}}-outputs">{{label}}</label>
+    {% if outputs %}
+    <span aria-hidden="true">{{label}}</span>
+    {% endif %}
     {% if CODE and outputs %}
     {{cell_display_priority(i, outputs, cell)}}
     {% elif cell_type=="markdown" %}

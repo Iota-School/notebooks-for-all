@@ -23,6 +23,7 @@
     --nb-calc-cell-width: calc(100vw - 2 * var(--nb-calc-cell-margin));
     --nb-calc-table-width: calc(100vw - 2 * var(--nb-calc-cell-margin) - 2 * var(--nb-table-border));
     --nb-calc-cell-fieldset-width: calc(var(--nb-calc-cell-width) - 2 * var(--nb-calc-fieldset-edge));
+    --nb-calc-header-width: calc(100vw - 2 *var(--nb-body-margin));
     /* --nb-calc-cell-margin: calc((100vw - var(--nb-calc-cell-width))/2 - var(--nb-fieldset-border) - var(--nb-table-border)) */
 }
 
@@ -171,73 +172,19 @@ legend:not(:focus):not(:active) {
     white-space: nowrap;
 }
 
-header#skip-link {
+#skip-link {
     position: fixed;
-    transform: translateY(-100%);
+    transform: translateY(-200%);
     display: inline-flex;
     justify-content: space-evenly;
     align-items: center;
-    width: 100vw;
+    width: var(--nb-calc-header-width);
     background-color: inherit;
 }
 
-header#skip-link:focus-within {
+#skip-link:focus-within {
     transform: translateY(0);
 }
-
-header#skip-link::after {
-    content: "";
-    clear: both;
-    display: table;
-}
-
-header#skip-link>ul {
-    display: inline-flex;
-    justify-content: inherit;
-    align-items: inherit;
-    flex: 3;
-}
-
-header#skip-link>ul>li {
-    list-style: none;
-}
-
-header#skip-link>ul>li {
-    margin: calc(2*var(--nb-focus-width));
-}
-
-header#skip-link>ul>li>:last-child::after,
-header#skip-link>ul>li>:first-child::before {
-    opacity: 0;
-    font-size: calc(2*var(--nb-font-size));
-    font-weight: bold;
-}
-
-header#skip-link>ul>li:focus-within>:last-child::after,
-header#skip-link>ul>li:focus-within>:first-child::before {
-    opacity: 1;
-}
-
-header#skip-link:focus-within {
-    transform: translateY(0);
-}
-
-header#skip-link>ul[aria-orientation=horizontal]>li:not(:first-child)>:first-child::before {
-    content: "‹";
-}
-
-header#skip-link>ul[aria-orientation=horizontal]>li:not(:last-child)>:last-child::after {
-    content: "›";
-}
-
-header#skip-link>ul[aria-orientation=vertical]>li:not(:first-child)>:first-child::before {
-    content: "˄";
-}
-
-header#skip-link>ul[aria-orientation=vertical]>li:not(:last-child)>:last-child::after {
-    content: "⌄";
-}
-
 
 /* grid area labels for organizing cell parts */
 .nb-index {
@@ -297,15 +244,6 @@ header#skip-link>ul[aria-orientation=vertical]>li:not(:last-child)>:last-child::
         grid-template-columns: var(--nb-calc-cell-width);
     }
 
-    header#skip-link {
-        display: block;
-        width: 100vw;
-    }
-
-    header#skip-link>ul {
-        display: block;
-    }
-
 }
 
 /* medium devices */
@@ -314,4 +252,10 @@ header#skip-link>ul[aria-orientation=vertical]>li:not(:last-child)>:last-child::
         --nb-table-border: 0px;
         --nb-body-margin: 0px;
     }
+}
+
+a[href="#notebook"] {
+    position: sticky;
+    float: right;
+    bottom: 0;
 }

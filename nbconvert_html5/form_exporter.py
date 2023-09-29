@@ -279,17 +279,17 @@ def get_markdown(md, **kwargs):
 
 def highlight(code, lang="python", attrs=None):
     import pygments, html
-    print("highlight")
-    # try:
-    return pygments.highlight(
-        code,
-        pygments.lexers.get_lexer_by_name(lang or "python"),
-        pygments.formatters.get_formatter_by_name(
-            "html", debug_token_types=True, title=f"{lang} code"
-        ),
-    )
-    # except:
-    #     return f"""<pre><code>{html.escape(code)}</code></pre>"""
+
+    try:
+        return pygments.highlight(
+            code,
+            pygments.lexers.get_lexer_by_name(lang or "python"),
+            pygments.formatters.get_formatter_by_name(
+                "html", debug_token_types=True, title=f"{lang} code"
+            ),
+        )
+    except:
+        return f"""<pre><code>{html.escape(code)}</code></pre>"""
 
 
 def get_soup(x):
@@ -342,7 +342,7 @@ class FormExporter(HTMLExporter):
         soup = soupify(body)
         describe_main(soup)
         heading_links(soup)
-        details = soup.select_one("""footer[aria-labelledby="nb-toc"] details""")
+        details = soup.select_one("""[aria-labelledby="nb-toc"] details""")
         if details:
             details.extend(soupify(toc(soup)).children)
             for x in details.select("ul"):
