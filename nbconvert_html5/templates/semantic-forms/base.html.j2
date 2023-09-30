@@ -38,7 +38,7 @@ the notebook experiennce from browse to edit/focus mode.
 
 <body>
     <section id="skip-link">
-        <a href="#cells" tabindex="0" accesskey="1">skip to content</a>
+        <a href="#cells" tabindex="0" accesskey="1">skip to main content</a>
     </section>
     <header aria-label="site header">
         {# the skip link is the first tab stop in the site to skip repetitive information
@@ -46,7 +46,7 @@ the notebook experiennce from browse to edit/focus mode.
         {# site authors with include their site specific headers in this region. #}
         {# a subsequent tab stop will indicate to keyboard and AT users that there are
         accessibility settings that can be toggled. #}
-        <button onclick="openDialog(this)" aria-controls="nb-settings">Settings</button>
+        <button onclick="openDialog(this)" aria-controls="nb-settings" accesskey=",">Settings</button>
     </header>
     {# this is the main section, but we want landmark navigation to go to the first cell in
     the notebook. the extending template will define the location of the main content. #}
@@ -58,15 +58,16 @@ the notebook experiennce from browse to edit/focus mode.
             to skip the link tree. the best implementation is a tree that will consume a single tab stop
             and allow arrow key navigation. #}
             <details open>
+                {# if the label is on the summary then the bullet is announced as the label and it should not be #}
                 <summary><span id="nb-toc">table of contents</span></summary>
                 {# the table of contents is populated in python. #}
             </details>
         </section>
-        {% block main_header scoped %}
-        {% endblock main_header %}
-        {% endblock body_header %}
+        <main>
+            {% endblock body_header %}
 
-        {% block body_footer %}
+            {% block body_footer %}
+        </main>
         {# a notebook begins as a static document that can progressively
         add features like run time computation. #}
         <form name="notebook" aria-labelledby="nb-controls-label">
@@ -84,7 +85,7 @@ the notebook experiennce from browse to edit/focus mode.
         </dialog>
         {# skip to top is needed for long notebooks.
         it is difficult to access for keyboard users. #}
-        <a href="#notebook">skip to top</a>
+        <a href="#notebook" accesskey="0">skip to top</a>
     </section>
     {% include "semantic-forms/settings.html.j2" %}
     <footer>
@@ -94,7 +95,6 @@ the notebook experiennce from browse to edit/focus mode.
             <input id="nb-activate" type="checkbox">
             <button onclick="openDialog(this)" aria-controls="nb-metadata">Metadata</button>
         </fieldset>
-
         <ol id="log" aria-relevant="additions"></ol>
     </footer>
 </body>
@@ -104,9 +104,8 @@ the notebook experiennce from browse to edit/focus mode.
     };
 
     function toggleColorScheme(x) {
-        const scheme = document.querySelector(`head > meta[name="color-scheme"]`);
-        scheme.content = x.value;
-        // handle code theme, will have to do this will meramid
+        document.querySelector(`head > meta[name="color-scheme"]`).content = x.value;
+        {# handle code theme, will have to do this will meramid #}
         document.getElementById(`nb-${x.value}-theme`).setAttribute("media", "all");
         const opposite = x.value == "dark" ? "light" : "dark";
         document.getElementById(`nb-${opposite}-theme`).setAttribute("media", "none");
