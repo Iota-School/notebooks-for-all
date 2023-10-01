@@ -44,10 +44,6 @@ main>fieldset[name=cells]>table>tbody,
     align-content: stretch;
 }
 
-fieldset[name=cells] {
-    width: var(--nb-calc-fieldset-width);
-}
-
 /* hide cell components when execution is disabled. */
 fieldset[name="cells"]:disabled table#cells .nb-cell_type,
 fieldset[name="cells"]:disabled table#cells .nb-metadata,
@@ -74,10 +70,6 @@ textarea[name=source] {
 }
 
 
-table#cells {
-    width: var(--nb-calc-table-width);
-}
-
 table#cells,
 table#cells .cell>td,
 table#cells .cell>th {
@@ -91,24 +83,15 @@ table#cells>tfoot th:empty {
 }
 
 table#cells tr.cell {
-    display: grid;
+    display: flex;
     width: var(--nb-calc-cell-width);
-    box-sizing: border-box;
+    flex-direction: column;
 }
 
-table#cells .cell.code {
-    grid-template-areas: "nb-index nb-source" ". nb-source" ". nb-outputs";
-    grid-template-columns: 2rem calc(var(--nb-calc-cell-width) - 2rem);
-}
-
-table#cells tr.cell.markdown {
-    grid-template-areas: "nb-outputs";
-    grid-template-columns: var(--nb-calc-cell-width);
-}
 
 /* layout for the cells using a grid display. */
-table#cells:not([role=table])>thead,
-table#cells:not([role=table])>tfoot,
+table#cells>thead,
+table#cells>tfoot,
 table#cells .cell.markdown .nb-metadata,
 table#cells .cell.markdown .nb-toolbar,
 table#cells .cell.markdown .nb-cell_type,
@@ -184,74 +167,6 @@ legend:not(:focus):not(:active) {
 
 #skip-link:focus-within {
     transform: translateY(0);
-}
-
-/* grid area labels for organizing cell parts */
-.nb-index {
-    grid-area: nb-index;
-    padding-top: var(--nb-calc-fieldset-top);
-}
-
-.nb-cell_type {
-    grid-area: nb-cell_type;
-}
-
-
-.nb-execution_count {
-    grid-area: nb-execution_count;
-}
-
-.nb-source {
-    grid-area: nb-source;
-}
-
-.nb-outputs {
-    grid-area: nb-outputs;
-}
-
-.nb-metadata {
-    grid-area: nb-metadata;
-}
-
-.nb-toolbar {
-    grid-area: nb-toolbar;
-}
-
-/* 
-
-
-// Medium devices (tablets, 768px and up)
-@media (min-width: 768px) { ... }
-
-// Large devices (desktops, 992px and up)
-@media (min-width: 992px) { ... }
-
-// X-Large devices (large desktops, 1200px and up)
-@media (min-width: 1200px) { ... }
-
-// XX-Large devices (larger desktops, 1400px and up)
-@media (min-width: 1400px) { ... } */
-
-/* small devices */
-@media (max-width: 576px) {
-    :root {
-        --nb-fieldset-margin: 0px;
-        --nb-fieldset-padding: 0em;
-    }
-
-    table#cells .cell.code {
-        grid-template-areas: "nb-index" "nb-source" "nb-outputs";
-        grid-template-columns: var(--nb-calc-cell-width);
-    }
-
-}
-
-/* medium devices */
-@media (max-width: 768px) {
-    :root {
-        --nb-table-border: 0px;
-        --nb-body-margin: 0px;
-    }
 }
 
 a[href="#notebook"] {
