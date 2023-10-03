@@ -1,5 +1,5 @@
 <dialog id="nb-settings">
-    <h1>Settings</h1>
+    <h1 role="presentation">Settings</h1>
     <form method="dialog">
         <button type="submit">Close</button>
     </form>
@@ -23,13 +23,13 @@
         <legend>font settings</legend>
         <label aria-hidden="true" for="nb-table-font-size-group">font size</label>
         <select name="font-size" id="nb-table-font-size-group">
-            <option value="xx-small">xx-small</label>
-            <option value="x-small">x-small</label>
-            <option value="small">small</label>
-            <option value="medium" selected>medium</label>
-            <option value="large">large</label>
-            <option value="x-large">x-large</label>
-            <option value="xx-large">xx-large</label>
+            <option value="xx-small">xx-small</option>
+            <option value="x-small">x-small</option>
+            <option value="small">small</option>
+            <option value="medium" selected>medium</option>
+            <option value="large">large</option>
+            <option value="x-large">x-large</option>
+            <option value="xx-large">xx-large</option>
         </select>
         <style id="nb-font-size-style"></style>
         <fieldset id="nb-font-serif-radio">
@@ -81,9 +81,10 @@
         document.getElementById(`nb-${opposite}-theme`).setAttribute("media", "none");
         document.querySelector(`head > meta[name="color-scheme"]`).setAttribute("content", event.target.value);
     }
-    document.querySelectorAll("#nb-color-scheme-radio>label>input").forEach(
+    document.querySelectorAll(`[name="color-scheme"]`).forEach(
         (x) => { x.addEventListener("change", toggleColorScheme) }
     )
+
     function toggleRole() {
         if (event.target.checked) {
             for (const [k, selector] of Object.entries(SELECTORS)) {
@@ -93,16 +94,15 @@
             }
         }
     }
-    document.querySelectorAll("#nb-table-role-radio>label>input").forEach(
+    document.querySelectorAll(`[name="table-role"]`).forEach(
         (x) => { x.addEventListener("change", toggleRole) }
     )
     function changeFont() {
         document.getElementById("nb-font-size-style").textContent = `:root {--nb-font-size: ${event.target.value};}`
     }
-    document.querySelectorAll(`select[name="font-size"]`).forEach(
+    document.querySelectorAll(`[name="font-size"]`).forEach(
         (x) => { x.addEventListener("change", changeFont) }
     )
-
     function changeFontFamily() {
         document.getElementById("nb-font-size-style").textContent = `:root {font-family: ${event.target.value};}`
     }
