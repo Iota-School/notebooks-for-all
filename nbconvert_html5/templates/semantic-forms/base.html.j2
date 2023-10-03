@@ -103,13 +103,6 @@ the notebook experiennce from browse to edit/focus mode.
         document.getElementById(x.getAttribute("aria-controls")).showModal();
     };
 
-    function toggleColorScheme(x) {
-        document.querySelector(`head > meta[name="color-scheme"]`).content = x.value;
-        {# handle code theme, will have to do this will meramid #}
-        document.getElementById(`nb-${x.value}-theme`).setAttribute("media", "all");
-        const opposite = x.value == "dark" ? "light" : "dark";
-        document.getElementById(`nb-${opposite}-theme`).setAttribute("media", "none");
-    }
 </script>
 
 </html>

@@ -1,54 +1,114 @@
 <dialog id="nb-settings">
     <h1>Settings</h1>
-    <label for="nb-color-theme-switcher">Switch color scheme</label>
-    <select onchange="toggleColorScheme(this)" id="nb-color-theme-switcher">
-        <option value="light">light mode</option>
-        <option value="dark">dark mode</option>
-    </select>
-    {# <details open>
-        <summary>Labels</summary>
-        <label>Cell numbers.</label><input type="checkbox" checked />
-        <label>Line numbers</label><input type="checkbox" disabled />
-    </details>
-    <details open>
-        <summary>Text</summary>
-        <label>Font size</label>
-        <optgroup>
-            <select>small</select>
-            <select>medium</select>
-            <select>large</select>
-        </optgroup>
-        <label>Letter spacing</label><input type="checkbox" />
-        <label>Word spacing</label><input type="checkbox" />
-        <label>Line spacing</label><input type="checkbox" />
-        <label>Serif</label><input type="checkbox" />
-    </details>
-    <details open>
-        <summary>Assistive technology</summary>
-        <label>Cells landmarks</label><input type="checkbox" checked />
-        <label>Semantic code grouping</label><input type="checkbox" checked />
-        <label>Notebook layout</label>
-        <optgroup>
-            <select>document</select>
-            <select>feed</select>
-            <select>list</select>
-            <select>table</select>
-            <select disabled>grid</select>
-            <select disabled>treegrid</select>
-        </optgroup>
-    </details>
-    <details>
-        <summary>Custom css</summary>
-        <textarea disabled></textarea>
-    </details>
     <form method="dialog">
         <button type="submit">Close</button>
-    </form> #}
-    <h2>Terminology</h2>
-    <dl>
-        <dt id="nb-def-cell">cell</dt>
-        <dd>units of the notebooks that contain source code and output.</dd>
-    </dl>
+    </form>
+    <fieldset id="nb-color-scheme-radio">
+        <legend>color scheme</legend>
+        <label aria-hidden="true" for="nb-color-theme-radio">color scheme</label>
+        <label><input value="light" name="color-scheme" type="radio" checked> light mode</label>
+        <label><input value="dark" name="color-scheme" type="radio"> dark mode</label>
+    </fieldset>
+    <fieldset id="nb-table-role-radio">
+        <legend>cell navigation</legend>
+        <label aria-hidden="true" for="nb-table-role-radio">cell navigation</label>
+        <label><input value="list" name="table-role" type="radio" checked> list</label>
+        <label><input value="table" name="table-role" type="radio"> table</label>
+        <label><input value="region" name="table-role" type="radio"> landmark</label>
+        <label><input value="grid" name="table-role" type="radio" disabled> grid</label>
+        <label><input value="treegrid" name="table-role" type="radio" disabled> treegrid</label>
+        <label><input value="tree" name="table-role" type="radio" disabled> tree</label>
+    </fieldset>
+    <fieldset id="nb-table-font-group">
+        <legend>font settings</legend>
+        <label aria-hidden="true" for="nb-table-font-size-group">font size</label>
+        <select name="font-size" id="nb-table-font-size-group">
+            <option value="xx-small">xx-small</label>
+            <option value="x-small">x-small</label>
+            <option value="small">small</label>
+            <option value="medium" selected>medium</label>
+            <option value="large">large</label>
+            <option value="x-large">x-large</label>
+            <option value="xx-large">xx-large</label>
+        </select>
+        <style id="nb-font-size-style"></style>
+        <fieldset id="nb-font-serif-radio">
+            <legend>serif</legend>
+            <label><input value="serif" name="font-family" type="radio" checked> serif</label>
+            <label><input value="sans-serif" name="font-family" type="radio"> sans-serif</label>
+        </fieldset>
+        <style id="nb-font-family-style"></style>
+        <span hidden id="nb-def-cell">cell</span>
+    </fieldset>
 </dialog>
 
 {# these settings should be updated from query parameters #}
+
+{% raw %}
+<script>
+    const SELECTORS = {
+        "table": "table#cells",
+        "body": "table#cells>tbody",
+        "row": "table#cells>tbody>tr",
+        "cell": "table#cells>tbody>tr>th,table#cells>tbody>tr>td",
+    }, ROLES = {
+        "list": {
+            "table": "group",
+            "body": "list",
+            "row": "listitem",
+            "cell": "none",
+        }, "table": {
+            "table": "table",
+            "body": "rowgroup",
+            "row": "row",
+            "cell": "cell",
+        }, "region": {
+            "table": "group",
+            "body": "group",
+            "row": "region",
+            "cell": "none",
+        }, "generic": {
+            "table": "group",
+            "body": "none",
+            "row": "none",
+            "cell": "none",
+        }
+    };
+
+    function toggleColorScheme() {
+        document.getElementById(`nb-${event.target.value}-theme`).setAttribute("media", "all");
+        let opposite = event.target.value == "dark" ? "light" : "dark"
+        document.getElementById(`nb-${opposite}-theme`).setAttribute("media", "none");
+        document.querySelector(`head > meta[name="color-scheme"]`).setAttribute("content", event.target.value);
+    }
+    document.querySelectorAll("#nb-color-scheme-radio>label>input").forEach(
+        (x) => { x.addEventListener("change", toggleColorScheme) }
+    )
+    function toggleRole() {
+        if (event.target.checked) {
+            for (const [k, selector] of Object.entries(SELECTORS)) {
+                document.querySelectorAll(selector).forEach(
+                    (x) => { x.setAttribute("role", ROLES[event.target.value][k]) }
+                )
+            }
+        }
+    }
+    document.querySelectorAll("#nb-table-role-radio>label>input").forEach(
+        (x) => { x.addEventListener("change", toggleRole) }
+    )
+    function changeFont() {
+        document.getElementById("nb-font-size-style").textContent = `:root {--nb-font-size: ${event.target.value};}`
+    }
+    document.querySelectorAll(`select[name="font-size"]`).forEach(
+        (x) => { x.addEventListener("change", changeFont) }
+    )
+
+    function changeFontFamily() {
+        document.getElementById("nb-font-size-style").textContent = `:root {font-family: ${event.target.value};}`
+    }
+    document.querySelectorAll(`[name="font-family"]`).forEach(
+        (x) => { x.addEventListener("change", changeFontFamily) }
+    )
+
+</script>
+{% endraw %}

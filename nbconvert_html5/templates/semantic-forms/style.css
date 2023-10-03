@@ -174,3 +174,20 @@ a[href="#notebook"] {
     float: right;
     bottom: 0;
 }
+
+
+/* small devices */
+@media (max-width: 576px) {
+    :root {
+        --nb-fieldset-margin: 0px;
+        --nb-fieldset-padding: 0em;
+    }
+}
+
+/* medium devices */
+@media (max-width: 768px) {
+    :root {
+        --nb-table-border: 0px;
+        --nb-body-margin: 0px;
+    }
+}
