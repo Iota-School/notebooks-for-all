@@ -157,7 +157,7 @@ In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span 
     <label aria-hidden="true" for="cell-{{i}}-source">{{label}}</label>
     <textarea form="cell-{{i}}" id="cell-{{i}}-source" name="source" rows="{{source.splitlines().__len__()}}"
         aria-labelledby="cell-{{i}}-input">{{source}}</textarea>
-    {{markdown("```python\n"+ source + "\n```")}}
+    {{highlight(source)}}
 </fieldset>
 {% endmacro %}
 

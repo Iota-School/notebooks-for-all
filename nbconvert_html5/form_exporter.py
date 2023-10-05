@@ -33,7 +33,7 @@ TEMPLATE = TEMPLATES / "html-templates.html"
 
 # this file contains a template tag that holds the skeleton for notebooks and a cell.
 
-formatter = pygments.formatters.find_formatter_class("html")(style="a11y-light")
+formatter = pygments.formatters.find_formatter_class("html")(style="a11y-light", wrapcode=True)
 lex = pygments.lexers.find_lexer_class("IPython3")()
 
 
@@ -285,7 +285,7 @@ def highlight(code, lang="python", attrs=None):
             code,
             pygments.lexers.get_lexer_by_name(lang or "python"),
             pygments.formatters.get_formatter_by_name(
-                "html", debug_token_types=True, title=f"{lang} code"
+                "html", debug_token_types=True, title=f"{lang} code", wrapcode=True
             ),
         )
     except:
@@ -323,7 +323,7 @@ class FormExporter(HTMLExporter):
         self.environment.globals.update(vars(builtins))
         import html
 
-        self.environment.globals.update(json=json, markdown=get_markdown)
+        self.environment.globals.update(json=json, markdown=get_markdown, highlight=highlight)
         self.environment.filters.update(escape_html=html.escape)
         self.environment.globals.update(
             formatter=pygments.formatters,
