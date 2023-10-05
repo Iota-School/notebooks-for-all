@@ -70,7 +70,7 @@ the notebook experiennce from browse to edit/focus mode.
         </main>
         {# a notebook begins as a static document that can progressively
         add features like run time computation. #}
-        <form name="notebook" aria-labelledby="nb-controls-label">
+        <form name="notebook" id="notebook" aria-labelledby="nb-controls-label">
             <fieldset disabled>
                 <legend id="nb-controls-label">Notebook Controls</legend>
                 <button type="submit">Run</button>
@@ -97,13 +97,13 @@ the notebook experiennce from browse to edit/focus mode.
         </fieldset>
         <ol id="log" aria-relevant="additions"></ol>
     </footer>
-</body>
-<script>
-    function openDialog(x) {
-        document.getElementById(x.getAttribute("aria-controls")).showModal();
-    };
+    <script>
+        function openDialog(x) {
+            document.getElementById(x.getAttribute("aria-controls")).showModal();
+        };
 
-</script>
+    </script>
+</body>
 
 </html>
 {% endblock body_footer %}
