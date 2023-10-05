@@ -6,8 +6,8 @@
     <fieldset id="nb-color-scheme-radio">
         <legend>color scheme</legend>
         <label aria-hidden="true" for="nb-color-theme-radio">color scheme</label>
-        <label><input value="light" name="color-scheme" type="radio" checked> light mode</label>
-        <label><input value="dark" name="color-scheme" type="radio"> dark mode</label>
+        <label><input value="light" name="color-scheme" type="radio" checked>light mode</label>
+        <label><input value="dark" name="color-scheme" type="radio">dark mode</label>
     </fieldset>
     <fieldset id="nb-table-role-radio">
         <legend>cell navigation</legend>
@@ -59,9 +59,9 @@
             "cell": "none",
         }, "table": {
             "table": "table",
-            "body": "rowgroup",
-            "row": "row",
-            "cell": "cell",
+            "body": null,
+            "row": null,
+            "cell": null,
         }, "region": {
             "table": "group",
             "body": "group",
@@ -84,12 +84,17 @@
     document.querySelectorAll(`[name="color-scheme"]`).forEach(
         (x) => { x.addEventListener("change", toggleColorScheme) }
     )
-
     function toggleRole() {
         if (event.target.checked) {
             for (const [k, selector] of Object.entries(SELECTORS)) {
                 document.querySelectorAll(selector).forEach(
-                    (x) => { x.setAttribute("role", ROLES[event.target.value][k]) }
+                    (x) => {
+                        if (ROLES[event.target.value][k] == null) {
+                            x.removeAttribute("role")
+                        } else {
+                            x.setAttribute("role", ROLES[event.target.value][k])
+                        }
+                    }
                 )
             }
         }
@@ -109,6 +114,5 @@
     document.querySelectorAll(`[name="font-family"]`).forEach(
         (x) => { x.addEventListener("change", changeFontFamily) }
     )
-
 </script>
 {% endraw %}
