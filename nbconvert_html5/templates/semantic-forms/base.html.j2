@@ -71,14 +71,6 @@ the notebook experiennce from browse to edit/focus mode.
 
             {% block body_footer %}
         </main>
-        {# a notebook begins as a static document that can progressively
-        add features like run time computation. #}
-        <form name="notebook" id="notebook" aria-labelledby="nb-controls-label">
-            <fieldset disabled>
-                <legend id="nb-controls-label">Notebook Controls</legend>
-                <button type="submit">Run</button>
-            </fieldset>
-        </form>
         <dialog id="nb-metadata">
             <fieldset name="metadata" form="notebook">
             </fieldset>
@@ -86,28 +78,36 @@ the notebook experiennce from browse to edit/focus mode.
                 <button>Close</button>
             </form>
         </dialog>
-        {# skip to top is needed for long notebooks.
-        it is difficult to access for keyboard users. #}
-        <a href="#notebook" accesskey="0">skip to top</a>
-        </section>
-        {% include "semantic-forms/settings.html.j2" %}
-        <footer>
-            <fieldset>
-                <legend>application controls</legend>
-                <label for="nb-activate">edit mode</label>
-                <input id="nb-activate" type="checkbox">
-                <button onclick="openDialog(this)" aria-controls="nb-metadata">Metadata</button>
-            </fieldset>
-            <ol id="log" aria-relevant="additions"></ol>
-        </footer>
-        <script>
-            function openDialog(x) {
-                document.getElementById(x.getAttribute("aria-controls")).showModal();
-            };
+    </fieldset>
+    {# a notebook begins as a static document that can progressively
+    add features like run time computation. #}
+    <form name="notebook" id="notebook" aria-labelledby="nb-controls-label">
+        <fieldset disabled>
+            <legend id="nb-controls-label">Notebook Controls</legend>
+            <button type="submit">Run</button>
+        </fieldset>
+    </form>
+    {# skip to top is needed for long notebooks.
+    it is difficult to access for keyboard users. #}
+    <a href="#notebook" accesskey="0">skip to top</a>
+    {% include "semantic-forms/settings.html.j2" %}
+    <footer>
+        <fieldset>
+            <legend>application controls</legend>
+            <label for="nb-activate">edit mode</label>
+            <input id="nb-activate" type="checkbox">
+            <button onclick="openDialog(this)" aria-controls="nb-metadata">Metadata</button>
+        </fieldset>
+        <ol id="log" aria-relevant="additions"></ol>
+    </footer>
+    <script>
+        function openDialog(x) {
+            document.getElementById(x.getAttribute("aria-controls")).showModal();
+        };
 
-        </script>
-        <style id="nb-font-size-style"></style>
-        <style id="nb-font-family-style"></style>
+    </script>
+    <style id="nb-font-size-style"></style>
+    <style id="nb-font-family-style"></style>
 </body>
 
 </html>
