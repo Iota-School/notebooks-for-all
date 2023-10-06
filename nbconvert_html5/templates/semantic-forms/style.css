@@ -140,7 +140,7 @@ fieldset {
     padding-right: var(--nb-fieldset-padding);
 }
 
-fieldset#notebook {
+fieldset[form="notebook"] {
     border: none;
     margin-left: 0;
     margin-right: 0;

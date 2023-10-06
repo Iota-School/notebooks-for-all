@@ -52,7 +52,7 @@ the notebook experiennce from browse to edit/focus mode.
     </header>
     {# this is the main section, but we want landmark navigation to go to the first cell in
     the notebook. the extending template will define the location of the main content. #}
-    <fieldset id="notebook">
+    <fieldset form="notebook">
         <legend>notebook</legend>
         <section aria-labelledby="nb-toc">
             {# a notebook will provide visual structural navigation for a document.
@@ -104,7 +104,6 @@ the notebook experiennce from browse to edit/focus mode.
         function openDialog(x) {
             document.getElementById(x.getAttribute("aria-controls")).showModal();
         };
-
     </script>
     <style id="nb-font-size-style"></style>
     <style id="nb-font-family-style"></style>
