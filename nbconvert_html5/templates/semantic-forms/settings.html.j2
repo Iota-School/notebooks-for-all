@@ -31,13 +31,11 @@
             <option value="x-large">x-large</option>
             <option value="xx-large">xx-large</option>
         </select>
-        <style id="nb-font-size-style"></style>
         <fieldset id="nb-font-serif-radio">
             <legend>serif</legend>
             <label><input value="serif" name="font-family" type="radio" checked> serif</label>
             <label><input value="sans-serif" name="font-family" type="radio"> sans-serif</label>
         </fieldset>
-        <style id="nb-font-family-style"></style>
         <span hidden id="nb-def-cell">cell</span>
     </fieldset>
 </dialog>
@@ -50,27 +48,32 @@
         "table": "table#cells",
         "body": "table#cells>tbody",
         "row": "table#cells>tbody>tr",
-        "cell": "table#cells>tbody>tr>th,table#cells>tbody>tr>td",
+        "heading": "table#cells>tbody>tr>th",
+        "cell": "table#cells>tbody>tr>td",
     }, ROLES = {
         "list": {
             "table": "group",
             "body": "list",
             "row": "listitem",
+            "header": "none",
             "cell": "none",
         }, "table": {
             "table": "table",
             "body": null,
             "row": null,
+            "header": null,
             "cell": null,
         }, "region": {
             "table": "group",
             "body": "group",
             "row": "region",
+            "header": "none",
             "cell": "none",
         }, "generic": {
             "table": "group",
             "body": "none",
             "row": "none",
+            "header": "none",
             "cell": "none",
         }
     };

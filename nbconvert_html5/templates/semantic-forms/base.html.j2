@@ -7,6 +7,7 @@ the notebook experiennce from browse to edit/focus mode.
 
 {%- extends 'semantic-forms/displays.j2.html' -%}
 {% from 'celltags.j2' import celltags %}
+{% set title = nb.metadata.get('title', resources['metadata']['name']) | escape_html_keep_quotes %}
 
 {%- block header -%}
 <!DOCTYPE html>
