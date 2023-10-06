@@ -38,6 +38,8 @@ body {
 main,
 main>fieldset[name=cells]>table,
 main>fieldset[name=cells]>table>tbody,
+main>fieldset[name=cells] ul section.cell,
+main>fieldset[name=cells] section.cell,
 [role=toolbar]>ul {
     display: flex;
     flex-direction: column;
@@ -45,12 +47,12 @@ main>fieldset[name=cells]>table>tbody,
 }
 
 /* hide cell components when execution is disabled. */
-fieldset[name="cells"]:disabled table#cells .nb-cell_type,
-fieldset[name="cells"]:disabled table#cells .nb-metadata,
-fieldset[name="cells"]:disabled table#cells .nb-toolbar,
-fieldset[name="cells"]:disabled table#cells .nb-execution_count,
-fieldset[name="cells"]:disabled table#cells .nb-toolbar,
-fieldset[name="cells"]:disabled table#cells textarea[name=source],
+fieldset[name="cells"]:disabled #cells .nb-cell_type,
+fieldset[name="cells"]:disabled #cells .nb-metadata,
+fieldset[name="cells"]:disabled #cells .nb-toolbar,
+fieldset[name="cells"]:disabled #cells .nb-execution_count,
+fieldset[name="cells"]:disabled #cells .nb-toolbar,
+fieldset[name="cells"]:disabled #cells textarea[name=source],
 fieldset[name=cells]:disabled .cell[data-outputs="0"][data-loc="0"],
 fieldset[name=cells]:disabled .cell[data-outputs="0"] fieldset[name=outputs] {
     display: none;
@@ -82,7 +84,7 @@ table#cells>tfoot th:empty {
     visibility: collapse;
 }
 
-table#cells tr.cell {
+#cells .cell {
     display: flex;
     width: var(--nb-calc-cell-width);
     flex-direction: column;
@@ -92,14 +94,14 @@ table#cells tr.cell {
 /* layout for the cells using a grid display. */
 table#cells>thead,
 table#cells>tfoot,
-table#cells .cell.markdown .nb-metadata,
-table#cells .cell.markdown .nb-toolbar,
-table#cells .cell.markdown .nb-cell_type,
-table#cells .cell.markdown .nb-source,
-table#cells .cell.markdown .nb-index,
-table#cells .cell.markdown .nb-execution_count,
-table#cells .cell.markdown .nb-outputs>fieldset>legend,
-table#cells .cell.markdown .nb-outputs>fieldset>legend+label {
+#cells .cell.markdown .nb-metadata,
+#cells .cell.markdown .nb-toolbar,
+#cells .cell.markdown .nb-cell_type,
+#cells .cell.markdown .nb-source,
+#cells .cell.markdown .nb-index,
+#cells .cell.markdown .nb-execution_count,
+#cells .cell.markdown .nb-outputs>fieldset>legend,
+#cells .cell.markdown .nb-outputs>fieldset>legend+label {
     display: none;
 }
 
@@ -136,6 +138,14 @@ fieldset {
     margin-right: var(--nb-fieldset-margin);
     padding-left: var(--nb-fieldset-padding);
     padding-right: var(--nb-fieldset-padding);
+}
+
+fieldset#notebook {
+    border: none;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 fieldset[name=outputs] {
