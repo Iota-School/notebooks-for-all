@@ -9,6 +9,7 @@ the notebook experiennce from browse to edit/focus mode.
 {% from 'celltags.j2' import celltags %}
 {% set title = nb.metadata.get('title', resources['metadata']['name']) | escape_html_keep_quotes %}
 
+
 {%- block header -%}
 <!DOCTYPE html>
 <html lang="en">
@@ -105,6 +106,8 @@ the notebook experiennce from browse to edit/focus mode.
             };
 
         </script>
+        <style id="nb-font-size-style"></style>
+        <style id="nb-font-family-style"></style>
 </body>
 
 </html>
