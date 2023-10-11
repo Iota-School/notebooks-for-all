@@ -348,7 +348,7 @@ class FormExporter(HTMLExporter):
             for x in details.select("ul"):
                 x.name = "ol"
             details.select_one("ol").attrs["aria-labelledby"] = "nb-toc"
-        return soup.prettify()
+        return soup.encode(formatter="html5")
 
 
 def soupify(body: str) -> BeautifulSoup:
