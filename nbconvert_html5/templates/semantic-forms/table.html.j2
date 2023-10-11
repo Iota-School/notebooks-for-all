@@ -29,8 +29,7 @@
                 </th>
             </tr>
             <tr class="all">
-                <th scope="row"><span id="nb-visibility-label">visibility</span>
-                </th>
+                <th scope="row">visibility</th>
                 <td><input form="nb-visibility" aria-labelledby="nb-index-label nb-visibility-label" name="anchor"
                         type="checkbox" checked>
                 </td>
@@ -136,23 +135,10 @@
             {% block body_footer %}
         </tbody>
         <tfoot>
-            <tr>
-                <th class="nb-label" scope="col">label</th>
-                <th id="nb-index-label" scope="col">index</th>
-                <th id="nb-execution_count-label" scope="col">execution_count
-                </th>
-                <th id="nb-cell_type-label" scope="col">cell_type</th>
-                <th id="nb-source-label" scope="col">source</th>
-                <th id="nb-output-label" scope="col">output</th>
-                <th id="nb-metadata-label" scope="col">metadata</th>
-                <th id="nb-toolbar-label" scope="col">toolbar</th>
-                <th id="nb-loc-label" scope="col"><abbr title="lines of code">loc</abbr>
-                </th>
-            </tr>
             <tr class="total">
                 <th scope="row">all cells</th>
                 <th scope="row">count</th>
-                <td id="nb-ordered">{{ordered(nb)}}</td>
+                <td class="nb-ordered">{{ordered(nb)}}</td>
                 <td class="nb-cell_type">{{nb.cells.__len__()}}</td>
                 <td class="nb-source"></td>
                 <td class="nb-outputs">{{count_outputs(nb)}}</td>
@@ -164,7 +150,7 @@
             <tr class="code">
                 <th scope="row">cpde cells</th>
                 <th scope="row">count</th>
-                <td id="nb-ordered">{{ordered(nb)}}</td>
+                <td class="nb-ordered">{{ordered(nb)}}</td>
                 <td class="nb-cell_type">{{nb.cells.__len__()}}</td>
                 <td class="nb-source"></td>
                 <td class="nb-outputs">{{count_outputs(nb)}}</td>
@@ -175,7 +161,7 @@
             <tr class="markdown">
                 <th scope="row">markdown cells</th>
                 <th scope="row">count</th>
-                <td id="nb-ordered"></td>
+                <td class="nb-ordered"></td>
                 <td class="nb-cell_type">{{nb.cells.__len__()}}</td>
                 <td class="nb-source"></td>
                 <td class="nb-outputs"></td>
