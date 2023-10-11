@@ -83,10 +83,10 @@ the notebook experiennce from browse to edit/focus mode.
     {# a notebook begins as a static document that can progressively
     add features like run time computation. #}
     <form name="notebook" id="notebook" aria-labelledby="nb-controls-label">
-        <legend id="nb-controls-label">Notebook Controls</legend>
         <label for="nb-activate">edit mode</label>
         <input id="nb-activate" type="checkbox">
         <fieldset disabled>
+            <legend id="nb-controls-label">Notebook Controls</legend>
             <button type="submit">Run</button>
         </fieldset>
         <button onclick="openDialog(this)" aria-controls="nb-metadata">Metadata</button>
