@@ -348,12 +348,12 @@ class FormExporter(HTMLExporter):
             for x in details.select("ul"):
                 x.name = "ol"
             details.select_one("ol").attrs["aria-labelledby"] = "nb-toc"
-        return soup.encode(formatter="html5")
+        return soup.prettify(formatter="html5")
 
 
 def soupify(body: str) -> BeautifulSoup:
     """convert a string of html to an beautiful soup object"""
-    return BeautifulSoup(body, features="html.parser")
+    return BeautifulSoup(body, features="html5lib")
 
 
 def mdtoc(html):

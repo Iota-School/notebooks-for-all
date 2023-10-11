@@ -30,6 +30,7 @@ dependencies = [
     "IPython",
     "markdown-it-py[plugins,linkify]",
     "python-slugify",
+    "html5lib"
 ]
 dynamic = ["version"]
 
