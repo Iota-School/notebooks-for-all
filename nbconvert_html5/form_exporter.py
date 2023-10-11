@@ -293,7 +293,7 @@ def highlight(code, lang="python", attrs=None):
 
 
 def get_soup(x):
-    return bs4.BeautifulSoup(x, features="html.parser")
+    return bs4.BeautifulSoup(x, features="html5lib")
 
 
 class FormExporter(HTMLExporter):
@@ -360,28 +360,35 @@ def mdtoc(html):
     import io
 
     toc = io.StringIO()
-    for header in html.select("h1,h2,h3,h4,h5,h6"):
+    for header in html.select(":is(h1,h2,h3,h4,h5,h6):not([role])"):
         id = header.attrs.get("id")
+        if not id:
+            from slugify import slugify
+
+            id = slugify(header.string)
+            
+        # there is missing logistics for managely role=heading 
+        # adding code group semantics will motivate this addition
+        
         l = int(header.name[-1])
-        toc.write("  " * (l - 1) + f"* [{header.string}](#{header.attrs.get('id')})\n")
+        toc.write("  " * (l - 1) + f"* [{header.string}](#{id})\n")
     return toc.getvalue()
 
 
 def toc(html):
     return get_markdown(mdtoc(html))
 
-
 def heading_links(html):
-    for header in html.select("h1,h2,h3,h4,h5,h6"):
+    for header in html.select(":is(h1,h2,h3,h4,h5,h6):not([role])"):
         id = header.attrs.get("id")
         if not id:
             from slugify import slugify
 
             id = slugify(header.string)
-        if id:
-            link = soupify(f"""<a href="#{id}">{header.encode_contents().decode()}</a>""")
-            header.clear()
-            header.append(link)
+
+        link = soupify(f"""<a href="#{id}">{header.string}</a>""").body.a
+        header.clear()
+        header.append(link)
 
 
 # * navigate links
