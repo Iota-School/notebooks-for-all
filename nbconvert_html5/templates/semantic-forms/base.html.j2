@@ -54,8 +54,8 @@ the notebook experiennce from browse to edit/focus mode.
     </header>
     {# this is the main section, but we want landmark navigation to go to the first cell in
     the notebook. the extending template will define the location of the main content. #}
-    <fieldset form="notebook">
-        <legend>notebook</legend>
+    <fieldset form="notebook" role="presentation">
+        <legend id="nb-notebook-label" hidden>notebook</legend>
         <section aria-labelledby="nb-toc">
             {# a notebook will provide visual structural navigation for a document.
             this is a feature of screen readers that is not common to sighted users.
@@ -68,7 +68,7 @@ the notebook experiennce from browse to edit/focus mode.
                 {# the table of contents is populated in python. #}
             </details>
         </section>
-        <section role="main">
+        <section role="main" aria-labelledby="nb-notebook-label">
             {% endblock body_header %}
 
             {% block body_footer %}
