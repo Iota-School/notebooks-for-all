@@ -87,6 +87,7 @@
     document.querySelectorAll(`[name="color-scheme"]`).forEach(
         (x) => { x.addEventListener("change", toggleColorScheme) }
     )
+    function activityLog(msg){}
     function toggleRole() {
         if (event.target.checked) {
             for (const [k, selector] of Object.entries(SELECTORS)) {
@@ -99,7 +100,7 @@
                         }
                     }
                 );
-                k == `table` ? log(`navigate cells as a ${event.target.value}`) : null;
+                k == `table` ? activityLog(`navigate cells as a ${event.target.value}`) : null;
             }
         }
     }
