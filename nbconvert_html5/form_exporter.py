@@ -344,7 +344,7 @@ class FormExporter(HTMLExporter):
         heading_links(soup)
         details = soup.select_one("""[aria-labelledby="nb-toc"] details""")
         if details:
-            details.extend(soupify(toc(soup)).children)
+            details.extend(soupify(toc(soup)).body.children)
             for x in details.select("ul"):
                 x.name = "ol"
             details.select_one("ol").attrs["aria-labelledby"] = "nb-toc"
