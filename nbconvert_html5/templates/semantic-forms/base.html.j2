@@ -78,31 +78,38 @@ the notebook experiennce from browse to edit/focus mode.
                 <button>Close</button>
             </form>
         </dialog>
+        <a href="#notebook" accesskey="0">skip to top</a>
     </fieldset>
     {# a notebook begins as a static document that can progressively
     add features like run time computation. #}
     <form name="notebook" id="notebook" aria-labelledby="nb-controls-label">
+        <legend id="nb-controls-label">Notebook Controls</legend>
+        <label for="nb-activate">edit mode</label>
+        <input id="nb-activate" type="checkbox">
         <fieldset disabled>
-            <legend id="nb-controls-label">Notebook Controls</legend>
             <button type="submit">Run</button>
         </fieldset>
+        <button onclick="openDialog(this)" aria-controls="nb-metadata">Metadata</button>
     </form>
     {# skip to top is needed for long notebooks.
     it is difficult to access for keyboard users. #}
-    <a href="#notebook" accesskey="0">skip to top</a>
     {% include "semantic-forms/settings.html.j2" %}
     <footer>
-        <fieldset>
-            <legend>application controls</legend>
-            <label for="nb-activate">edit mode</label>
-            <input id="nb-activate" type="checkbox">
-            <button onclick="openDialog(this)" aria-controls="nb-metadata">Metadata</button>
+        <fieldset name="log" id="log" role="log" aria-live="polite">
+            <legend>activity</legend>
         </fieldset>
-        <ol id="log" aria-relevant="additions"></ol>
     </footer>
     <script>
         function openDialog(x) {
             document.getElementById(x.getAttribute("aria-controls")).showModal();
+        };
+
+        function activityLog(msg, at = true) {
+            const body = document.querySelector("#log");
+            let out = document.createElement("output");
+            out.textContent = msg;
+            at ? null : out.setAttribute("aria-hidden", true);
+            body.append(out);
         };
     </script>
     <style id="nb-font-size-style"></style>
@@ -182,17 +189,17 @@ In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span 
 {% set label %}{% if CODE and outputs %}Out<span aria-hidden="true">[</span>{{execution_count}}<span
     aria-hidden="true">]</span>{% else %}Cell {{i}}{% endif %}{% endset %}
 <span hidden id="cell-{{i}}-outputs-len">{{outputs.__len__()}} outputs</span>
+{% if CODE and outputs %}
 <fieldset name="outputs" id="cell-{{i}}-outputs" aria-describedby="cell-{{i}}-outputs-len">
     <legend hidden>Out {{execution_count}}</legend>
     {% if outputs %}
     <span aria-hidden="true">{{label}}</span>
     {% endif %}
-    {% if CODE and outputs %}
     {{cell_display_priority(i, outputs, cell)}}
-    {% elif cell_type=="markdown" %}
-    {{ markdown(source) | strip_files_prefix }}
-    {% endif %}
 </fieldset>
+{% elif cell_type=="markdown" %}
+{{ markdown(source) | strip_files_prefix }}
+{% endif %}
 {%- endmacro -%}
 
 {#

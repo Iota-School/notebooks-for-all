@@ -94,11 +94,13 @@ table#cells>tfoot th:empty {
 /* layout for the cells using a grid display. */
 table#cells>thead,
 table#cells>tfoot,
+table#cells>tbody>tr.cell>th:first-child,
+#cells .cell .nb-loc,
 #cells .cell.markdown .nb-metadata,
 #cells .cell.markdown .nb-toolbar,
 #cells .cell.markdown .nb-cell_type,
 #cells .cell.markdown .nb-source,
-#cells .cell.markdown .nb-index,
+/* #cells .cell.markdown .nb-index, */
 #cells .cell.markdown .nb-execution_count,
 #cells .cell.markdown .nb-outputs>fieldset>legend,
 #cells .cell.markdown .nb-outputs>fieldset>legend+label {
