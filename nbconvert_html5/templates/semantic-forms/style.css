@@ -35,15 +35,22 @@ body {
     line-height: var(--nb-line-height);
 }
 
-main,
-main>fieldset[name=cells]>table,
-main>fieldset[name=cells]>table>tbody,
-main>fieldset[name=cells] ul section.cell,
-main>fieldset[name=cells] section.cell,
+table#cells,
+table#cells .cell>td {
+    display: block;
+}
+
+table#cells>tbody,
 [role=toolbar]>ul {
     display: flex;
     flex-direction: column;
     align-content: stretch;
+}
+
+table#cells .cell {
+    display: flex;
+    width: var(--nb-calc-cell-width);
+    flex-direction: column;
 }
 
 /* hide cell components when execution is disabled. */
@@ -72,29 +79,17 @@ textarea[name=source] {
 }
 
 
-table#cells,
-table#cells .cell>td,
-table#cells .cell>th {
-    display: block;
-}
-
-
-table#cells>tfoot td:empty,
-table#cells>tfoot th:empty {
+table#cells+table td:empty,
+table#cells+table th:empty {
     visibility: collapse;
 }
 
-#cells .cell {
-    display: flex;
-    width: var(--nb-calc-cell-width);
-    flex-direction: column;
-}
 
 
 /* layout for the cells using a grid display. */
-table#cells>thead,
-table#cells>tfoot,
-table#cells>tbody>tr.cell>th:first-child,
+form#nb-visibility > table,
+table#cells+table,
+table#cells>tr.cell>th:first-child,
 #cells .cell .nb-loc,
 #cells .cell.markdown .nb-metadata,
 #cells .cell.markdown .nb-toolbar,

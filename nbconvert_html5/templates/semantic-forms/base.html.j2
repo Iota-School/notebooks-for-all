@@ -41,10 +41,10 @@ the notebook experiennce from browse to edit/focus mode.
 {% block body_header %}
 
 <body>
-    <section id="skip-link">
-        <a href="#cells" tabindex="0" accesskey="1">skip to main content</a>
-    </section>
     <header aria-label="site header">
+        <section id="skip-link">
+            <a href="#cells" tabindex="0" accesskey="1">skip to main content</a>
+        </section>
         {# the skip link is the first tab stop in the site to skip repetitive information
         and directly access the content. #}
         {# site authors with include their site specific headers in this region. #}
@@ -80,13 +80,11 @@ the notebook experiennce from browse to edit/focus mode.
                 <button>Close</button>
             </form>
         </dialog>
-        <a href="#notebook" accesskey="0">skip to top</a>
     </fieldset>
     {# a notebook begins as a static document that can progressively
     add features like run time computation. #}
     <form name="notebook" id="notebook" aria-labelledby="nb-controls-label">
-        <label for="nb-activate">edit mode</label>
-        <input id="nb-activate" type="checkbox">
+        <label><input type="checkbox">edit mode</label>
         <fieldset disabled>
             <legend id="nb-controls-label">Notebook Controls</legend>
             <button type="submit">Run</button>
@@ -99,6 +97,7 @@ the notebook experiennce from browse to edit/focus mode.
     <footer>
         <section id="log" role="log" aria-live="polite" aria-label="activity">
         </section>
+        <a href="#notebook" accesskey="0">skip to top</a>
     </footer>
     <script>
         function openDialog(x) {
@@ -164,7 +163,6 @@ In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span 
     <legend hidden id="cell-{{i}}-input">
         In {{execution_count}}
     </legend>
-    <label aria-hidden="true" for="cell-{{i}}-source">{{label}}</label>
     <textarea form="cell-{{i}}" id="cell-{{i}}-source" name="source" rows="{{source.splitlines().__len__()}}"
         aria-labelledby="cell-{{i}}-input">{{source}}</textarea>
     {{highlight(source)}}

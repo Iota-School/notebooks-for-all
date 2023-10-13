@@ -7,154 +7,167 @@
         <legend aria-hidden="true" id="nb-cells-label">cells</legend>
 
         {# the most consistent implementation would connect the input visibility to a form #}
-        <form name="visibility" id="nb-visibility" aria-labelledby="nb-visibility-label"></form>
+        <form name="visibility" id="nb-visibility" aria-labelledby="nb-visibility-label">
+                <button>toggle <span id="nb-visibility-label">visibility</span></button>
 
-        {# the table element has the most permissive accessibility semantics of the ARIA specification. #}
+                {# the table element has the most permissive accessibility semantics of the ARIA specification. #}
+                <table aria-labelledby="nb-visibility-label" role="grid" hidden>
+                        <tbody>
+                                {# the table head is used to provide controls #}
+                                {# it hints at a configurable pattern for showing different features. #}
+                                {# there should be controls for each cell type here, and cell types can be added. #}
+                                <tr>
+                                        <td id="nb-cell-label">cell</td>
+                                        <td id="nb-index-label">index</td>
+                                        <td id="nb-execution_count-label">execution_count</td>
+                                        <td id="nb-cell_type-label">cell_type</td>
+                                        <td id="nb-source-label">source</td>
+                                        <td id="nb-output-label">output</td>
+                                        <td id="nb-metadata-label">metadata</td>
+                                        <td id="nb-toolbar-label">toolbar</td>
+                                        <td id="nb-loc-label"><abbr title="lines of code">loc</abbr>
+                                        </td>
+                                </tr>
+                                <tr class="all">
+                                        <td>all</td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-index-label nb-visibility-label"
+                                                        name="anchor" type="checkbox" checked>
+                                        </td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-execution_count-label nb-visibility-label"
+                                                        name="execution_count" type="checkbox" checked></td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-cell_type-label nb-visibility-label"
+                                                        name="cell_type" type="checkbox">
+                                        </td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-source-label nb-visibility-label"
+                                                        name="source" type="checkbox" checked>
+                                        </td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-output-label nb-visibility-label"
+                                                        name="output" type="checkbox" checked>
+                                        </td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-metadata-label nb-visibility-label"
+                                                        name="metadata" type="checkbox"></td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-toolbar-label nb-visibility-label"
+                                                        name="toolbar" type="checkbox"></td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-loc-label nb-visibility-label" name="loc"
+                                                        type="checkbox">
+                                        </td>
+                                </tr>
+                                <tr class="code">
+                                        <td id="nb-code-label">code</td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-code-label nb-index-label nb-visibility-label"
+                                                        name="anchor" type="checkbox" checked>
+                                        </td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-code-label nb-execution_count-label nb-visibility-label"
+                                                        name="execution_count" type="checkbox" checked></td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-code-label nb-cell_type-label nb-visibility-label"
+                                                        name="cell_type" type="checkbox">
+                                        </td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-code-label nb-source-label nb-visibility-label"
+                                                        name="source" type="checkbox" checked>
+                                        </td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-code-label nb-output-label nb-visibility-label"
+                                                        name="output" type="checkbox" checked>
+                                        </td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-code-label nb-metadata-label nb-visibility-label"
+                                                        name="metadata" type="checkbox"></td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-code-label nb-toolbar-label nb-visibility-label"
+                                                        name="toolbar" type="checkbox"></td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-code-label nb-loc-label nb-visibility-label"
+                                                        name="loc" type="checkbox">
+                                        </td>
+                                </tr>
+                                <tr class="markdown">
+                                        <td id="nb-md-label">markdown</td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-md-label nb-index-label nb-visibility-label"
+                                                        name="anchor" type="checkbox" checked></td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-md-label nb-execution_count-label nb-visibility-label"
+                                                        name="execution_count" type="checkbox" checked></td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-md-label nb-cell_type-label nb-visibility-label"
+                                                        name="cell_type" type="checkbox"></td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-md-label nb-source-label nb-visibility-label"
+                                                        name="source" type="checkbox" checked></td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-md-label nb-output-label nb-visibility-label"
+                                                        name="output" type="checkbox" checked></td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-md-label nb-metadata-label nb-visibility-label"
+                                                        name="metadata" type="checkbox"></td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-md-label nb-toolbar-label nb-visibility-label"
+                                                        name="toolbar" type="checkbox"></td>
+                                        <td><input form="nb-visibility"
+                                                        aria-labelledby="nb-md-label nb-loc-label nb-visibility-label"
+                                                        name="toolbar" type="checkbox"></td>
+                                </tr>
+                                <tr class="nb-column-descriptions">
+                                        <td id="nb-description-label">description</td>
+
+                                        <td>
+                                                <p id="nb-index-desc"></p>
+                                        </td>
+                                        <td>
+                                                <p id="nb-execution_count-desc"></p>
+                                        </td>
+                                        <td>
+                                                <p id="nb-cell_type-desc"></p>
+                                        </td>
+                                        <td>
+                                                <p id="nb-source-desc"></p>
+                                        </td>
+                                        <td>
+                                                <p id="nb-output-desc"></p>
+                                        </td>
+                                        <td>
+                                                <p id="nb-metadata-desc"></p>
+                                        </td>
+                                        <td>
+                                                <p id="nb-toolbar-desc"></p>
+                                        </td>
+                                        <td>
+                                                <p id="nb-loc-desc">significant lines of code in the cell source</p>
+                                        </td>
+                                </tr>
+                        </tbody>
+                </table>
+        </form>
         <table id="cells" role="presentation">
-                {# the table caption is removed because testing on VoiceOver iOS encountered
-                https://developer.apple.com/forums/thread/679841
+                <tbody role="list">
+                        {# the table caption is removed because testing on VoiceOver iOS encountered
+                        https://developer.apple.com/forums/thread/679841
 
-                the best course of action is to remove the caption and provide label support with aria. #}
-                {# <caption hidden>contents</caption> #}
-                <thead>
-                        {# the table head is used to provide controls #}
-                        {# it hints at a configurable pattern for showing different features. #}
-                        {# there should be controls for each cell type here, and cell types can be added. #}
-                        <tr>
-                                <th class="nb-label" scope="col">label</th>
-                                <th id="nb-index-label" scope="col">index</th>
-                                <th id="nb-execution_count-label" scope="col">execution_count</th>
-                                <th id="nb-cell_type-label" scope="col">cell_type</th>
-                                <th id="nb-source-label" scope="col">source</th>
-                                <th id="nb-output-label" scope="col">output</th>
-                                <th id="nb-metadata-label" scope="col">metadata</th>
-                                <th id="nb-toolbar-label" scope="col">toolbar</th>
-                                <th id="nb-loc-label" scope="col"><abbr title="lines of code">loc</abbr>
-                                </th>
-                        </tr>
-                        <tr class="all">
-                                <th scope="row">visibility</th>
-                                <td><input form="nb-visibility" aria-labelledby="nb-index-label nb-visibility-label"
-                                                name="anchor" type="checkbox" checked>
-                                </td>
-                                <td><input form="nb-visibility"
-                                                aria-labelledby="nb-execution_count-label nb-visibility-label"
-                                                name="execution_count" type="checkbox" checked></td>
-                                <td><input form="nb-visibility" aria-labelledby="nb-cell_type-label nb-visibility-label"
-                                                name="cell_type" type="checkbox">
-                                </td>
-                                <td><input form="nb-visibility" aria-labelledby="nb-source-label nb-visibility-label"
-                                                name="source" type="checkbox" checked>
-                                </td>
-                                <td><input form="nb-visibility" aria-labelledby="nb-output-label nb-visibility-label"
-                                                name="output" type="checkbox" checked>
-                                </td>
-                                <td><input form="nb-visibility" aria-labelledby="nb-metadata-label nb-visibility-label"
-                                                name="metadata" type="checkbox"></td>
-                                <td><input form="nb-visibility" aria-labelledby="nb-toolbar-label nb-visibility-label"
-                                                name="toolbar" type="checkbox"></td>
-                                <td><input form="nb-visibility" aria-labelledby="nb-loc-label nb-visibility-label"
-                                                name="loc" type="checkbox">
-                                </td>
-                        </tr>
-                        <tr class="code">
-                                <th scope="row"><span id="nb-code-label">code</span> <span
-                                                id="nb-visibility-label">visibility</span>
-                                </th>
-                                <td><input form="nb-visibility"
-                                                aria-labelledby="nb-code-label nb-index-label nb-visibility-label"
-                                                name="anchor" type="checkbox" checked>
-                                </td>
-                                <td><input form="nb-visibility"
-                                                aria-labelledby="nb-code-label nb-execution_count-label nb-visibility-label"
-                                                name="execution_count" type="checkbox" checked></td>
-                                <td><input form="nb-visibility"
-                                                aria-labelledby="nb-code-label nb-cell_type-label nb-visibility-label"
-                                                name="cell_type" type="checkbox">
-                                </td>
-                                <td><input form="nb-visibility"
-                                                aria-labelledby="nb-code-label nb-source-label nb-visibility-label"
-                                                name="source" type="checkbox" checked>
-                                </td>
-                                <td><input form="nb-visibility"
-                                                aria-labelledby="nb-code-label nb-output-label nb-visibility-label"
-                                                name="output" type="checkbox" checked>
-                                </td>
-                                <td><input form="nb-visibility"
-                                                aria-labelledby="nb-code-label nb-metadata-label nb-visibility-label"
-                                                name="metadata" type="checkbox"></td>
-                                <td><input form="nb-visibility"
-                                                aria-labelledby="nb-code-label nb-toolbar-label nb-visibility-label"
-                                                name="toolbar" type="checkbox"></td>
-                                <td><input form="nb-visibility"
-                                                aria-labelledby="nb-code-label nb-loc-label nb-visibility-label"
-                                                name="loc" type="checkbox">
-                                </td>
-                        </tr>
-                        <tr class="markdown">
-                                <th scope="row"><span id="nb-md-label">markdown</span> <span>visibility</span>
-                                </th>
-                                <td><input form="nb-visibility"
-                                                aria-labelledby="nb-md-label nb-index-label nb-visibility-label"
-                                                name="anchor" type="checkbox" checked></td>
-                                <td><input form="nb-visibility"
-                                                aria-labelledby="nb-md-label nb-execution_count-label nb-visibility-label"
-                                                name="execution_count" type="checkbox" checked></td>
-                                <td><input form="nb-visibility"
-                                                aria-labelledby="nb-md-label nb-cell_type-label nb-visibility-label"
-                                                name="cell_type" type="checkbox"></td>
-                                <td><input form="nb-visibility"
-                                                aria-labelledby="nb-md-label nb-source-label nb-visibility-label"
-                                                name="source" type="checkbox" checked></td>
-                                <td><input form="nb-visibility"
-                                                aria-labelledby="nb-md-label nb-output-label nb-visibility-label"
-                                                name="output" type="checkbox" checked></td>
-                                <td><input form="nb-visibility"
-                                                aria-labelledby="nb-md-label nb-metadata-label nb-visibility-label"
-                                                name="metadata" type="checkbox"></td>
-                                <td><input form="nb-visibility"
-                                                aria-labelledby="nb-md-label nb-toolbar-label nb-visibility-label"
-                                                name="toolbar" type="checkbox"></td>
-                                <td><input form="nb-visibility"
-                                                aria-labelledby="nb-md-label nb-loc-label nb-visibility-label"
-                                                name="toolbar" type="checkbox"></td>
-                        </tr>
-                        <tr>
-                                <th scope="row">description</th>
-                                <td>
-                                        <p id="nb-index-desc"></p>
-                                </td>
-                                <td>
-                                        <p id="nb-execution_count-desc"></p>
-                                </td>
-                                <td>
-                                        <p id="nb-cell_type-desc"></p>
-                                </td>
-                                <td>
-                                        <p id="nb-source-desc"></p>
-                                </td>
-                                <td>
-                                        <p id="nb-output-desc"></p>
-                                </td>
-                                <td>
-                                        <p id="nb-metadata-desc"></p>
-                                </td>
-                                <td>
-                                        <p id="nb-toolbar-desc"></p>
-                                </td>
-                                <td>
-                                        <p id="nb-loc-desc">significant lines of code in the cell source</p>
-                                </td>
-                        </tr>
-                </thead>
-                <tbody role="list" aria-labelledby="nb-cells-label">
+                        the best course of action is to remove the caption and provide label support with aria.
+                        we wont use captions on any tables for this reason. #}
+                        {# <caption hidden>contents</caption> #}
                         {% endblock body_header %}
 
                         {% block any_cell %}{{cell_row(cell, loop)}}{% endblock any_cell %}
 
                         {% block body_footer %}
                 </tbody>
-                <tfoot>
+        </table>
+        <table class="nb-cells-footer" hidden>
+                <tbody>
+                        {# needs a header row #}
                         <tr class="total">
                                 <th scope="row">all cells</th>
                                 <th scope="row">count</th>
@@ -189,7 +202,7 @@
                                 <td class="nb-metadata">{# list keys #}</td>
                                 <td class="nb-loc">{{count_loc(nb)}}</td>
                         </tr>
-                </tfoot>
+                </tbody>
         </table>
 </fieldset>
 {{super()}}
@@ -202,8 +215,7 @@
         aria-labelledby="nb-def-cell {{loop.index}} cell-{{loop.index}}-cell_type"
         data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %}
         data-outputs="{{cell.outputs.__len__()}}" {% endif %}>
-        <th class="nb-label" scope="row">{{cell.cell_type}} cell</th>
-        <th class="nb-index" scope="row">{{cell_anchor(loop.index)}}</th>
+        <td class="nb-index">{{cell_anchor(loop.index)}}</td>
         <td class="nb-execution_count">{{cell_execution_count(loop.index, cell.execution_count)}}</td>
         <td class="nb-cell_type">{{cell_cell_type(loop.index, cell.cell_type)}}</td>
         <td class="nb-source">{{cell_source(loop.index, cell.source, cell.execution_count)}}</td>

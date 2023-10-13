@@ -6,18 +6,18 @@
     <fieldset id="nb-color-scheme-radio">
         <legend>color scheme</legend>
         <span aria-hidden="true">color scheme</span>
-        <label><input value="light" name="color-scheme" type="radio" checked>light mode</label>
-        <label><input value="dark" name="color-scheme" type="radio">dark mode</label>
+        <label>light mode<input value="light" name="color-scheme" type="radio" checked></label>
+        <label>>dark mode<input value="dark" name="color-scheme" type="radio"></label>
     </fieldset>
     <fieldset id="nb-table-role-radio">
         <legend>cell navigation</legend>
         <span aria-hidden="true">cell navigation</span>
-        <label><input value="list" name="table-role" type="radio" checked>list</label>
-        <label><input value="table" name="table-role" type="radio">table</label>
-        <label><input value="region" name="table-role" type="radio">landmark</label>
-        <label><input value="grid" name="table-role" type="radio" disabled>grid</label>
-        <label><input value="treegrid" name="table-role" type="radio" disabled>treegrid</label>
-        <label><input value="tree" name="table-role" type="radio" disabled>tree</label>
+        <label>list<input value="list" name="table-role" type="radio" checked></label>
+        <label>table<input value="table" name="table-role" type="radio"></label>
+        <label>landmark<input value="region" name="table-role" type="radio"></label>
+        <label>grid<input value="grid" name="table-role" type="radio" disabled></label>
+        <label>treegrid<input value="treegrid" name="table-role" type="radio" disabled></label>
+        <label>tree<input value="tree" name="table-role" type="radio" disabled></label>
     </fieldset>
     <fieldset id="nb-table-font-group">
         <legend>font settings</legend>
@@ -33,8 +33,8 @@
         </select>
         <fieldset id="nb-font-serif-radio">
             <legend>serif</legend>
-            <label><input value="serif" name="font-family" type="radio" checked> serif</label>
-            <label><input value="sans-serif" name="font-family" type="radio"> sans-serif</label>
+            <label>serif<input value="serif" name="font-family" type="radio" checked>s</label>
+            <label>sans-serif<input value="sans-serif" name="font-family" type="radio"></label>
         </fieldset>
         <span hidden id="nb-def-cell">cell</span>
     </fieldset>
@@ -87,7 +87,7 @@
     document.querySelectorAll(`[name="color-scheme"]`).forEach(
         (x) => { x.addEventListener("change", toggleColorScheme) }
     )
-    function activityLog(msg){}
+    function activityLog(msg) { }
     function toggleRole() {
         if (event.target.checked) {
             for (const [k, selector] of Object.entries(SELECTORS)) {
