@@ -79,7 +79,7 @@ the notebook experiennce from browse to edit/focus mode.
             <form method="dialog">
                 <button>Close</button>
             </form>
-        </fieldset>
+    </fieldset>
     </dialog>
     {# a notebook begins as a static document that can progressively
     add features like run time computation. #}
@@ -152,6 +152,7 @@ In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span 
     <legend hidden id="cell-{{i}}-input">
         In {{execution_count}}
     </legend>
+    <label aria-hidden="true" for="cell-{{i}}-source">{{label}}</label>
     <textarea form="cell-{{i}}" id="cell-{{i}}-source" name="source" rows="{{source.splitlines().__len__()}}"
         aria-labelledby="cell-{{i}}-input">{{source}}</textarea>
     {{highlight(source)}}
