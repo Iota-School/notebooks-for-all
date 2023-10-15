@@ -7,6 +7,7 @@ from pathlib import Path
 from functools import partial
 import warnings
 from sys import executable
+
 HERE = Path(__file__).parent
 
 DOCS = Path("docs")
@@ -18,24 +19,53 @@ CONFIGS = EXPORTS / "configs"
 HTML = EXPORTS / "html"
 AUDITS = EXPORTS / "audits"
 REPORTS = EXPORTS / "reports"
+TEMPLATES = Path("nbconvert_html5/templates/semantic-forms")
+
 
 def do(cmd, *args):
     from doit.cmd_base import CmdAction
     from shlex import split
+
     return CmdAction(split(cmd) + list(args), shell=False)
 
-def cp(x , y):
+
+def cp(x, y):
     x, y = map(Path, (x, y))
     if x.is_dir():
-        print(F"copy {x} to {y}")
+        print(f"copy {x} to {y}")
         copytree(x, y, dirs_exist_ok=True)
     else:
-        print(F"copy {x} to {y}")
         Path.mkdir(y.parent, parents=True, exist_ok=True)
         copyfile(x, y)
 
 
+def task_styles():
+    def get_pygments(target, theme):
+        import pygments.formatters
 
+        target.write_text(
+            """body {
+                background-color: var(--nb-background-color-%s);
+                color-scheme: %s;
+            }\n""" % (theme, theme)
+            + pygments.formatters.get_formatter_by_name(
+                "html", style=f"a11y-high-contrast-{theme}"
+            ).get_style_defs()
+        )
+
+    for theme in ("light", "dark"):
+        name = f"{theme}-code"
+        target = (TEMPLATES / name).with_suffix(".css")
+        yield dict(
+            name=f"{theme}-code",
+            targets=[target],
+            actions=[(get_pygments, (target, theme))],
+            uptodate=[target.exists],
+            clean=True,
+        )
+
+
+@create_after("styles")
 @task_params(
     [
         dict(name="notebooks", default=[TESTS / "notebooks/lorenz.ipynb"], type=list),
@@ -49,19 +79,29 @@ def task_copy(notebooks, configurations, target):
     CONFIGS = target / "configs"
     notebooks = list(map(Path, notebooks))
     configurations = list(map(Path, configurations))
+    styles = list(TEMPLATES.glob("*.css"))
     targets = [NB / x.name for x in notebooks]
+
     def readme(target, ext, title):
-        body = F"""# {title}\n\n"""
-        for t in target.glob(F"*.{ext}"):
-            body += F"* [{t.name}]({t.relative_to(target)})\n"
+        body = f"""# {title}\n\n"""
+        for t in target.glob(f"*.{ext}"):
+            body += f"* [{t.name}]({t.relative_to(target)})\n"
         (target / "README.md").write_text(body)
 
     yield dict(
         name="notebooks",
         clean=True,
-        actions=[(cp, (x, NB /x.name )) for x in notebooks],
+        actions=[(cp, (x, NB / x.name)) for x in notebooks],
         targets=targets,
-        uptodate=list(map(Path.exists, targets))
+        uptodate=list(map(Path.exists, targets)),
+    )
+    yield dict(
+        name="styles",
+        clean=True,
+        task_dep=["styles"],
+        actions=[(cp, (x, HTML / x.name)) for x in styles],
+        targets=[HTML / x.name for x in styles],
+        uptodate=list(map(Path.exists, targets)),
     )
     targets = [CONFIGS / x.name for x in configurations]
     yield dict(
@@ -69,21 +109,21 @@ def task_copy(notebooks, configurations, target):
         clean=True,
         actions=[(cp, (x, CONFIGS / x.name)) for x in configurations],
         targets=[CONFIGS / x.name for x in configurations],
-        uptodate=list(map(Path.exists, targets))
+        uptodate=list(map(Path.exists, targets)),
     )
     yield dict(
         name="readme-nb",
         actions=[(readme, (NB, "ipynb", "reference notebooks"))],
         file_dep=targets,
         clean=True,
-        targets=[NB / "README.md"]
+        targets=[NB / "README.md"],
     )
     yield dict(
         name="readme-config",
         actions=[(readme, (CONFIGS, "py", "configuration files"))],
         file_dep=targets,
         clean=True,
-        targets=[CONFIGS / "README.md"]
+        targets=[CONFIGS / "README.md"],
     )
     # this is missing the file_deps and targets
     # they can be computed
@@ -95,10 +135,12 @@ def task_copy(notebooks, configurations, target):
         yield dict(
             name=d,
             actions=[(cp, (DIR, EXPORTS / DIR))],
-            clean=[F"""rm -rf {EXPORTS / DIR}"""],
+            clean=[f"""rm -rf {EXPORTS / DIR}"""],
             file_dep=files,
-            targets=targets
+            targets=targets,
         )
+
+
 # @task_params(
 #     [
 #         dict(name="notebooks", default=[TESTS / "notebooks/lorenz.ipynb"], type=list),
@@ -191,6 +233,7 @@ def task_copy(notebooks, configurations, target):
 
 #     yield dict(name=f"index", file_dep=audits, targets=[INDEX], actions=[get_index], clean=True)
 
+
 @create_after("copy")
 @task_params(
     [
@@ -202,11 +245,13 @@ def task_copy(notebooks, configurations, target):
 def task_convert(notebooks_dir, configs_dir, target):
     """convert notebooks and configurations to their html outputs"""
     target = Path(target)
+
     def readme(target):
         body = """# html versions\n\n"""
         for t in target.glob("*.html"):
-            body += F"* [{t.name}]({t.relative_to(target)})\n"
+            body += f"* [{t.name}]({t.relative_to(target)})\n"
         (target / "README.md").write_text(body)
+
     targets = []
     for c in Path(configs_dir).glob("*.py"):
         for nb in Path(notebooks_dir).glob("*.ipynb"):
@@ -216,83 +261,80 @@ def task_convert(notebooks_dir, configs_dir, target):
             yield dict(
                 name=str(name),
                 actions=[
-                    do(f"{executable} -m jupyter nbconvert --config {c} --output {name} --output-dir {target} {nb}")
+                    do(
+                        f"{executable} -m jupyter nbconvert --config {c} --output {name} --output-dir {target} {nb}"
+                    )
                 ],
                 file_dep=[nb, c],
                 targets=[t],
                 clean=True,
-                basename="convert"
+                basename="convert",
             )
     yield dict(
         name="readme",
         actions=[(readme, (target,))],
         file_dep=targets,
-        targets=[target / "README.md"]
+        targets=[target / "README.md"],
     )
-    
+
+
 @create_after(executed="convert", creates=["audit"])
 @task_params(
     [
         dict(name="html_dir", default=HTML, type=str),
-        dict(name="target", default=AUDITS, type=str, help="the subdirectory to place audits in")
+        dict(name="target", default=AUDITS, type=str, help="the subdirectory to place audits in"),
     ]
 )
 def task_audit(html_dir, target):
     """audit the files in the html directory"""
+
     def readme(target):
         body = """# audits\n\n"""
         for t in target.glob("*.json"):
-            body += F"* [{t.name}]({t.relative_to(target)})\n"
+            body += f"* [{t.name}]({t.relative_to(target)})\n"
         (target / "README.md").write_text(body)
 
     from nbconvert_html5.audit import audit_one
+
     targets = []
     for x in Path(html_dir).rglob("*.html"):
         targets.append(Path(target) / x.with_suffix(".json").name)
         yield dict(
             name=x.name,
-            actions=[
-                (audit_one, (x, targets[-1]))
-            ],
+            actions=[(audit_one, (x, targets[-1]))],
             file_dep=[x],
             targets=[targets[-1]],
             clean=True,
-            basename="audit"
+            basename="audit",
         )
     yield dict(
         name="readme",
         actions=[(readme, (target,))],
         file_dep=targets,
-        targets=[target / "README.md"]
+        targets=[target / "README.md"],
     )
+
 
 @create_after(executed="audit")
 def task_report():
     print((HERE / "tests/templates/report.py").exists())
     TPL = HERE / "tests/templates/report.py"
-    report = module_from_spec(
-        spec_from_file_location("test.templates.report", TPL)
-    )
+    report = module_from_spec(spec_from_file_location("test.templates.report", TPL))
     report.__loader__.exec_module(report)
-    
+
     yield dict(
         name="readme",
         actions=[report.write_experiments],
         clean=True,
-        targets=[REPORTS / "experiment.md"]
+        targets=[REPORTS / "experiment.md"],
     )
     yield dict(
-        name="nb",
-        actions=[report.write_notebooks],
-        clean=True,
-        targets=[REPORTS / "notebooks.md"]
+        name="nb", actions=[report.write_notebooks], clean=True, targets=[REPORTS / "notebooks.md"]
     )
     yield dict(
-        name="configs",
-        actions=[report.write_configs],
-        clean=True,
-        targets=[REPORTS / "configs.md"]
+        name="configs", actions=[report.write_configs], clean=True, targets=[REPORTS / "configs.md"]
     )
+
 
 # @create_after(executed="audit", creates=["docs"])
 # @task_params(

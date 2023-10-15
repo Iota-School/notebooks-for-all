@@ -1,174 +1,197 @@
-{%- extends 'display_priority.j2' -%}
+{# # a base template for accessible notebook representations.
+
+the base template defines notebook independent components.
+an accessible base template provides a substrate to progressively enchance
+the notebook experiennce from browse to edit/focus mode.
+#}
+
+{%- extends 'semantic-forms/displays.j2.html' -%}
 {% from 'celltags.j2' import celltags %}
+{% set title = nb.metadata.get('title', resources['metadata']['name']) | escape_html_keep_quotes %}
 
-{% block execute_result -%}
-{%- set extra_class="output_execute_result" -%}
-{% block data_priority scoped %}
-{{ super() }}
-{% endblock data_priority %}
-{%- set extra_class="" -%}
-{%- endblock execute_result %}
 
-{% block stream_stdout -%}
-<pre class="stdout">
-<code>{{- output.text -}}</code>
-</pre>
-{%- endblock stream_stdout %}
+{%- block header -%}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block stream_stderr -%}
-<pre class="stdout">
-<code>{{- output.text -}}</code>
-</pre>
-{%- endblock stream_stderr %}
+<head>
+    {%- block head -%}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {# use technique [h25] to provide a title to satisfy [2.4.2A]. #}
+    <title>{{title}}</title>
+    {# color scheme signals that notebooks can viewed in light and dark mode.
+    the html representation is used instead of the css representation so it is immediately avaiable.
+    https://css-tricks.com/almanac/properties/c/color-scheme/ #}
+    <meta name="color-scheme" content="light">
 
-{% block data_svg scoped -%}
-{# <figure class="svg"> #}
-{%- if output.svg_filename %}
-<img src="{{ output.svg_filename | posix_path | escape_html }}">
-{%- else %}
-{{ output.data['image/svg+xml'].encode("utf-8") | clean_html }}
-{%- endif %}
-{# </figure> #}
-{%- endblock data_svg %}
+    {# non-html resources, css and javascript, are served as external resources to optimize load times. #}
+    <link rel="stylesheet" href="style.css">
+    <link id="nb-light-theme" rel="stylesheet" href="light-code.css">
+    <link id="nb-dark-theme" disabled rel="stylesheet" href="dark-code.css">
+    <style id="nb-font-size-style"></style>
+    <style id="nb-font-family-style"></style>
+    {%- endblock head -%}
+    {%- block html_head_js_mathjax -%}{%- endblock html_head_js_mathjax -%}
+</head>
+{%- endblock header -%}
 
-{% block data_html scoped -%}
-{%- if resources.should_sanitize_html %}
-{%- set html_value=output.data['text/html'] | clean_html -%}
-{%- else %}
-{%- set html_value=output.data['text/html'] -%}
-{%- endif %}
-{%- if output.get('metadata', {}).get('text/html', {}).get('isolated') -%}
-<iframe
-    class="isolated-iframe"
-    style="height:520px; width:100%; margin:0; padding: 0"
-    frameborder="0"
-    scrolling="auto"
-    src="data:text/html;base64,{{ html_value | text_base64 }}">
-</iframe>
-{%- else -%}
-{{ html_value }}
-{%- endif -%}
-{%- endblock data_html %}
+{% block any_cell %}{{cell_section(cell, loop)}}{% endblock any_cell %}
 
-{% block data_markdown scoped -%}
-{%- if resources.should_sanitize_html %}
-{%- set html_value=output.data['text/markdown'] | markdown2html | clean_html -%}
-{%- else %}
-{%- set html_value=output.data['text/markdown'] | markdown2html -%}
-{%- endif %}
-{{ html_value }}
-{%- endblock data_markdown %}
+{% block body_header %}
 
-{% block data_png scoped %}
-{# <figure class="png"> #}
-{%- if 'image/png' in output.metadata.get('filenames', {}) %}
-<img src="{{ output.metadata.filenames['image/png'] | posix_path | escape_html }}"
-{%- else %}
-<img src="data:image/png;base64,{{ output.data['image/png'] | escape_html }}"
-{%- endif %}
-{%- set width=output | get_metadata('width', 'image/png') -%}
-{%- if width is not none %}
-width={{ width | escape_html }}
-{%- endif %}
-{%- set height=output | get_metadata('height', 'image/png') -%}
-{%- if height is not none %}
-height={{ height | escape_html }}
-{%- endif %}
-{%- if output | get_metadata('unconfined', 'image/png') %}
-class="unconfined"
-{%- endif %}
-{%- set alttext=(output | get_metadata('alt', 'image/png')) or (cell | get_metadata('alt')) -%}
-{%- if alttext is not none %}
-alt="{{ alttext | escape_html }}"
-{%- endif %}
->
-{# </figure> #}
-{%- endblock data_png %}
+<body>
+    <header aria-label="site header">
+        <section id="skip-link">
+            <a href="#cells" tabindex="0" accesskey="1">skip to main content</a>
+        </section>
+        {# the skip link is the first tab stop in the site to skip repetitive information
+        and directly access the content. #}
+        {# site authors with include their site specific headers in this region. #}
+        {# a subsequent tab stop will indicate to keyboard and AT users that there are
+        accessibility settings that can be toggled. #}
+        <button onclick="openDialog()" aria-controls="nb-settings" accesskey=",">Settings</button>
+    </header>
+    {# this is the main section, but we want landmark navigation to go to the first cell in
+    the notebook. the extending template will define the location of the main content. #}
+    <fieldset form="notebook" role="presentation">
+        <legend id="nb-notebook-label" hidden>notebook</legend>
+        <section aria-labelledby="nb-toc">
+            {# a notebook will provide visual structural navigation for a document.
+            this is a feature of screen readers that is not common to sighted users.
+            the implementation here is very naive. users will need to know to collapse the heading
+            to skip the link tree. the best implementation is a tree that will consume a single tab stop
+            and allow arrow key navigation. #}
+            <details open>
+                {# if the label is on the summary then the bullet is announced as the label and it should not be #}
+                <summary><span id="nb-toc">table of contents</span></summary>
+                {# the table of contents is populated in python. #}
+            </details>
+        </section>
+        <section role="main" aria-labelledby="nb-notebook-label">
+            {% endblock body_header %}
 
-{% block data_jpg scoped %}
-{# <figure class="jpeg jpg"> #}
-{%- if 'image/jpeg' in output.metadata.get('filenames', {}) %}
-<img src="{{ output.metadata.filenames['image/jpeg'] | posix_path | escape_html }}"
-{%- else %}
-<img src="data:image/jpeg;base64,{{ output.data['image/jpeg'] | escape_html }}"
-{%- endif %}
-{%- set width=output | get_metadata('width', 'image/jpeg') -%}
-{%- if width is not none %}
-width={{ width | escape_html }}
-{%- endif %}
-{%- set height=output | get_metadata('height', 'image/jpeg') -%}
-{%- if height is not none %}
-height={{ height | escape_html }}
-{%- endif %}
-{%- if output | get_metadata('unconfined', 'image/jpeg') %}
-class="unconfined"
-{%- endif %}
-{%- set alttext=(output | get_metadata('alt', 'image/jpeg')) or (cell | get_metadata('alt')) -%}
-{%- if alttext is not none %}
-alt="{{ alttext | escape_html }}"
-{%- endif %}
->
-{# </figure> #}
-{%- endblock data_jpg %}
+            {% block body_footer %}
+        </section>
+        <dialog id="nb-metadata">
+            <fieldset name="metadata" form="notebook">
+            </fieldset>
+            <form method="dialog">
+                <button>Close</button>
+            </form>
+    </fieldset>
+    </dialog>
+    {# a notebook begins as a static document that can progressively
+    add features like run time computation. #}
+    <form name="notebook" id="notebook" aria-labelledby="nb-controls-label">
+        <label><input type="checkbox">edit mode</label>
+        <fieldset disabled>
+            <legend id="nb-controls-label">Notebook Controls</legend>
+            <button type="submit">Run</button>
+        </fieldset>
+        <button onclick="openDialog()" aria-controls="nb-metadata">Metadata</button>
+    </form>
+    {# skip to top is needed for long notebooks.
+    it is difficult to access for keyboard users. #}
+    {% include "semantic-forms/settings.html.j2" %}
+    <footer>
+        <fieldset form="notebook" name="log">
+            <ul class="activityLog" aria-live="polite">
+            </ul>
+        </fieldset>
+        <a href="#notebook" accesskey="0">skip to top</a>
+    </footer>
+</body>
 
-{% block data_latex scoped %}
-{# <figure class="latex"> #}
-{{ output.data['text/latex'] | e }}
-{# </figure> #}
-{%- endblock data_latex %}
+</html>
+{% endblock body_footer %}
 
-{% block error -%}
-<pre class="exception">
-{{- super() -}}
-</pre>
-{%- endblock error %}
 
-{%- block traceback_line %}
-{{ line | ansi2html }}
-{%- endblock traceback_line %}
+{% macro cell_section(cell, loop) %}
+<section class="cell {{cell.cell_type}}" aria-labelledby="cell-{{loop.index}}-cell_type {{loop.index}}"
+    data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %}
+    data-outputs="{{cell.outputs.__len__()}}" {% endif %}>
+    {{cell_anchor(loop.index)}}
+    {{cell_form(i)}}
+    {{cell_execution_count(loop.index, cell.execution_count)}}
+    {{cell_cell_type(loop.index, cell.cell_type)}}
+    {{cell_source(loop.index, cell.source, cell.execution_count)}}
+    {{cell_output(loop.index, cell, cell.source, cell.outputs, cell.cell_type, cell.execution_count)}}
+    {{cell_metadata(loop.index, cell.metadata)}}
+</section>
+{% endmacro%}
 
-{%- block data_text scoped %}
-<pre class="plain">
-{{- output.data['text/plain'] | ansi2html -}}
-</pre>
-{%- endblock -%}
+{% macro cell_anchor(i) %}
+<a href="#{{i}}" id="{{i}}" aria-labelledby="nb-def-cell {{i}}">{{i}}</a>
+{% endmacro %}
 
-{%- block data_javascript scoped %}
-{% set div_id = uuid4() %}
-<div id="{{ div_id }}" class="output_subarea output_javascript {{ extra_class }}">
-{%- if not resources.should_sanitize_html %}
-<script type="text/javascript">
-var element = $('#{{ div_id }}');
-{{ output.data['application/javascript'] }}
-</script>
-{%- endif %}
-</div>
-{%- endblock -%}
+{% macro cell_cell_type(i, cell_type) %}
+<select form="cell-{{i}}" name="cell_type" disabled>
+    <option value="markdown" {%- if cell_type=="markdown" %} selected{% endif%}>markdown</option>
+    <option value="code" {%- if cell_type=="code" %} selected{% endif%}>code</option>
+    <option value="raw" {%- if cell_type=="raw" %} selected{% endif%}>raw</option>
+</select>
+<span id="cell-{{i}}-cell_type">{{cell_type}}</span>
+{% endmacro %}
 
-{%- block data_widget_view scoped %}
-{%- if not resources.should_sanitize_html %}
-{% set div_id = uuid4() %}
-{% set datatype_list = output.data | filter_data_type %}
-{% set datatype = datatype_list[0]%}
-<div id="{{ div_id }}" class="output_subarea output_widget_view {{ extra_class }}">
-<script type="text/javascript">
-var element = $('#{{ div_id }}');
-</script>
-<script type="{{ datatype }}">
-{{ output.data[datatype] | json_dumps | escape_html }}
-</script>
-</div>
-{%- endif %}
-{%- endblock data_widget_view -%}
+{% macro cell_execution_count(i, execution_count) %}
+<output form="cell-{{i}}" name="execution_count" id="cell-{{i}}-execution_count">#{{execution_count}}</output>
+{% endmacro %}
 
-{%- block footer %}
-{%- if not resources.should_sanitize_html %}
-{% set mimetype = 'application/vnd.jupyter.widget-state+json'%}
-{% if mimetype in nb.metadata.get("widgets",{})%}
-<script type="{{ mimetype }}">
-{{ nb.metadata.widgets[mimetype] | json_dumps | escape_html }}
-</script>
+{% macro cell_form(i) %}
+<form id="cell-{{i}}" name="/cells/{{i}}" aria-labelledby="cell-{{i}}-cell_type">
+    <button type="submit">Run Cell</button>
+</form>
+{% endmacro %}
+
+{% macro cell_source(i, source, execution_count) %}
+{% set label -%}
+In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span aria-hidden="true">]</span>
+{%- endset %}
+<fieldset name="input">
+    <legend hidden id="cell-{{i}}-input">
+        In {{execution_count}}
+    </legend>
+    <label aria-hidden="true" for="cell-{{i}}-source">{{label}}</label>
+    <textarea form="cell-{{i}}" id="cell-{{i}}-source" name="source" rows="{{source.splitlines().__len__()}}"
+        aria-labelledby="cell-{{i}}-input">{{source}}</textarea>
+    {{highlight(source)}}
+</fieldset>
+{% endmacro %}
+
+{% macro cell_metadata(i, metadata) %}
+<button name="metadata" form="cell-{{i}}">Metadata</button>
+<dialog id="cell-{{i}}-metadata">
+    <form>
+        <button formmethod="dialog">Close</button>
+    </form>
+    <pre><code>
+    {{metadata}}
+    </code></pre>
+</dialog>
+{% endmacro %}
+
+{%- macro cell_output(i, cell, source, outputs, cell_type, execution_count) -%}
+{% set CODE = cell_type == "code" %}
+{% set label %}{% if CODE and outputs %}Out<span aria-hidden="true">[</span>{{execution_count}}<span
+    aria-hidden="true">]</span>{% else %}Cell {{i}}{% endif %}{% endset %}
+<span hidden id="cell-{{i}}-outputs-len">{{outputs.__len__()}} outputs</span>
+{% if CODE and outputs %}
+<fieldset name="outputs" id="cell-{{i}}-outputs" aria-describedby="cell-{{i}}-outputs-len">
+    <legend hidden>Out {{execution_count}}</legend>
+    {% if outputs %}
+    <span aria-hidden="true">{{label}}</span>
+    {% endif %}
+    {{cell_display_priority(i, outputs, cell)}}
+</fieldset>
+{% elif cell_type=="markdown" %}
+{{ markdown(source) | strip_files_prefix }}
 {% endif %}
-{%- endif %}
-{{ super() }}
-{%- endblock footer-%}
+{%- endmacro -%}
+
+{#
+
+[h25]: https://www.w3.org/WAI/WCAG21/Techniques/html/H25
+[2.4.2A]: https://www.w3.org/WAI/WCAG21/Understanding/page-titled
+
+#}

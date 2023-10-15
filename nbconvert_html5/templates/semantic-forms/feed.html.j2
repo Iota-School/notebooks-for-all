@@ -1,13 +1,16 @@
-{%- extends 'semantic-forms/index.html.j2' -%}
+{%- extends 'semantic-forms/main.html.j2' -%}
 {% from 'mathjax.html.j2' import mathjax %}
 {% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
 
-{% block body_loop %}
-<section role="feed">{{super()}}</section>
-{% endblock body_loop %}
+{% set title = nb.metadata.get('title', resources['metadata']['name']) | escape_html_keep_quotes %}
 
-{% block any_cell %}
-<article class="cell {{cell.cell_type}} {{celltags(cell)}}">
-{{cell_form(cell, nb)}}
+{% block body_header %}
+{{super()}}
+<article role="feed">
+    {{super()}}
+    {% endblock body_header %}
+
+    {% block body_footer %}
 </article>
-{% endblock any_cell %}
+{{super()}}
+{% endblock body_footer %}

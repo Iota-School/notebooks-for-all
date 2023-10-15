@@ -23,7 +23,15 @@ classifiers = [
     "Programming Language :: Python",
     "License :: OSI Approved :: BSD License",
 ]
-dependencies = ["nbconvert", "accessible-pygments", "pydantic < 2", "IPython", "markdown-it-py[plugins,linkify]", ]
+dependencies = [
+    "nbconvert",
+    "accessible-pygments",
+    "pydantic < 2",
+    "IPython",
+    "markdown-it-py[plugins,linkify]",
+    "python-slugify",
+    "html5lib"
+]
 dynamic = ["version"]
 
 [project.optional-dependencies]
@@ -139,8 +147,8 @@ configurations = [
     "tests/configurations/sections.py",
     "tests/configurations/smol.py",
     "tests/configurations/ol.py",
-    "tests/configurations/ul.py",
     "tests/configurations/feed.py",
+    "tests/configurations/main.py",
     # "tests/configurations/notebook-list.py",
 ]
 

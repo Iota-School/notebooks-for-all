@@ -1,0 +1,14 @@
+{%- extends 'semantic-forms/base.html.j2' -%}
+{% set title = nb.metadata.get('title', resources['metadata']['name']) | escape_html_keep_quotes %}
+
+
+{% block main_header scoped %}
+{{super()}} 
+<fieldset name="cells" form="notebook" disabled>
+    <legend>cells</legend>
+    {% endblock main_header %}
+
+    {% block body_footer %}
+</fieldset>
+{{super()}}
+{% endblock body_footer %}
