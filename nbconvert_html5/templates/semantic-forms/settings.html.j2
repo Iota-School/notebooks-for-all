@@ -1,20 +1,23 @@
 <dialog id="nb-settings">
     <h1 role="presentation">Settings</h1>
-    <form method="dialog">
-        <button type="submit">Close</button>
+    <form>
+        <button formmethod="dialog">Close</button>
     </form>
     <fieldset id="nb-color-scheme-radio">
         <legend>color scheme</legend>
         <span aria-hidden="true">color scheme</span>
         <label>light mode<input value="light" name="color-scheme" type="radio" checked></label>
-        <label>>dark mode<input value="dark" name="color-scheme" type="radio"></label>
+        <label>dark mode<input value="dark" name="color-scheme" type="radio"></label>
     </fieldset>
     <fieldset id="nb-table-role-radio">
         <legend>cell navigation</legend>
-        <span aria-hidden="true">cell navigation</span>
+        <b aria-hidden="true">cell navigation</b>
+        <i>modify the screen reader's cell navigation preference,
+            there is no effect on the visual layout.</i>
         <label>list<input value="list" name="table-role" type="radio" checked></label>
         <label>table<input value="table" name="table-role" type="radio"></label>
-        <label>landmark<input value="region" name="table-role" type="radio"></label>
+        <label>landmark<input value="landmark" name="table-role" type="radio"></label>
+        <label>presentation<input value="presentation" name="table-role" type="radio"></label>
         <label>grid<input value="grid" name="table-role" type="radio" disabled></label>
         <label>treegrid<input value="treegrid" name="table-role" type="radio" disabled></label>
         <label>tree<input value="tree" name="table-role" type="radio" disabled></label>
@@ -33,10 +36,14 @@
         </select>
         <fieldset id="nb-font-serif-radio">
             <legend>serif</legend>
-            <label>serif<input value="serif" name="font-family" type="radio" checked>s</label>
+            <label>serif<input value="serif" name="font-family" type="radio" checked></label>
             <label>sans-serif<input value="sans-serif" name="font-family" type="radio"></label>
         </fieldset>
         <span hidden id="nb-def-cell">cell</span>
+    </fieldset>
+    <fieldset form="notebook" name="log">
+        <section class="activityLog" role="log" aria-live="polite">
+        </section>
     </fieldset>
 </dialog>
 
@@ -63,13 +70,13 @@
             "row": null,
             "header": null,
             "cell": null,
-        }, "region": {
+        }, "landmark": {
             "table": "presentation",
             "body": "group",
             "row": "region",
             "header": "none",
             "cell": "none",
-        }, "generic": {
+        }, "presentation": {
             "table": "presentation",
             "body": "none",
             "row": "none",
@@ -83,6 +90,7 @@
         let opposite = event.target.value == "dark" ? "light" : "dark"
         document.getElementById(`nb-${opposite}-theme`).setAttribute("disabled", null);
         document.querySelector(`head > meta[name="color-scheme"]`).setAttribute("content", event.target.value);
+        activityLog(`${event.target.value} mode activated`)
     }
     document.querySelectorAll(`[name="color-scheme"]`).forEach(
         (x) => { x.addEventListener("change", toggleColorScheme) }
@@ -100,8 +108,8 @@
                         }
                     }
                 );
-                k == `table` ? activityLog(`navigate cells as a ${event.target.value}`) : null;
             }
+            activityLog(`notebook cell navigation set to ${event.target.value}.`);
         }
     }
     document.querySelectorAll(`[name="table-role"]`).forEach(
@@ -109,15 +117,30 @@
     )
     function changeFont() {
         document.getElementById("nb-font-size-style").textContent = `:root {--nb-font-size: ${event.target.value};}`
+        activityLog(`font size change`)
     }
     document.querySelectorAll(`[name="font-size"]`).forEach(
         (x) => { x.addEventListener("change", changeFont) }
     )
     function changeFontFamily() {
-        document.getElementById("nb-font-family-style").textContent = `:root {font-family: ${event.target.value};}`
+        document.getElementById("nb-font-family-style").textContent = `:root {font-family: ${event.target.value};}`;
+        activityLog(`font family change`)
     }
     document.querySelectorAll(`[name="font-family"]`).forEach(
         (x) => { x.addEventListener("change", changeFontFamily) }
     )
+    function activityLog(msg, silent = false) {
+        document.querySelectorAll(".activityLog").forEach(
+            (body) => {
+                let li = document.createElement("li"), out = document.createElement("output");
+                out.textContent = msg;
+                silent ? out.setAttribute("aria-hidden", true) : null;
+                li.append(out);
+                body.append(li);
+            }
+        )
+
+    };
+
 </script>
 {% endraw %}

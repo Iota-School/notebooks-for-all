@@ -79,8 +79,8 @@ the notebook experiennce from browse to edit/focus mode.
             <form method="dialog">
                 <button>Close</button>
             </form>
-        </dialog>
-    </fieldset>
+        </fieldset>
+    </dialog>
     {# a notebook begins as a static document that can progressively
     add features like run time computation. #}
     <form name="notebook" id="notebook" aria-labelledby="nb-controls-label">
@@ -95,21 +95,28 @@ the notebook experiennce from browse to edit/focus mode.
     it is difficult to access for keyboard users. #}
     {% include "semantic-forms/settings.html.j2" %}
     <footer>
-        <section id="log" role="log" aria-live="polite" aria-label="activity">
-        </section>
+        <fieldset form="notebook" name="log">
+            <section class="activityLog" role="log" aria-live="polite">
+            </section>
+        </fieldset>
         <a href="#notebook" accesskey="0">skip to top</a>
     </footer>
     <script>
         function openDialog(x) {
-            document.getElementById(x.getAttribute("aria-controls")).showModal();
+            event.preventDefault();
+            document.getElementById(event.target.getAttribute("aria-controls")).showModal();
         };
 
-        function activityLog(msg, at = true) {
-            const body = document.querySelector("#log");
-            let out = document.createElement("output");
-            out.textContent = msg;
-            at ? null : out.setAttribute("aria-hidden", true);
-            body.append(out);
+        function activityLog(msg, silent = false) {
+            document.querySelectorAll(".activityLog").forEach(
+                (body) => {
+                    let out = document.createElement("output");
+                    out.textContent = msg;
+                    silent ? out.setAttribute("aria-hidden", true) : null;
+                    body.append(out);
+                }
+            )
+
         };
     </script>
 </body>
@@ -172,12 +179,12 @@ In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span 
 {% macro cell_metadata(i, metadata) %}
 <button name="metadata" form="cell-{{i}}">Metadata</button>
 <dialog id="cell-{{i}}-metadata">
+    <form>
+        <button formmethod="dialog">Close</button>
+    </form>
     <pre><code>
     {{metadata}}
     </code></pre>
-    <form method="dialog">
-        <button>Close</button>
-    </form>
 </dialog>
 {% endmacro %}
 
