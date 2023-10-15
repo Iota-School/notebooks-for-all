@@ -3,9 +3,8 @@
 {% block body_header %}
 {{super()}}
 <form name="visibility" id="nb-visibility" aria-labelledby="nb-visibility-label">
-    <button aria-controls="nb-visibility-panel" onclick="openDialog(this)">toggle <span
+    <button aria-controls="nb-visibility-panel" onclick="openDialog()">toggle <span
             id="nb-visibility-label">visibility</span></button>
-
 </form>
 {# the table element has the most permissive accessibility semantics of the ARIA specification. #}
 <dialog id="nb-visibility-panel">

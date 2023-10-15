@@ -50,7 +50,7 @@ the notebook experiennce from browse to edit/focus mode.
         {# site authors with include their site specific headers in this region. #}
         {# a subsequent tab stop will indicate to keyboard and AT users that there are
         accessibility settings that can be toggled. #}
-        <button onclick="openDialog(this)" aria-controls="nb-settings" accesskey=",">Settings</button>
+        <button onclick="openDialog()" aria-controls="nb-settings" accesskey=",">Settings</button>
     </header>
     {# this is the main section, but we want landmark navigation to go to the first cell in
     the notebook. the extending template will define the location of the main content. #}
@@ -89,7 +89,7 @@ the notebook experiennce from browse to edit/focus mode.
             <legend id="nb-controls-label">Notebook Controls</legend>
             <button type="submit">Run</button>
         </fieldset>
-        <button onclick="openDialog(this)" aria-controls="nb-metadata">Metadata</button>
+        <button onclick="openDialog()" aria-controls="nb-metadata">Metadata</button>
     </form>
     {# skip to top is needed for long notebooks.
     it is difficult to access for keyboard users. #}
@@ -101,24 +101,6 @@ the notebook experiennce from browse to edit/focus mode.
         </fieldset>
         <a href="#notebook" accesskey="0">skip to top</a>
     </footer>
-    <script>
-        function openDialog(x) {
-            event.preventDefault();
-            document.getElementById(event.target.getAttribute("aria-controls")).showModal();
-        };
-
-        function activityLog(msg, silent = false) {
-            document.querySelectorAll(".activityLog").forEach(
-                (body) => {
-                    let out = document.createElement("output");
-                    out.textContent = msg;
-                    silent ? out.setAttribute("aria-hidden", true) : null;
-                    body.append(out);
-                }
-            )
-
-        };
-    </script>
 </body>
 
 </html>
