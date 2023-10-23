@@ -1,50 +1,52 @@
+<button onclick="openDialog()" aria-controls="nb-settings" accesskey=",">Settings</button>
 <dialog id="nb-settings">
-    <h1 role="presentation">Settings</h1>
-    <form>
+    <form name="settings">
+        <h1 role="presentation">Settings</h1>
         <button formmethod="dialog">Close</button>
-    </form>
-    <fieldset id="nb-color-scheme-radio">
-        <legend>color scheme</legend>
-        <span aria-hidden="true">color scheme</span>
-        <label>light mode<input value="light" name="color-scheme" type="radio" checked></label>
-        <label>dark mode<input value="dark" name="color-scheme" type="radio"></label>
-    </fieldset>
-    <fieldset id="nb-table-role-radio">
-        <legend>cell navigation</legend>
-        <b aria-hidden="true">cell navigation</b>
-        <i>modify the screen reader's cell navigation preference,
-            there is no effect on the visual layout.</i>
-        <label>list<input value="list" name="table-role" type="radio" checked></label>
-        <label>table<input value="table" name="table-role" type="radio"></label>
-        <label>landmark<input value="landmark" name="table-role" type="radio"></label>
-        <label>presentation<input value="presentation" name="table-role" type="radio"></label>
-        <label>grid<input value="grid" name="table-role" type="radio" disabled></label>
-        <label>treegrid<input value="treegrid" name="table-role" type="radio" disabled></label>
-        <label>tree<input value="tree" name="table-role" type="radio" disabled></label>
-    </fieldset>
-    <fieldset id="nb-table-font-group">
-        <legend>font settings</legend>
-        <label aria-hidden="true" for="nb-table-font-size-group">font size</label>
-        <select name="font-size" id="nb-table-font-size-group">
-            <option value="xx-small">xx-small</option>
-            <option value="x-small">x-small</option>
-            <option value="small">small</option>
-            <option value="medium" selected>medium</option>
-            <option value="large">large</option>
-            <option value="x-large">x-large</option>
-            <option value="xx-large">xx-large</option>
-        </select>
-        <fieldset id="nb-font-serif-radio">
-            <legend>serif</legend>
-            <label>serif<input value="serif" name="font-family" type="radio" checked></label>
-            <label>sans-serif<input value="sans-serif" name="font-family" type="radio"></label>
+        <fieldset id="nb-color-scheme-radio">
+            <legend>color scheme</legend>
+            <span aria-hidden="true">color scheme</span>
+            <label>light mode<input value="light" name="color-scheme" type="radio" checked></label>
+            <label>dark mode<input value="dark" name="color-scheme" type="radio"></label>
         </fieldset>
-        <span hidden id="nb-def-cell">cell</span>
-    </fieldset>
-    <fieldset form="notebook" name="log">
-        <ul class="activityLog" aria-live="polite">
-        </ul>
-    </fieldset>
+        <fieldset id="nb-table-role-radio">
+            <legend>cell navigation</legend>
+            <b aria-hidden="true">cell navigation</b>
+            <i>modify the screen reader's cell navigation preference,
+                there is no effect on the visual layout.</i>
+            <label>list<input value="list" name="table-role" type="radio" checked></label>
+            <label>table<input value="table" name="table-role" type="radio"></label>
+            <label>landmark<input value="landmark" name="table-role" type="radio"></label>
+            <label>presentation<input value="presentation" name="table-role" type="radio"></label>
+            <label>grid<input value="grid" name="table-role" type="radio" disabled></label>
+            <label>treegrid<input value="tre            egrid" name="table-role" type="radio" disabled></label>
+            <label>tree<input value="tree" name="table-role" type="radio" disabled></label>
+        </fieldset>
+        <fieldset id="nb-table-font-group">
+            <legend>font settings</legend>
+            <label aria-hidden="true" for="nb-table-font-size-group">font size</label>
+            <select name="font-size" id="nb-table-font-size-group">
+                <option value="xx-small">xx-small</option>
+                <option value="x-small">x-small</option>
+                <option value="small">small</option>
+                <option value="medium" selected>medium</option>
+                <option value="large">large</option>
+                <option value="x-large">x-large</option>
+                <option value="xx-large">xx-large</option>
+            </select>
+            <fieldset id="nb-font-serif-radio">
+                <legend>serif</legend>
+                <label>serif<input value="serif" name="font-family" type="radio" checked></label>
+                <label>sans-serif<input value="sans-serif" name="font-family" type="radio"></label>
+            </fieldset>
+            <span hidden id="nb-def-cell">cell</span>
+        </fieldset>
+        <fieldset id="nb-sound-group">
+            <legend>sound settings</legend>
+            <label><input type="checkbox" name="speech">Synthetic speech</label>
+        </fieldset>
+        {% include "semantic-forms/activity-log.html.j2" %}
+    </form>
 </dialog>
 
 {# these settings should be updated from query parameters #}
@@ -128,22 +130,56 @@
     document.querySelectorAll(`[name="font-family"]`).forEach(
         (x) => { x.addEventListener("change", changeFontFamily) }
     )
+    function getSettings() {
+        return new FormData(document.forms.settings)
+    }
     function activityLog(msg, silent = false) {
-        document.querySelectorAll(".activityLog").forEach(
+        document.querySelectorAll("details.log+table").forEach(
             (body) => {
-                let li = document.createElement("li"), out = document.createElement("output");
+                let tr = document.createElement("tr"),
+                    th = document.createElement("th"),
+                    time = document.createElement("time"),
+                    td = document.createElement("td"),
+                    out = document.createElement("output"),
+                    now = Date.now();
                 out.textContent = msg;
+                th.append(time);
+                time.setAttribute("datetime", now);
+                time.textContent = now;
+                tr.append(th);
+                tr.append(td);
+                td.append(out);
                 silent ? out.setAttribute("aria-hidden", true) : null;
-                li.append(out);
-                body.append(li);
+                body.append(tr);
+                if (getSettings().get("speech") == "on") {
+                    // a non-screen reader solution for audible activity.
+                    speechSynthesis.speak(new SpeechSynthesisUtterance(msg));
+                }
             }
         )
-
     };
     function openDialog() {
         event.preventDefault();
         document.getElementById(event.target.getAttribute("aria-controls")).showModal();
     };
+    const L = 37, U = 38, R = 39, D = 40;
+    document.querySelectorAll("table[role=grid]").forEach(
+        (x) => {
+            x.addEventListener("keydown", (e) => {
+                switch (e.code) {
+                    case L:
+                        break
+                    case U:
+                        break
+                    case R:
+                        break
+                    case D:
+                        break
+
+                }
+            })
+        }
+    )
 
 </script>
 {% endraw %}

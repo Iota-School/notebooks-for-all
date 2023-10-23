@@ -4,11 +4,9 @@ the base template defines notebook independent components.
 an accessible base template provides a substrate to progressively enchance
 the notebook experiennce from browse to edit/focus mode.
 #}
-
 {%- extends 'semantic-forms/displays.j2.html' -%}
 {% from 'celltags.j2' import celltags %}
 {% set title = nb.metadata.get('title', resources['metadata']['name']) | escape_html_keep_quotes %}
-
 
 {%- block header -%}
 <!DOCTYPE html>
@@ -50,55 +48,53 @@ the notebook experiennce from browse to edit/focus mode.
         {# site authors with include their site specific headers in this region. #}
         {# a subsequent tab stop will indicate to keyboard and AT users that there are
         accessibility settings that can be toggled. #}
-        <button onclick="openDialog()" aria-controls="nb-settings" accesskey=",">Settings</button>
+        {% include "semantic-forms/settings.html.j2" %}
     </header>
-    {# this is the main section, but we want landmark navigation to go to the first cell in
-    the notebook. the extending template will define the location of the main content. #}
-    <fieldset form="notebook" role="presentation">
-        <legend id="nb-notebook-label" hidden>notebook</legend>
-        <section aria-labelledby="nb-toc">
-            {# a notebook will provide visual structural navigation for a document.
-            this is a feature of screen readers that is not common to sighted users.
-            the implementation here is very naive. users will need to know to collapse the heading
-            to skip the link tree. the best implementation is a tree that will consume a single tab stop
-            and allow arrow key navigation. #}
-            <details open>
-                {# if the label is on the summary then the bullet is announced as the label and it should not be #}
-                <summary><span id="nb-toc">table of contents</span></summary>
-                {# the table of contents is populated in python. #}
-            </details>
-        </section>
-        <section role="main" aria-labelledby="nb-notebook-label">
-            {% endblock body_header %}
-
-            {% block body_footer %}
-        </section>
-        <dialog id="nb-metadata">
-            <fieldset name="metadata" form="notebook">
-            </fieldset>
-            <form method="dialog">
-                <button>Close</button>
+    <main aria-labelledby="nb-notebook-label">
+        <header>
+            <form name="notebook" id="notebook" aria-labelledby="nb-notebook-label">
+                <section aria-labelledby="nb-toc">
+                    {# a notebook will provide visual structural navigation for a document.
+                    this is a feature of screen readers that is not common to sighted users.
+                    the implementation here is very naive. users will need to know to collapse the heading
+                    to skip the link tree. the best implementation is a tree that will consume a single tab stop
+                    and allow arrow key navigation. #}
+                    <details open name="toc">
+                        {# if the label is on the summary then the bullet is announced as the label and it should not be
+                        #}
+                        <summary><span id="nb-toc">table of contents</span></summary>
+                        {# the table of contents is populated in python. #}
+                    </details>
+                </section>
+                <button aria-controls="nb-metadata" onclick="openDialog()">Metadata</button>
+                <button aria-controls="nb-expanded-dialog" onclick="openDialog()">expand and collapse cells</button>
+                <button aria-controls="nb-visibility-dialog" onclick="openDialog()">show and hide cell parts</button>
+                <label><input id="nb-edit-mode" type="checkbox">edit mode</label>
+                <button type="submit">Run</button>
+                <button onclick="openDialog()" aria-controls="nb-help">help</button>
             </form>
-    </fieldset>
-    </dialog>
+        </header>
+        {% endblock body_header %}
+
+        {% block body_footer %}
+        {# dialogs need to be outside the form because we cant nest forms #}
+        {% include "semantic-forms/expanded.html.j2"%}
+        {% include "semantic-forms/visibility.html.j2"%}
+        <dialog id="nb-metadata">
+            <form method="dialog">
+                <button formmethod="dialog">Close</button>
+                {{nb.metadata}}
+            </form>
+        </dialog>
+        {% include "semantic-forms/schema-dl.html.j2" %}
+    </main>
     {# a notebook begins as a static document that can progressively
     add features like run time computation. #}
-    <form name="notebook" id="notebook" aria-labelledby="nb-controls-label">
-        <label><input type="checkbox">edit mode</label>
-        <fieldset disabled>
-            <legend id="nb-controls-label">Notebook Controls</legend>
-            <button type="submit">Run</button>
-        </fieldset>
-        <button onclick="openDialog()" aria-controls="nb-metadata">Metadata</button>
-    </form>
     {# skip to top is needed for long notebooks.
     it is difficult to access for keyboard users. #}
-    {% include "semantic-forms/settings.html.j2" %}
     <footer>
-        <fieldset form="notebook" name="log">
-            <ul class="activityLog" aria-live="polite">
-            </ul>
-        </fieldset>
+        {% set LOGID = True %}
+        {% include "semantic-forms/activity-log.html.j2" %}
         <a href="#notebook" accesskey="0">skip to top</a>
     </footer>
 </body>
@@ -126,7 +122,7 @@ the notebook experiennce from browse to edit/focus mode.
 {% endmacro %}
 
 {% macro cell_cell_type(i, cell_type) %}
-<select form="cell-{{i}}" name="cell_type" disabled>
+<select form="cell-{{i}}" name="cell_type">
     <option value="markdown" {%- if cell_type=="markdown" %} selected{% endif%}>markdown</option>
     <option value="code" {%- if cell_type=="code" %} selected{% endif%}>code</option>
     <option value="raw" {%- if cell_type=="raw" %} selected{% endif%}>raw</option>
@@ -139,7 +135,7 @@ the notebook experiennce from browse to edit/focus mode.
 {% endmacro %}
 
 {% macro cell_form(i) %}
-<form id="cell-{{i}}" name="/cells/{{i}}" aria-labelledby="cell-{{i}}-cell_type">
+<form id="cell-{{i}}" name="cells" aria-labelledby="cell-{{i}}-cell_type">
     <button type="submit">Run Cell</button>
 </form>
 {% endmacro %}
@@ -148,15 +144,12 @@ the notebook experiennce from browse to edit/focus mode.
 {% set label -%}
 In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span aria-hidden="true">]</span>
 {%- endset %}
-<fieldset name="input">
-    <legend hidden id="cell-{{i}}-input">
-        In {{execution_count}}
-    </legend>
-    <label aria-hidden="true" for="cell-{{i}}-source">{{label}}</label>
+<details open aria-labelledby="cell-{{i}}-source-label">
+    <summary inert id="cell-{{i}}-source-label">{{label}}</summary>
     <textarea form="cell-{{i}}" id="cell-{{i}}-source" name="source" rows="{{source.splitlines().__len__()}}"
         aria-labelledby="cell-{{i}}-input">{{source}}</textarea>
     {{highlight(source)}}
-</fieldset>
+</details>
 {% endmacro %}
 
 {% macro cell_metadata(i, metadata) %}
@@ -177,15 +170,17 @@ In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span 
     aria-hidden="true">]</span>{% else %}Cell {{i}}{% endif %}{% endset %}
 <span hidden id="cell-{{i}}-outputs-len">{{outputs.__len__()}} outputs</span>
 {% if CODE and outputs %}
-<fieldset name="outputs" id="cell-{{i}}-outputs" aria-describedby="cell-{{i}}-outputs-len">
-    <legend hidden>Out {{execution_count}}</legend>
-    {% if outputs %}
-    <span aria-hidden="true">{{label}}</span>
-    {% endif %}
+{% if outputs %}
+<details open aria-labelledby="cell-{{i}}-outputs-label">
+    <summary inert id="cell-{{i}}-outputs-label">{{label}}</summary>
     {{cell_display_priority(i, outputs, cell)}}
-</fieldset>
+</details>
+{% endif %}
 {% elif cell_type=="markdown" %}
-{{ markdown(source) | strip_files_prefix }}
+<details open aria-labelledby="cell-{{i}}-outputs-label">
+    <summary hidden inert id="cell-{{i}}-outputs-label">{{label}}</summary>
+    {{ markdown(source) | strip_files_prefix }}
+</details>
 {% endif %}
 {%- endmacro -%}
 

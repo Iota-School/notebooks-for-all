@@ -2,194 +2,61 @@
 
 {% block body_header %}
 {{super()}}
-<form name="visibility" id="nb-visibility" aria-labelledby="nb-visibility-label">
-    <button aria-controls="nb-visibility-panel" onclick="openDialog()">toggle <span
-            id="nb-visibility-label">visibility</span></button>
-</form>
-{# the table element has the most permissive accessibility semantics of the ARIA specification. #}
-<dialog id="nb-visibility-panel">
-    <form>
-        <button formmethod="dialog">Close</button>
-    </form>
-    <table aria-labelledby="nb-visibility-label" role="grid">
-        <tbody>
-            {# the table head is used to provide controls #}
-            {# it hints at a configurable pattern for showing different features. #}
-            {# there should be controls for each cell type here, and cell types can be
-            added. #}
-            <tr>
-                <td id="nb-cell-label">cell</td>
-                <td id="nb-index-label">index</td>
-                <td id="nb-execution_count-label">execution_count</td>
-                <td id="nb-cell_type-label">cell_type</td>
-                <td id="nb-source-label">source</td>
-                <td id="nb-output-label">output</td>
-                <td id="nb-metadata-label">metadata</td>
-                <td id="nb-toolbar-label">toolbar</td>
-                <td id="nb-loc-label"><abbr title="lines of code">loc</abbr>
-                </td>
-            </tr>
-            <tr class="all">
-                <td>all</td>
-                <td><input form="nb-visibility" aria-labelledby="nb-index-label nb-visibility-label" name="anchor"
-                        type="checkbox" checked>
-                </td>
-                <td><input form="nb-visibility" aria-labelledby="nb-execution_count-label nb-visibility-label"
-                        name="execution_count" type="checkbox" checked></td>
-                <td><input form="nb-visibility" aria-labelledby="nb-cell_type-label nb-visibility-label"
-                        name="cell_type" type="checkbox">
-                </td>
-                <td><input form="nb-visibility" aria-labelledby="nb-source-label nb-visibility-label" name="source"
-                        type="checkbox" checked>
-                </td>
-                <td><input form="nb-visibility" aria-labelledby="nb-output-label nb-visibility-label" name="output"
-                        type="checkbox" checked>
-                </td>
-                <td><input form="nb-visibility" aria-labelledby="nb-metadata-label nb-visibility-label" name="metadata"
-                        type="checkbox"></td>
-                <td><input form="nb-visibility" aria-labelledby="nb-toolbar-label nb-visibility-label" name="toolbar"
-                        type="checkbox"></td>
-                <td><input form="nb-visibility" aria-labelledby="nb-loc-label nb-visibility-label" name="loc"
-                        type="checkbox">
-                </td>
-            </tr>
-            <tr class="code">
-                <td id="nb-code-label">code</td>
-                <td><input form="nb-visibility" aria-labelledby="nb-code-label nb-index-label nb-visibility-label"
-                        name="anchor" type="checkbox" checked>
-                </td>
-                <td><input form="nb-visibility"
-                        aria-labelledby="nb-code-label nb-execution_count-label nb-visibility-label"
-                        name="execution_count" type="checkbox" checked></td>
-                <td><input form="nb-visibility" aria-labelledby="nb-code-label nb-cell_type-label nb-visibility-label"
-                        name="cell_type" type="checkbox">
-                </td>
-                <td><input form="nb-visibility" aria-labelledby="nb-code-label nb-source-label nb-visibility-label"
-                        name="source" type="checkbox" checked>
-                </td>
-                <td><input form="nb-visibility" aria-labelledby="nb-code-label nb-output-label nb-visibility-label"
-                        name="output" type="checkbox" checked>
-                </td>
-                <td><input form="nb-visibility" aria-labelledby="nb-code-label nb-metadata-label nb-visibility-label"
-                        name="metadata" type="checkbox"></td>
-                <td><input form="nb-visibility" aria-labelledby="nb-code-label nb-toolbar-label nb-visibility-label"
-                        name="toolbar" type="checkbox"></td>
-                <td><input form="nb-visibility" aria-labelledby="nb-code-label nb-loc-label nb-visibility-label"
-                        name="loc" type="checkbox">
-                </td>
-            </tr>
-            <tr class="markdown">
-                <td id="nb-md-label">markdown</td>
-                <td><input form="nb-visibility" aria-labelledby="nb-md-label nb-index-label nb-visibility-label"
-                        name="anchor" type="checkbox" checked></td>
-                <td><input form="nb-visibility"
-                        aria-labelledby="nb-md-label nb-execution_count-label nb-visibility-label"
-                        name="execution_count" type="checkbox" checked></td>
-                <td><input form="nb-visibility" aria-labelledby="nb-md-label nb-cell_type-label nb-visibility-label"
-                        name="cell_type" type="checkbox"></td>
-                <td><input form="nb-visibility" aria-labelledby="nb-md-label nb-source-label nb-visibility-label"
-                        name="source" type="checkbox" checked></td>
-                <td><input form="nb-visibility" aria-labelledby="nb-md-label nb-output-label nb-visibility-label"
-                        name="output" type="checkbox" checked></td>
-                <td><input form="nb-visibility" aria-labelledby="nb-md-label nb-metadata-label nb-visibility-label"
-                        name="metadata" type="checkbox"></td>
-                <td><input form="nb-visibility" aria-labelledby="nb-md-label nb-toolbar-label nb-visibility-label"
-                        name="toolbar" type="checkbox"></td>
-                <td><input form="nb-visibility" aria-labelledby="nb-md-label nb-loc-label nb-visibility-label"
-                        name="toolbar" type="checkbox"></td>
-            </tr>
-            <tr class="nb-column-descriptions">
-                <td id="nb-description-label">description</td>
+{# the most consistent implementation would connect the input visibility to a form #}
+<table id="cells" role="presentation">
+    <tbody role="list">
+        {# the table caption is removed because testing on VoiceOver iOS encountered
+        https://developer.apple.com/forums/thread/679841
 
-                <td>
-                    <p id="nb-index-desc"></p>
-                </td>
-                <td>
-                    <p id="nb-execution_count-desc"></p>
-                </td>
-                <td>
-                    <p id="nb-cell_type-desc"></p>
-                </td>
-                <td>
-                    <p id="nb-source-desc"></p>
-                </td>
-                <td>
-                    <p id="nb-output-desc"></p>
-                </td>
-                <td>
-                    <p id="nb-metadata-desc"></p>
-                </td>
-                <td>
-                    <p id="nb-toolbar-desc"></p>
-                </td>
-                <td>
-                    <p id="nb-loc-desc">significant lines of code in the cell source
-                    </p>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</dialog>
-<fieldset name="cells" form="notebook" role="presentation" disabled>
-    {# the fieldset allows formal access to `document.forms["notebook"].elements["cells"]` #}
-    <legend aria-hidden="true" id="nb-cells-label">cells</legend>
+        the best course of action is to remove the caption and provide label support with aria.
+        we wont use captions on any tables for this reason. #}
+        {# <caption hidden>contents</caption> #}
+        {% endblock body_header %}
 
-    {# the most consistent implementation would connect the input visibility to a form #}
-    <table id="cells" role="presentation">
-        <tbody role="list">
-            {# the table caption is removed because testing on VoiceOver iOS encountered
-            https://developer.apple.com/forums/thread/679841
+        {% block any_cell %}{{cell_row(cell, loop)}}{% endblock any_cell %}
 
-            the best course of action is to remove the caption and provide label support with aria.
-            we wont use captions on any tables for this reason. #}
-            {# <caption hidden>contents</caption> #}
-            {% endblock body_header %}
+        {% block body_footer %}
+    </tbody>
+</table>
+<table class="nb-cells-footer" hidden>
+    <tbody>
+        {# needs a header row #}
+        <tr class="total">
+            <th scope="row">all cells</th>
+            <th scope="row">count</th>
+            <td class="nb-ordered">{{ordered(nb)}}</td>
+            <td class="nb-cell_type">{{nb.cells.__len__()}}</td>
+            <td class="nb-source"></td>
+            <td class="nb-outputs">{{count_outputs(nb)}}</td>
+            <td class="nb-toolbar"></td>
+            <td class="nb-metadata">{# list keys #}</td>
+            <td class="nb-loc">{{count_loc(nb)}}</td>
 
-            {% block any_cell %}{{cell_row(cell, loop)}}{% endblock any_cell %}
-
-            {% block body_footer %}
-        </tbody>
-    </table>
-    <table class="nb-cells-footer" hidden>
-        <tbody>
-            {# needs a header row #}
-            <tr class="total">
-                <th scope="row">all cells</th>
-                <th scope="row">count</th>
-                <td class="nb-ordered">{{ordered(nb)}}</td>
-                <td class="nb-cell_type">{{nb.cells.__len__()}}</td>
-                <td class="nb-source"></td>
-                <td class="nb-outputs">{{count_outputs(nb)}}</td>
-                <td class="nb-toolbar"></td>
-                <td class="nb-metadata">{# list keys #}</td>
-                <td class="nb-loc">{{count_loc(nb)}}</td>
-
-            </tr>
-            <tr class="code">
-                <th scope="row">cpde cells</th>
-                <th scope="row">count</th>
-                <td class="nb-ordered">{{ordered(nb)}}</td>
-                <td class="nb-cell_type">{{nb.cells.__len__()}}</td>
-                <td class="nb-source"></td>
-                <td class="nb-outputs">{{count_outputs(nb)}}</td>
-                <td class="nb-toolbar"></td>
-                <td class="nb-metadata">{# list keys #}</td>
-                <td class="nb-loc">{{count_loc(nb)}}</td>
-            </tr>
-            <tr class="markdown">
-                <th scope="row">markdown cells</th>
-                <th scope="row">count</th>
-                <td class="nb-ordered"></td>
-                <td class="nb-cell_type">{{nb.cells.__len__()}}</td>
-                <td class="nb-source"></td>
-                <td class="nb-outputs"></td>
-                <td class="nb-toolbar"></td>
-                <td class="nb-metadata">{# list keys #}</td>
-                <td class="nb-loc">{{count_loc(nb)}}</td>
-            </tr>
-        </tbody>
-    </table>
-</fieldset>
+        </tr>
+        <tr class="code">
+            <th scope="row">code cells</th>
+            <th scope="row">count</th>
+            <td class="nb-ordered">{{ordered(nb)}}</td>
+            <td class="nb-cell_type">{{nb.cells.__len__()}}</td>
+            <td class="nb-source"></td>
+            <td class="nb-outputs">{{count_outputs(nb)}}</td>
+            <td class="nb-toolbar"></td>
+            <td class="nb-metadata">{# list keys #}</td>
+            <td class="nb-loc">{{count_loc(nb)}}</td>
+        </tr>
+        <tr class="markdown">
+            <th scope="row">markdown cells</th>
+            <th scope="row">count</th>
+            <td class="nb-ordered"></td>
+            <td class="nb-cell_type">{{nb.cells.__len__()}}</td>
+            <td class="nb-source"></td>
+            <td class="nb-outputs"></td>
+            <td class="nb-toolbar"></td>
+            <td class="nb-metadata">{# list keys #}</td>
+            <td class="nb-loc">{{count_loc(nb)}}</td>
+        </tr>
+    </tbody>
+</table>
 {{super()}}
 {% endblock body_footer %}
 
@@ -198,16 +65,15 @@
 {% macro cell_row(cell, loop) %}
 <tr role="listitem" class="cell {{cell.cell_type}}"
     aria-labelledby="nb-def-cell {{loop.index}} cell-{{loop.index}}-cell_type"
-    data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %}
-    data-outputs="{{cell.outputs.__len__()}}" {% endif %}>
-    <td class="nb-index">{{cell_anchor(loop.index)}}</td>
-    <td class="nb-execution_count">{{cell_execution_count(loop.index, cell.execution_count)}}</td>
-    <td class="nb-cell_type">{{cell_cell_type(loop.index, cell.cell_type)}}</td>
-    <td class="nb-source">{{cell_source(loop.index, cell.source, cell.execution_count)}}</td>
-    <td class="nb-outputs">{{cell_output(loop.index, cell, cell.source, cell.outputs, cell.cell_type,
+    data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %} {% endif %}>
+    <td role="none" class="nb-anchor">{{cell_anchor(loop.index)}}</td>
+    <td role="none" class="nb-execution_count">{{cell_execution_count(loop.index, cell.execution_count)}}</td>
+    <td role="none" class="nb-cell_type">{{cell_cell_type(loop.index, cell.cell_type)}}</td>
+    <td role="none" class="nb-source">{{cell_source(loop.index, cell.source, cell.execution_count)}}</td>
+    <td role="none" class="nb-outputs">{{cell_output(loop.index, cell, cell.source, cell.outputs, cell.cell_type,
         cell.execution_count)}}</td>
-    <td class="nb-metadata">{{cell_metadata(loop.index, cell.metadata)}}</td>
-    <td class="nb-toolbar">{{cell_form(loop.index)}}</td>
-    <td class="nb-loc">{{loc(cell)}}</td>
+    <td role="none" class="nb-metadata">{{cell_metadata(loop.index, cell.metadata)}}</td>
+    <td role="none" class="nb-toolbar">{{cell_form(loop.index)}}</td>
+    <td role="none" class="nb-loc">{{loc(cell)}}</td>
 </tr>
 {% endmacro %}

@@ -19,7 +19,7 @@
     --nb-table-border: 2px;
     --nb-calc-fieldset-edge: var(--nb-fieldset-margin) + var(--nb-fieldset-padding) + var(--nb-fieldset-border);
     --nb-calc-fieldset-top: calc(var(--nb-fieldset-border) + var(--nb-fieldset-margin-top));
-    --nb-calc-cell-margin: calc(var(--nb-calc-fieldset-edge) + var(--nb-body-margin) + var(--nb-table-border));
+    --nb-calc-cell-margin: calc(0*var(--nb-calc-fieldset-edge) + var(--nb-body-margin) + var(--nb-table-border));
     --nb-calc-cell-width: calc(100vw - 2 * var(--nb-calc-cell-margin));
     --nb-calc-table-width: calc(100vw - 2 * var(--nb-calc-cell-margin) - 2 * var(--nb-table-border));
     --nb-calc-cell-fieldset-width: calc(var(--nb-calc-cell-width) - 2 * var(--nb-calc-fieldset-edge));
@@ -36,42 +36,27 @@ body {
 }
 
 table#cells,
-table#cells .cell>td {
+table#cells>.cell>td {
     display: block;
 }
 
-table#cells>tbody,
-[role=toolbar]>ul {
+table#cells .cell,
+table#cells>tbody {
     display: flex;
     flex-direction: column;
-    align-content: stretch;
-}
-
-table#cells .cell {
-    display: flex;
-    width: var(--nb-calc-cell-width);
-    flex-direction: column;
-}
-
-/* hide cell components when execution is disabled. */
-fieldset[name="cells"]:disabled #cells .nb-cell_type,
-fieldset[name="cells"]:disabled #cells .nb-metadata,
-fieldset[name="cells"]:disabled #cells .nb-toolbar,
-fieldset[name="cells"]:disabled #cells .nb-execution_count,
-fieldset[name="cells"]:disabled #cells .nb-toolbar,
-fieldset[name="cells"]:disabled #cells textarea[name=source],
-fieldset[name=cells]:disabled .cell[data-outputs="0"][data-loc="0"],
-fieldset[name=cells]:disabled .cell[data-outputs="0"] fieldset[name=outputs] {
-    display: none;
 }
 
 
 /* the input and output become interactive when there is overflow.*/
 textarea[name=source],
-fieldset[name=input],
-[name=outputs] {
+.cell>td>details {
     overflow: auto;
     min-width: 0;
+}
+
+
+summary[inert]::marker {
+    content: "";
 }
 
 textarea[name=source] {
@@ -79,26 +64,16 @@ textarea[name=source] {
 }
 
 
-table#cells+table td:empty,
-table#cells+table th:empty {
-    visibility: collapse;
-}
 
-
-
-/* layout for the cells using a grid display. */
-form#nb-visibility > table,
 table#cells+table,
-table#cells>tr.cell>th:first-child,
-#cells .cell .nb-loc,
-#cells .cell.markdown .nb-metadata,
-#cells .cell.markdown .nb-toolbar,
-#cells .cell.markdown .nb-cell_type,
-#cells .cell.markdown .nb-source,
-/* #cells .cell.markdown .nb-index, */
-#cells .cell.markdown .nb-execution_count,
-#cells .cell.markdown .nb-outputs>fieldset>legend,
-#cells .cell.markdown .nb-outputs>fieldset>legend+label {
+#cells .cell>.nb-loc,
+#cells .cell.markdown>.nb-source,
+#cells .nb-cell_type,
+#cells .nb-metadata,
+#cells .nb-toolbar,
+#cells .nb-execution_count,
+#cells .nb-toolbar,
+#cells textarea[name=source] {
     display: none;
 }
 
@@ -109,6 +84,8 @@ header:focus-within,
     box-shadow: 0 0 0 calc(2 * max(var(--nb-focus-width), 1px));
 }
 
+/* we visually hide the logs so that the screen reader announces them. hiding them hides them from AT. */
+details.log:not([open])+table,
 .visually-hidden:not(:focus-within):not(:active) {
     clip: rect(0 0 0 0);
     clip-path: inset(50%);
@@ -136,19 +113,6 @@ fieldset {
     padding-left: var(--nb-fieldset-padding);
     padding-right: var(--nb-fieldset-padding);
 }
-
-fieldset[form="notebook"] {
-    border: none;
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: 0;
-    padding-right: 0;
-}
-
-fieldset[name=outputs] {
-    border: unset;
-}
-
 
 /* hide legends and use labels instead. they increase the hit area.
 https://adrianroselli.com/2022/07/use-legend-and-fieldset.html */
@@ -181,7 +145,6 @@ a[href="#notebook"] {
     float: right;
     bottom: 0;
 }
-
 
 /* small devices */
 @media (max-width: 576px) {
