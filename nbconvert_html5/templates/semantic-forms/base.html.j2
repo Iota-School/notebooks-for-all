@@ -59,20 +59,20 @@ the notebook experiennce from browse to edit/focus mode.
                     the implementation here is very naive. users will need to know to collapse the heading
                     to skip the link tree. the best implementation is a tree that will consume a single tab stop
                     and allow arrow key navigation. #}
-                    <details open name="toc">
+                    <details open>
                         {# if the label is on the summary then the bullet is announced as the label and it should not be
                         #}
-                        <summary><span id="nb-toc">table of contents</span></summary>
+                        <summary id="toc"><span id="nb-toc">table of contents</span></summary>
                         {# the table of contents is populated in python. #}
                         <ol></ol>
                     </details>
                 </section>
+                <label><input id="nb-edit-mode" type="checkbox">edit mode</label>
                 <button aria-controls="nb-metadata" onclick="openDialog()">Metadata</button>
                 <button aria-controls="nb-expanded-dialog" onclick="openDialog()">expand and collapse cells</button>
                 <button aria-controls="nb-visibility-dialog" onclick="openDialog()">show and hide cell parts</button>
-                <label><input id="nb-edit-mode" type="checkbox">edit mode</label>
-                <button type="submit">Run</button>
                 <button onclick="openDialog()" aria-controls="nb-help">help</button>
+                <button type="submit">Run</button>
             </form>
         </header>
         {% endblock body_header %}
@@ -98,6 +98,7 @@ the notebook experiennce from browse to edit/focus mode.
         {% include "semantic-forms/activity-log.html.j2" %}
         <a href="#notebook" accesskey="0">skip to top</a>
     </footer>
+    <script src="settings.js"></script>
 </body>
 
 </html>
