@@ -7,6 +7,7 @@
     --nb-line-height: 1.75;
     --nb-background-color-dark: #2b2a33;
     --nb-background-color-light: #FFFFFF;
+    --nb-margin: 5%;
 
     /* default browser values */
     --nb-ul-margin-top: 1em;
@@ -33,7 +34,10 @@ body {
     font-size: var(--nb-font-size);
     accent-color: var(--nb-accent-color);
     line-height: var(--nb-line-height);
+    margin-left: var(--nb-margin);
+    margin-right: var(--nb-margin);
 }
+
 
 table#cells,
 table#cells>.cell>td {
