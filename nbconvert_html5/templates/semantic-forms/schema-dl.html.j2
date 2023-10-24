@@ -17,6 +17,9 @@
             <dt id="nb-cell-label">cell</dt>
             <dd>
                 <dl aria-labelledby="nb-cell-label nb-defs-label">
+                    <dt id="nb-index-label">index</dt>
+                    <dd id="nb-index-desc">the ordinal location of the cell in the notebook, counting begins from 1.
+                    </dd>
                     <dt id="nb-source-label">source</dt>
                     <dd id="nb-source-desc">{{schema.definitions.misc.source.description}}</dd>
                     <dt id="nb-metadata-label">metadata</dt>
@@ -44,8 +47,13 @@
                     </dd>
                     <dt id="nb-attachments-label">attachments</dt>
                     <dd id="nb-attachments-desc">{{schema.definitions.misc.attachments.description}}</dd>
+                    <dt id="nb-loc-label">lines of code</dt>
+                    <dd>lines of code in the cell, including whitespace.</dd>
+                    {# this probably should be significant lines of code #}
                 </dl>
             </dd>
+            <dt id="nb-toolbar-label">toolbar</dt>
+            <dd>composite widgets that allow for arrow key navigation</dd>
         </dl>
     </form>
 </dialog>
