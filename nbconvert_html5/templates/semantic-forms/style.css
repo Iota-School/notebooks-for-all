@@ -39,6 +39,12 @@ summary[inert]::marker {
     content: "";
 }
 
+textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
 textarea[name=source] {
     box-sizing: border-box;
     /* https://davidwalsh.name/textarea-width */
@@ -67,7 +73,7 @@ header:focus-within,
 
 /* we visually hide the logs so that the screen reader announces them. hiding them hides them from AT. */
 details.log:not([open])+table,
-details.log:not([open])+div[aria-live],
+details.log:not([open])+ul[aria-live],
 .visually-hidden:not(:focus-within):not(:active) {
     clip: rect(0 0 0 0);
     clip-path: inset(50%);

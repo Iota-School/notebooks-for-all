@@ -105,7 +105,7 @@ function activityLog(msg, silent = false, first = false) {
             }
         }
     );
-    document.querySelectorAll("details.log~div[aria-live] ul").forEach(
+    document.querySelectorAll("details.log~ul[aria-live]").forEach(
         (body, i) => {
             let li = document.createElement("li"),
                 time = document.createElement("time"),
