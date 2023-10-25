@@ -1,39 +1,15 @@
-/* style for the accessible themes */
-
 /* style variables */
 :root {
     --nb-focus-width: 3px;
     --nb-accent-color: auto;
-    --nb-line-height: 1.75;
     --nb-background-color-dark: #2b2a33;
     --nb-background-color-light: #FFFFFF;
     --nb-margin: 5%;
-
-    /* default browser values */
-    --nb-ul-margin-top: 1em;
-    --nb-font-size: medium;
-    --nb-fieldset-margin: 2px;
-    --nb-fieldset-margin-top: .35em;
-    --nb-fieldset-padding: .75em;
-    --nb-fieldset-border: 2px;
-    --nb-body-margin: 8px;
-    --nb-table-border: 2px;
-    --nb-calc-fieldset-edge: var(--nb-fieldset-margin) + var(--nb-fieldset-padding) + var(--nb-fieldset-border);
-    --nb-calc-fieldset-top: calc(var(--nb-fieldset-border) + var(--nb-fieldset-margin-top));
-    --nb-calc-cell-margin: calc(0*var(--nb-calc-fieldset-edge) + var(--nb-body-margin) + var(--nb-table-border));
-    --nb-calc-cell-width: calc(100vw - 2 * var(--nb-calc-cell-margin));
-    --nb-calc-table-width: calc(100vw - 2 * var(--nb-calc-cell-margin) - 2 * var(--nb-table-border));
-    --nb-calc-cell-fieldset-width: calc(var(--nb-calc-cell-width) - 2 * var(--nb-calc-fieldset-edge));
-    --nb-calc-header-width: calc(100vw - 2 *var(--nb-body-margin));
-    /* --nb-calc-cell-margin: calc((100vw - var(--nb-calc-cell-width))/2 - var(--nb-fieldset-border) - var(--nb-table-border)) */
 }
 
 body {
     overflow-x: hidden;
-    margin: var(--nb-body-margin);
-    font-size: var(--nb-font-size);
     accent-color: var(--nb-accent-color);
-    line-height: var(--nb-line-height);
     margin-left: var(--nb-margin);
     margin-right: var(--nb-margin);
 }
@@ -110,13 +86,6 @@ textarea:disabled {
     color: unset;
 }
 
-fieldset {
-    border: var(--nb-fieldset-border) groove;
-    margin-left: var(--nb-fieldset-margin);
-    margin-right: var(--nb-fieldset-margin);
-    padding-left: var(--nb-fieldset-padding);
-    padding-right: var(--nb-fieldset-padding);
-}
 
 /* hide legends and use labels instead. they increase the hit area.
 https://adrianroselli.com/2022/07/use-legend-and-fieldset.html */
@@ -136,7 +105,7 @@ legend:not(:focus):not(:active) {
     display: inline-flex;
     justify-content: space-evenly;
     align-items: center;
-    width: var(--nb-calc-header-width);
+    width: 100vw;
     background-color: inherit;
 }
 
@@ -151,17 +120,11 @@ a[href="#notebook"] {
 }
 
 /* small devices */
-@media (max-width: 576px) {
-    :root {
-        --nb-fieldset-margin: 0px;
-        --nb-fieldset-padding: 0em;
-    }
-}
+@media (max-width: 576px) {}
 
 /* medium devices */
 @media (max-width: 768px) {
     :root {
-        --nb-table-border: 0px;
-        --nb-body-margin: 0px;
+        --nb-margin: 0px;
     }
 }

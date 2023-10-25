@@ -1,4 +1,4 @@
-const SELECTORS = {
+const BODY = document.querySelector("body"), SELECTORS = {
     "table": "table#cells",
     "body": "table#cells>tbody",
     "row": "table#cells>tbody>tr",
@@ -58,15 +58,27 @@ function toggleRole() {
 document.forms.settings.elements["table-role"].forEach(
     (x) => { x.addEventListener("change", toggleRole) }
 )
+function flattenCss(x) {
+    return Object.entries(x).map(x => x.join(": ")).join("; ");
+}
+function getStyle() {
+    return {
+        "font-size": document.forms.settings["font-size"].value,
+        "font-family": document.forms.settings["font-family"].value,
+        "--nb-margin": `${document.forms.settings.elements.margin.value}%`,
+        "line-height": `${document.forms.settings.elements["line-height"].value}`,
+    }
+}
+function setStyle(msg) {
+    BODY.setAttribute("style", flattenCss(getStyle()));
+    activityLog(msg);
+}
 function changeFont() {
-    let value = document.forms.settings["font-size"].value;
-    document.getElementById("nb-font-size-style").textContent = `:root {--nb-font-size: ${value};}`
-    activityLog(`font size change`)
+    setStyle(`font size change`);
 }
 function changeFontFamily() {
     let value = document.forms.settings["font-family"].value;
-    document.getElementById("nb-font-family-style").textContent = `:root {font-family: ${value};}`;
-    activityLog(`font family change`)
+    setStyle(value == "serif" ? `serifs included` : `serifs removed`)
 }
 function activityLog(msg, silent = false, first = false) {
     document.querySelectorAll("details.log+table").forEach(
@@ -98,33 +110,37 @@ function openDialog() {
     document.getElementById(event.target.getAttribute("aria-controls")).showModal();
 };
 const L = 37, U = 38, R = 39, D = 40;
-document.addEventListener("load", () => {
-    document.querySelectorAll("table[role=grid]").forEach(
-        (x) => {
-            x.addEventListener("keydown", (e) => {
-                let target = document.activeElement;
-                let i = Array.prototype.indexOf.call(target.parentElement.parentElement.childNodes, target.parentElement);
-                switch (e.code) {
-                    case L:
-                        break
-                    case U:
-                        break
-                    case R:
-                        break
-                    case D:
-                        break
-                };
-            })
-        }
-    );
-    document.forms.settings.elements["color-scheme"].forEach(
-        (x) => { x.addEventListener("change", toggleColorScheme) }
-    );
-    document.forms.settings.elements["font-size"].addEventListener("change", changeFont);
-    document.forms.settings.elements["font-family"].forEach(
-        (x) => { x.addEventListener("change", changeFontFamily) }
-    );
-    document.forms.settings.elements.speech.addEventListener("change", (x) => {
-        activityLog("speech on")
-    });
-})
+document.querySelectorAll("table[role=grid]").forEach(
+    (x) => {
+        x.addEventListener("keydown", (e) => {
+            let target = document.activeElement;
+            let i = Array.prototype.indexOf.call(target.parentElement.parentElement.childNodes, target.parentElement);
+            switch (e.code) {
+                case L:
+                    break
+                case U:
+                    break
+                case R:
+                    break
+                case D:
+                    break
+            };
+        })
+    }
+);
+document.forms.settings.elements["color-scheme"].forEach(
+    (x) => { x.addEventListener("change", toggleColorScheme) }
+);
+document.forms.settings.elements["font-size"].addEventListener("change", changeFont);
+document.forms.settings.elements["font-family"].forEach(
+    (x) => { x.addEventListener("change", changeFontFamily) }
+);
+document.forms.settings.elements.speech.addEventListener("change", (x) => {
+    activityLog("speech on")
+});
+document.forms.settings.elements.margin.addEventListener("change", (x)=>{
+    setStyle("margin changed");
+});
+document.forms.settings.elements["line-height"].addEventListener("change", (x)=>{
+    setStyle("line height changed");
+});

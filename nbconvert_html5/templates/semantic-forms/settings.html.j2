@@ -9,11 +9,14 @@
             <label>light mode<input value="light" name="color-scheme" type="radio" checked></label>
             <label>dark mode<input value="dark" name="color-scheme" type="radio"></label>
         </fieldset>
+        <label>
+            margin<input type="number" min="0" max="40" step="5" name="margin" value="5">%
+        </label>
         <fieldset id="nb-table-role-radio">
             <legend>cell navigation</legend>
             <b aria-hidden="true">cell navigation</b>
             <i>modify the screen reader's cell navigation preference,
-                there is no effect on the visual layout.</i>
+                there is no visual effect.</i>
             <label>list<input value="list" name="table-role" type="radio" checked></label>
             <label>table<input value="table" name="table-role" type="radio"></label>
             <label>landmark<input value="landmark" name="table-role" type="radio"></label>
@@ -39,8 +42,11 @@
                 <label>serif<input value="serif" name="font-family" type="radio" checked></label>
                 <label>sans-serif<input value="sans-serif" name="font-family" type="radio"></label>
             </fieldset>
-            <span hidden id="nb-def-cell">cell</span>
+            <label>
+                line height<input type="number" min=".5" max="3" step=".1" name="line-height" value="1.2">
+            </label>
         </fieldset>
+
         <fieldset id="nb-sound-group">
             <legend>sound settings</legend>
             <label><input type="checkbox" name="speech">Synthetic speech</label>
