@@ -1,11 +1,15 @@
 <details class="log">
-    <summary{% if LOGID %} id="nb-activity-log-label" {%endif%}>activity log</summary>
+    {# <summary{% if LOGID %} id="nb-activity-log-label" {%endif%}>activity log</summary> #}
 </details>
-<table aria-labelledby="nb-activity-log-label">
+<div aria-live="polite">
+    <ul aria-labelledby="nb-activity-log-label">
+    </ul>
+</div>
+<!--<table aria-labelledby="nb-activity-log-label">
     <tr>
         <th>time</th>
         <td>message</td>
         {# all forward behaviors should be reversible except code execution #}
         {# <td>action</td> #}
     </tr>
-</table>
+</table>-->

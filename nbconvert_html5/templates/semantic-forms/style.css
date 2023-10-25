@@ -67,6 +67,7 @@ header:focus-within,
 
 /* we visually hide the logs so that the screen reader announces them. hiding them hides them from AT. */
 details.log:not([open])+table,
+details.log:not([open])+div[aria-live],
 .visually-hidden:not(:focus-within):not(:active) {
     clip: rect(0 0 0 0);
     clip-path: inset(50%);
@@ -97,6 +98,10 @@ legend:not(:focus):not(:active) {
     width: 1px;
     height: 1px;
     white-space: nowrap;
+}
+
+[role=log] li::marker {
+    display: none;
 }
 
 #skip-link {

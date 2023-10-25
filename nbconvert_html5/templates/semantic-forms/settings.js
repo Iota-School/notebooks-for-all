@@ -89,7 +89,6 @@ function activityLog(msg, silent = false, first = false) {
                 td = document.createElement("td"),
                 out = document.createElement("output"),
                 now = Date.now();
-            out.textContent = msg;
             th.append(time);
             time.setAttribute("datetime", now);
             time.textContent = now;
@@ -98,6 +97,29 @@ function activityLog(msg, silent = false, first = false) {
             td.append(out);
             silent ? out.setAttribute("aria-hidden", true) : null;
             body.append(tr);
+            out.setAttribute("aria-live", "polite")
+            out.textContent = msg;
+            if (!i && document.forms.settings.elements.speech.checked) {
+                // a non-screen reader solution for audible activity.
+                speechSynthesis.speak(new SpeechSynthesisUtterance(msg));
+            }
+        }
+    );
+    document.querySelectorAll("details.log~div[aria-live] ul").forEach(
+        (body, i) => {
+            let li = document.createElement("li"),
+                time = document.createElement("time"),
+                out = document.createElement("output"),
+                now = Date.now();
+            li.append(time);
+            time.setAttribute("datetime", now);
+            time.textContent = now;
+            time.setAttribute("aria-hidden", true);
+            li.append(out);
+            silent ? out.setAttribute("aria-hidden", true) : null;
+            body.append(li);
+            out.setAttribute("role", "status");
+            out.textContent = msg;
             if (!i && document.forms.settings.elements.speech.checked) {
                 // a non-screen reader solution for audible activity.
                 speechSynthesis.speak(new SpeechSynthesisUtterance(msg));
