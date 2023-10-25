@@ -64,7 +64,7 @@ the notebook experiennce from browse to edit/focus mode.
                     <ol></ol>
                 </details>
             </section>
-            <label><input id="nb-edit-mode" type="checkbox">edit mode</label>
+            <label><input id="nb-edit-mode" type="checkbox" name="edit">edit mode</label>
             <button aria-controls="nb-metadata" onclick="openDialog()">Metadata</button>
             <button aria-controls="nb-expanded-dialog" onclick="openDialog()">expand and collapse cells</button>
             <button aria-controls="nb-visibility-dialog" onclick="openDialog()">show and hide cell parts</button>
@@ -95,6 +95,7 @@ the notebook experiennce from browse to edit/focus mode.
         <a href="#notebook" accesskey="0">skip to top</a>
     </footer>
     <script src="settings.js"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js" defer></script>
 </body>
 
 </html>
@@ -114,12 +115,20 @@ the notebook experiennce from browse to edit/focus mode.
     {{cell_metadata(loop.index, cell.metadata)}}
 </section>
 {% endmacro%}
-
-{% macro cell_anchor(i, cell_type) %}
-{# the index is a common tab stop/anchor for each cell. the description can be enhanced and configured for a better
-AT experience. #}
+{% macro cell_anchor(i, cell_type)%}
 <a href="#{{i}}" id="{{i}}" aria-labelledby="nb-cell-label {{i}}"
     aria-describedby="nb-{{cell_type}}-label nb-cell-label cell-{{i}}-loc nb-loc-label">{{i}}</a>
+{% endmacro %}
+
+{% macro cell_form(i, cell_type) %}
+{# the cell form acts a formal reference for each cell. as a form, each cell can handle a submission process
+that would include talking to the kernel. #}
+<form class="nb-toolbar" id="cell-{{i}}" name="cell-{{i}}" aria-labelledby="cell-{{i}}-source-label" hidden>
+    <fieldset>
+        <legend>actions</legend>
+        <button type="submit">Run Cell</button>
+    </fieldset>
+</form>
 {% endmacro %}
 
 {% macro cell_cell_type(i, cell_type) %}
@@ -135,13 +144,6 @@ AT experience. #}
 <output form="cell-{{i}}" name="execution_count" id="cell-{{i}}-execution_count">#{{execution_count}}</output>
 {% endmacro %}
 
-{% macro cell_form(i) %}
-{# the cell form acts a formal reference for each cell. as a form, each cell can handle a submission process
-that would include talking to the kernel. #}
-<form id="cell-{{i}}" name="cells" aria-labelledby="cell-{{i}}-source-label">
-    <button type="submit">Run Cell</button>
-</form>
-{% endmacro %}
 
 {% macro cell_source(i, source, execution_count) %}
 {% set label -%}

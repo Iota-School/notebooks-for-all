@@ -40,6 +40,8 @@ summary[inert]::marker {
 }
 
 textarea[name=source] {
+    box-sizing: border-box;
+    /* https://davidwalsh.name/textarea-width */
     width: 100%;
 }
 
@@ -50,10 +52,9 @@ table#cells+table,
 #cells .cell.markdown>.nb-source,
 #cells .nb-cell_type,
 #cells .nb-metadata,
-#cells .nb-toolbar,
 #cells .nb-execution_count,
-#cells .nb-toolbar,
-#cells textarea[name=source] {
+#cells details>summary[inert]~textarea[name=source],
+#cells details>summary:not([inert])~textarea[name=source]~* {
     display: none;
 }
 
@@ -78,11 +79,10 @@ details.log:not([open])+table,
 
 /* default tag settings. */
 textarea {
-    line-height: var(--nb-line-height);
     overflow: auto;
 }
 
-textarea:disabled {
+textarea: {
     color: unset;
 }
 

@@ -138,9 +138,64 @@ document.forms.settings.elements["font-family"].forEach(
 document.forms.settings.elements.speech.addEventListener("change", (x) => {
     activityLog("speech on")
 });
-document.forms.settings.elements.margin.addEventListener("change", (x)=>{
+document.forms.settings.elements.margin.addEventListener("change", (x) => {
     setStyle("margin changed");
 });
-document.forms.settings.elements["line-height"].addEventListener("change", (x)=>{
+document.forms.settings.elements["line-height"].addEventListener("change", (x) => {
     setStyle("line height changed");
 });
+
+function toggleActive() {
+    if (document.forms.notebook.elements.edit.checked) {
+        document.querySelectorAll("tr.cell>td>details>summary[inert]").forEach(
+            x => x.removeAttribute("inert")
+        );
+        document.querySelectorAll("tr.cell>td>details>textarea[readonly]").forEach(
+            x => x.removeAttribute("readonly")
+        );
+        document.querySelectorAll("tr.cell>td>form").forEach(
+            x => x.removeAttribute("hidden")
+        );
+        activityLog("entering edit mode");
+    } else {
+        document.querySelectorAll("tr.cell>td>details>summary").forEach(
+            x => x.setAttribute("inert", null)
+        );
+        document.querySelectorAll("tr.cell>td>details>textarea").forEach(
+            x => x.setAttribute("readonly", null)
+        );
+        document.querySelectorAll("tr.cell>td>form").forEach(
+            x => x.setAttribute("hidden", null)
+        );
+        activityLog("entering reading mode");
+    }
+}
+document.forms.notebook.elements.edit.addEventListener("change", () => toggleActive())
+
+// async function runSource(target) {
+//     {
+//         let pyodide = await loadPyodide();
+//         pyodide.runPython(target.elements.source.value).then(
+//             (x) => {
+//                 console.log(x)
+//             }, (x) => {
+//                 console.log(x)
+//             }
+//         )
+//         return false;
+//     }
+// }
+// document.querySelectorAll("form.nb-toolbar").forEach((x) => {
+//     x.addEventListener("submit", (event) => {
+//         event.preventDefault();
+//     })
+// });
+// document.querySelectorAll("textarea[name=source]").forEach(
+//     (x) => {
+//         x.addEventListener("keydown", (event) => {
+//             if (event.ctrlKey && event.key === 'Enter') {
+//                 runSource(event.target.form);
+//             }
+//         })
+//     }
+// );
