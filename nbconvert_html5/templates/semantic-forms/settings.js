@@ -89,15 +89,10 @@ function activityLog(msg, silent = false, first = false) {
                 td = document.createElement("td"),
                 out = document.createElement("output"),
                 now = Date.now();
-            th.append(time);
-            time.setAttribute("datetime", now);
+            time.setAttribute("datetime", now), time.setAttribute("aria-hidden", "true");
             time.textContent = now;
-            tr.append(th);
-            tr.append(td);
-            td.append(out);
-            silent ? out.setAttribute("aria-hidden", true) : null;
-            body.append(tr);
-            out.setAttribute("aria-live", "polite")
+            body.append(tr), th.append(time), tr.append(th), tr.append(td), td.append(out);
+            silent ? out.setAttribute("aria-live", "off") : null;
             out.textContent = msg;
             if (!i && document.forms.settings.elements.speech.checked) {
                 // a non-screen reader solution for audible activity.
@@ -105,27 +100,6 @@ function activityLog(msg, silent = false, first = false) {
             }
         }
     );
-    document.querySelectorAll("details.log~ul[aria-live]").forEach(
-        (body, i) => {
-            let li = document.createElement("li"),
-                time = document.createElement("time"),
-                out = document.createElement("output"),
-                now = Date.now();
-            li.append(time);
-            time.setAttribute("datetime", now);
-            time.textContent = now;
-            time.setAttribute("aria-hidden", true);
-            li.append(out);
-            silent ? out.setAttribute("aria-hidden", true) : null;
-            body.append(li);
-            out.setAttribute("role", "status");
-            out.textContent = msg;
-            if (!i && document.forms.settings.elements.speech.checked) {
-                // a non-screen reader solution for audible activity.
-                speechSynthesis.speak(new SpeechSynthesisUtterance(msg));
-            }
-        }
-    )
 };
 function openDialog() {
     event.preventDefault();
