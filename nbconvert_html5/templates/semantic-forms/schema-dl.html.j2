@@ -1,0 +1,59 @@
+<dialog id="nb-help">
+    <h1>notebook help</h1>
+    <form>
+        <button formmethod="dialog">close</button>
+        <h2 id="nb-defs-label">definitions</h2>
+        <dl aria-labelledby="nb-defs-label">
+            <dt id="nb-notebook-label">notebook</dt>
+            <dd>a collections of <a href="#nb-cells-label">cells</a></dd>
+            <dd>
+                <dl aria-labelledby="nb-notebook-label nb-defs-label">
+                    <dt id="nb-root-metadata-label">metadata</dt>
+                    <dd id="nb-root-metadata-desc">{{schema.properties.metadata.description}}</dd>
+                    <dt id="nb-cells-label">cells</dt>
+                    <dd id="nb-cells-desc">{{schema.properties.cells.description}}</dd>
+                </dl>
+            </dd>
+            <dt id="nb-cell-label">cell</dt>
+            <dd>
+                <dl aria-labelledby="nb-cell-label nb-defs-label">
+                    <dt id="nb-index-label">index</dt>
+                    <dd id="nb-index-desc">the ordinal location of the cell in the notebook, counting begins from 1.
+                    </dd>
+                    <dt id="nb-source-label">source</dt>
+                    <dd id="nb-source-desc">{{schema.definitions.misc.source.description}}</dd>
+                    <dt id="nb-metadata-label">metadata</dt>
+                    <dd id="nb-metadata-desc">{{schema.definitions.raw_cell.properties.metadata.description}}</dd>
+                    <dt id="nb-cell_type-label">cell type</dt>
+                    <dd>the are three kinds of cells
+                        <dl aria-labelledby="nb-cell_type-label">
+                            <dt id="nb-code-label">code</dt>
+                            <dd id="nb-code-desc">{{schema.definitions.code_cell.description}}</dd>
+                            <dt id="nb-markdown-label">markdown</dt>
+                            <dd id="nb-markdown-desc">{{schema.definitions.markdown_cell.description}}</dd>
+                            <dt id="nb-raw-label">raw</dt>
+                            <dd id="nb-raw-desc">{{schema.definitions.raw_cell.description}}</dd>
+                        </dl>
+                    </dd>
+                    <dd id="nb-cell_type-desc">{{schema.definitions.raw_cell.properties.cell_type.description}}</dd>
+                    <dt id="nb-execution_count-label">execution count</dt>
+                    <dd id="nb-execution_count-desc">
+                        {{schema.definitions.code_cell.properties.execution_count.description}}
+                    </dd>
+
+                    <dt id="nb-outputs-label">outputs</dt>
+                    <dd id="nb-outputs-desc">
+                        {{schema.definitions.code_cell.properties.outputs.description}}
+                    </dd>
+                    <dt id="nb-attachments-label">attachments</dt>
+                    <dd id="nb-attachments-desc">{{schema.definitions.misc.attachments.description}}</dd>
+                    <dt id="nb-loc-label">lines of code</dt>
+                    <dd>lines of code in the cell, including whitespace.</dd>
+                    {# this probably should be significant lines of code #}
+                </dl>
+            </dd>
+            <dt id="nb-toolbar-label">toolbar</dt>
+            <dd>composite widgets that allow for arrow key navigation</dd>
+        </dl>
+    </form>
+</dialog>

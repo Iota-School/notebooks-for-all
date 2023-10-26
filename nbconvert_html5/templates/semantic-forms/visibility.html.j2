@@ -1,0 +1,43 @@
+{% macro header_row(names) %}
+<tr>
+    <th></th>
+    {% for name in names.split() %}
+    {% set alias = name.lstrip("!") %}
+    <th>{{alias}}</th>
+    {% endfor %}
+</tr>
+{% endmacro%}
+
+
+{% macro checkbox_row(label, names) %}
+<tr class="{{label}}">
+    <td>{{label}}</td>
+    {% for name in names.split() %}
+    {% set alias = name.lstrip("!") %}
+    <td><input aria-labelledby="nb-{{label}}-label nb-{{alias}}-label" name="{{alias}}" type="checkbox" {% if not
+            name.startswith("!") %} checked{% endif %}>
+    </td>
+    {% endfor %}
+</tr>
+{% endmacro%}
+
+
+<dialog id="nb-visibility-dialog">
+    <form name="visibility">
+        <button formmethod="dialog">Close</button>
+        <table aria-label="notebook cell visibility" role="grid">
+            <tbody>
+                {# the table head is used to provide controls #}
+                {# it hints at a configurable pattern for showing different features. #}
+                {# there should be controls for each cell type here, and cell types can be
+                added. #}
+                {% set labels = "index execution_count !cell_type source outputs !metadata !toolbar !loc" %}
+                {{header_row(labels)}}
+                {{checkbox_row("code", labels)}}
+                {{checkbox_row("markdown", labels)}}
+                {{checkbox_row("raw", labels)}}
+            </tbody>
+        </table>
+    </form>
+    {% include "semantic-forms/activity-log.html.j2" %}
+</dialog>

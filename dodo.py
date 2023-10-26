@@ -47,7 +47,8 @@ def task_styles():
             """body {
                 background-color: var(--nb-background-color-%s);
                 color-scheme: %s;
-            }\n""" % (theme, theme)
+            }\n"""
+            % (theme, theme)
             + pygments.formatters.get_formatter_by_name(
                 "html", style=f"a11y-high-contrast-{theme}"
             ).get_style_defs()
@@ -80,6 +81,7 @@ def task_copy(notebooks, configurations, target):
     notebooks = list(map(Path, notebooks))
     configurations = list(map(Path, configurations))
     styles = list(TEMPLATES.glob("*.css"))
+    scripts = list(TEMPLATES.glob("*.js"))
     targets = [NB / x.name for x in notebooks]
 
     def readme(target, ext, title):
@@ -101,6 +103,13 @@ def task_copy(notebooks, configurations, target):
         task_dep=["styles"],
         actions=[(cp, (x, HTML / x.name)) for x in styles],
         targets=[HTML / x.name for x in styles],
+        uptodate=list(map(Path.exists, targets)),
+    )
+    yield dict(
+        name="scripts",
+        clean=True,
+        actions=[(cp, (x, HTML / x.name)) for x in scripts],
+        targets=[HTML / x.name for x in scripts],
         uptodate=list(map(Path.exists, targets)),
     )
     targets = [CONFIGS / x.name for x in configurations]
