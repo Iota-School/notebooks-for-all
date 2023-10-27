@@ -19,7 +19,7 @@ CONFIGS = EXPORTS / "configs"
 HTML = EXPORTS / "html"
 AUDITS = EXPORTS / "audits"
 REPORTS = EXPORTS / "reports"
-TEMPLATES = Path("nbconvert_html5/templates/semantic-forms")
+TEMPLATES = Path("nbconvert_html5/templates/a11y")
 
 
 def do(cmd, *args):
