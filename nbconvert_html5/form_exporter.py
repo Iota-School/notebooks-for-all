@@ -22,16 +22,6 @@ singleton = lru_cache(1)
 
 HERE = Path(__file__).parent
 TEMPLATES = HERE / "templates"
-TEMPLATE = TEMPLATES / "html-templates.html"
-
-# this file contains a template tag that holds the skeleton for notebooks and a cell.
-
-formatter = pygments.formatters.find_formatter_class("html")(style="a11y-light", wrapcode=True)
-lex = pygments.lexers.find_lexer_class("IPython3")()
-
-
-def get_highlighted(x):
-    return pygments.highlight(x, lex, formatter)
 
 
 SCHEMA = nbformat.validator._get_schema_json(nbformat.v4)
