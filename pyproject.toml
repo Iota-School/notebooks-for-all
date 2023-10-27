@@ -68,8 +68,9 @@ serve = "mkdocs serve -v"
 
 [project.entry-points."nbconvert.exporters"]
 html5_test = "nbconvert_html5.exporters:Html5Test"
-html5 = "nbconvert_html5.form_exporter:FormExporter"
-html_post = "nbconvert_html5.exporters:PostProcessExporter"
+# html5 = "nbconvert_html5.form_exporter:FormExporter"
+a11y = "nbconvert_html5.form_exporter:A11yExporter"
+# html_post = "nbconvert_html5.exporters:PostProcessExporter"
 
 [tool.hatch.build.targets.wheel.shared-data]
 "nbconvert_html5/templates" = "share/jupyter/nbconvert/templates"
@@ -138,17 +139,7 @@ notebooks = [
 ]
 configurations = [
     "tests/configurations/default.py",
-    # "tests/configurations/contenteditable-code.py",
-    "tests/configurations/tabs-scroll-to-top.py",
-    # "tests/configurations/tab-to-content-nav-high-contrast.py",
-    # "tests/configurations/tab-to-code-nav-high-contrast.py",
-    "tests/configurations/table-default.py",
-    "tests/configurations/sections.py",
-    "tests/configurations/smol.py",
-    "tests/configurations/ol.py",
-    "tests/configurations/feed.py",
-    "tests/configurations/main.py",
-    # "tests/configurations/notebook-list.py",
+    "tests/configurations/a11y.py",
 ]
 
 [tool.doit.tasks.convert]

@@ -46,7 +46,7 @@ the notebook experiennce from browse to edit/focus mode.
         {# site authors with include their site specific headers in this region. #}
         {# a subsequent tab stop will indicate to keyboard and AT users that there are
         accessibility settings that can be toggled. #}
-        {% include "semantic-forms/settings.html.j2" %}
+        {% include "a11y/settings.html.j2" %}
     </header>
     <main aria-labelledby="nb-notebook-label">
         <form name="notebook" id="notebook" aria-labelledby="nb-notebook-label">
@@ -75,15 +75,15 @@ the notebook experiennce from browse to edit/focus mode.
 
         {% block body_footer %}
         {# dialogs need to be outside the form because we cant nest forms #}
-        {% include "semantic-forms/expanded.html.j2"%}
-        {% include "semantic-forms/visibility.html.j2"%}
+        {% include "a11y/expanded.html.j2"%}
+        {% include "a11y/visibility.html.j2"%}
         <dialog id="nb-metadata">
             <form method="dialog">
                 <button formmethod="dialog">Close</button>
                 {{nb.metadata}}
             </form>
         </dialog>
-        {% include "semantic-forms/schema-dl.html.j2" %}
+        {% include "a11y/help.html.j2" %}
     </main>
     {# a notebook begins as a static document that can progressively
     add features like run time computation. #}
@@ -91,7 +91,7 @@ the notebook experiennce from browse to edit/focus mode.
     it is difficult to access for keyboard users. #}
     <footer>
         {% set LOGID = True %}
-        {% include "semantic-forms/activity-log.html.j2" %}
+        {% include "a11y/activity-log.html.j2" %}
         <a href="#notebook" accesskey="0">skip to top</a>
     </footer>
     <script src="settings.js"></script>

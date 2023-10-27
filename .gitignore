@@ -1,6 +1,8 @@
 docs
 site
 tests/exports
+nbconvert_html5/templates/a11y/light-code.css
+nbconvert_html5/templates/a11y/dark-code.css
 
 *~
 *#

@@ -1,4 +1,4 @@
-{% from "semantic-forms/visibility.html.j2" import header_row, checkbox_row%}
+{% from "a11y/visibility.html.j2" import header_row, checkbox_row%}
 <dialog id="nb-expanded-dialog">
     <form name="expanded">
         <button formmethod="dialog">Close</button>
@@ -12,6 +12,6 @@
             </tbody>
         </table>
     </form>
-    {% include "semantic-forms/activity-log.html.j2" %}
+    {% include "a11y/activity-log.html.j2" %}
 
 </dialog>

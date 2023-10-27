@@ -5,12 +5,9 @@ this design assumes __notebooks are a feed of forms__.
 
 from nbconvert.exporters.html import HTMLExporter
 from contextlib import suppress
-from copy import copy, deepcopy
-import enum
 from functools import lru_cache
 from json import loads
 from pathlib import Path
-from webbrowser import get
 import json
 import builtins
 import bs4
@@ -25,19 +22,11 @@ singleton = lru_cache(1)
 
 HERE = Path(__file__).parent
 TEMPLATES = HERE / "templates"
-TEMPLATE = TEMPLATES / "html-templates.html"
-
-# this file contains a template tag that holds the skeleton for notebooks and a cell.
-
-formatter = pygments.formatters.find_formatter_class("html")(style="a11y-light", wrapcode=True)
-lex = pygments.lexers.find_lexer_class("IPython3")()
-
-
-def get_highlighted(x):
-    return pygments.highlight(x, lex, formatter)
 
 
 SCHEMA = nbformat.validator._get_schema_json(nbformat.v4)
+
+
 def strip_comments(tag):
     for child in getattr(tag, "children", ()):
         with suppress(AttributeError):
@@ -45,6 +34,7 @@ def strip_comments(tag):
                 child.extract()
         strip_comments(child)
     return tag
+
 
 @lru_cache
 def get_markdown_renderer():
@@ -134,6 +124,10 @@ class FormExporter(HTMLExporter):
                 x.name = "ol"
             details.select_one("ol").attrs["aria-labelledby"] = "nb-toc"
         return soup.prettify(formatter="html5")
+
+
+class A11yExporter(FormExporter):
+    template_file = Unicode("a11y/table.html.j2").tag(config=True)
 
 
 def soupify(body: str) -> BeautifulSoup:
