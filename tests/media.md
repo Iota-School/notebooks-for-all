@@ -4,8 +4,9 @@ A collection of multimedia references to Notebooks for All.
 
 ## Articles 
 
-* [Making Jupyter Notebooks More Accessible]
-* referenced in [Data Driven Understanding of Data
+* [Notebooks For All: Making Jupyter Notebooks More Accessible - Astrobites][Making Jupyter Notebooks More Accessible]
+* referenced in [Notably Inaccessible -- Data Driven Understanding of Data
+Science Notebook Inaccessibility][Data Driven Understanding of Data
 Science Notebook Inaccessibility]
 * [SciPy 2023](https://gihyo.jp/article/2023/08/scipy2023) written in Japanese
 
@@ -21,7 +22,7 @@ Science Notebook Inaccessibility]
     * [Joshua Miele - Day of Accessibility Keynote]
     * [Hearing the Light - Astronomy Data Sonification]
     * [Learn to Use a Screen Reader]
-* [Accessibility best practices for authoring Jupyter notebooks] @ JupyterCon
+* [Accessibility best practices for authoring Jupyter notebooks] @ SciPy 2023
 
 
 [Introduction to Day of Accessibility]: https://www.youtube.com/watch?v=9ELaUM1fRNc&list=PLCPZgcYzVpj_WHHCTUpec8THYEMzXZnR1&index=1&t=9s&pp=iAQB
@@ -30,8 +31,7 @@ Science Notebook Inaccessibility]
 [Joshua Miele - Day of Accessibility Keynote]: https://www.youtube.com/watch?v=pR29v4-J6i0&list=PLCPZgcYzVpj_WHHCTUpec8THYEMzXZnR1&index=4&t=6s&pp=iAQB
 [Hearing the Light - Astronomy Data Sonification]: https://www.youtube.com/watch?v=-MBpGKoULyc&list=PLCPZgcYzVpj_WHHCTUpec8THYEMzXZnR1&index=5&t=10s&pp=iAQB
 [Learn to Use a Screen Reader]: https://www.youtube.com/watch?v=F189lurxSbs&list=PLCPZgcYzVpj_WHHCTUpec8THYEMzXZnR1&index=6&pp=iAQB
-[Notebooks For All: Making Jupyter Notebooks More Accessible - Astrobites]: https://astrobites.org/2023/06/10/notebooks-for-all/
-[Notably Inaccessible -- Data Driven Understanding of Data
+[Making Jupyter Notebooks More Accessible]: https://astrobites.org/2023/06/10/notebooks-for-all/
+[Data Driven Understanding of Data
 Science Notebook Inaccessibility]: https://arxiv.org/pdf/2308.03241.pdf
-
-[Accessibility best practices for authoring Jupyter notebooks - SciPy 2023]: https://www.youtube.com/watch?v=onjRLjveGxk
+[Accessibility best practices for authoring Jupyter notebooks]: https://www.youtube.com/watch?v=onjRLjveGxk
