@@ -1,6 +1,7 @@
 <dialog id="nb-audit">
     <h1>AXE accessibility violations</h1>
     <table id="nb-audit-violations">
+        <caption aria-live="polite"><span role="status" id="nb-audit-desc"></span></caption>
         <tbody>
             <tr>
                 <th>id</th>
@@ -11,6 +12,7 @@
         </tbody>
     </table>
     <table id="nb-audit-nodes">
+        <caption></caption>
         <tbody>
             <tr>
                 <th>id</th>
@@ -36,9 +38,18 @@
             updateAuditTables(results)
         })
     }
-
     function updateAuditTables(results) {
-        results.violations.forEach(updateViolation);
+        var total = 0, violations = { "serious": 0, "critical": 0, "moderate": 0, "minor": 0 };
+        if (results.violations) {
+            for (const x in results.violations) {
+                violations[results.violations[x].impact] = violations[results.violations[x].impact] + 1;
+                total++;
+            }
+            results.violations.forEach(updateViolation);
+            var caption = VIOLATION_TABLE.querySelector("caption>span");
+
+            caption.textContent = `${total} accessibility violations automatically detected. ${violations["serious"] + violations["critical"]} are serious or critical.`
+        }
     }
     function updateViolation(violation) {
         var row = document.createElement("tr"),
@@ -70,7 +81,7 @@
         element.textContent = node.target[0];
         cell.textContent = getCell(document.querySelector(node.target[0])).getAttribute("data-index")
         row.appendChild(id), row.appendChild(impact), row.appendChild(cell), row.appendChild(failure_summary);
-        VIOLATION_NODES_TABLE.appendChild(row)
+        VIOLATION_NODES_TABLE.querySelector("tbody").appendChild(row);
     }
     function getCell(node) {
         if (node.tagName == "TR") {

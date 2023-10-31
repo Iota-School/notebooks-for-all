@@ -67,14 +67,10 @@ the notebook experiennce from browse to edit/focus mode.
                 </details>
             </section>
             <label><input id="nb-edit-mode" type="checkbox" name="edit">edit mode</label>
-            <button name="nb-cell-prev" aria-keyshortcuts="K Shift+J">previous cell</button>
-            <button name="nb-cell-next" aria-keyshortcuts="J Shift+K">next cell</button>
-            <button aria-controls="nb-metadata" onclick="openDialog()">Metadata</button>
-            <button aria-controls="nb-audit" onclick="openDialog()">Audit</button>
-            <button aria-controls="nb-expanded-dialog" onclick="openDialog()" accesskey="+">expand and collapse
-                cells</button>
-            <button aria-controls="nb-visibility-dialog" onclick="openDialog()" accesskey="-">show and hide cell
-                parts</button>
+            <button aria-controls="nb-metadata" onclick="openDialog()">metadata</button>
+            <button aria-controls="nb-audit" aria-describedby="nb-audit-desc" onclick="openDialog()">audit</button>
+            <button aria-controls="nb-expanded-dialog" onclick="openDialog()" accesskey="+">expand and collapse cells</button>
+            <button aria-controls="nb-visibility-dialog" onclick="openDialog()" accesskey="-">show and hide cell parts</button>
             <button onclick="openDialog()" aria-controls="nb-help" accesskey="?">help</button>
             <button type="submit">Run</button>
         </form>
