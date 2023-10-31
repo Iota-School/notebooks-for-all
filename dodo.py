@@ -39,6 +39,18 @@ def cp(x, y):
         copyfile(x, y)
 
 
+def task_axe():
+    target = TEMPLATES / "axe.js"
+    return dict(
+        actions=[
+            "wget https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.8.2/axe.js",
+            f"cp axe.js {TEMPLATES}",
+        ],
+        targets=[target],
+        uptodate=[target.exists],
+    )
+
+
 def task_styles():
     def get_pygments(target, theme):
         import pygments.formatters
@@ -67,6 +79,7 @@ def task_styles():
 
 
 @create_after("styles")
+@create_after("axe")
 @task_params(
     [
         dict(name="notebooks", default=[TESTS / "notebooks/lorenz.ipynb"], type=list),
