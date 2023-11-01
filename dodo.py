@@ -44,9 +44,10 @@ def task_axe():
     return dict(
         actions=[
             "wget https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.8.2/axe.js",
-            f"cp axe.js {TEMPLATES}",
+            f"mv axe.js {TEMPLATES}",
         ],
         targets=[target],
+        clean=True,
         uptodate=[target.exists],
     )
 
@@ -121,6 +122,7 @@ def task_copy(notebooks, configurations, target):
     yield dict(
         name="scripts",
         clean=True,
+        task_dep=["axe"],
         actions=[(cp, (x, HTML / x.name)) for x in scripts],
         targets=[HTML / x.name for x in scripts],
         uptodate=list(map(Path.exists, targets)),
