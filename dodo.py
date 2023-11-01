@@ -48,7 +48,7 @@ def task_axe():
         ],
         targets=[target],
         clean=True,
-        uptodate=[target.exists],
+        uptodate=[target.exists()],
     )
 
 
