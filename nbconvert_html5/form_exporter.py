@@ -11,8 +11,9 @@ from pathlib import Path
 import json
 import builtins
 import bs4
+from polars import Boolean
 import pygments
-from traitlets import Unicode
+from traitlets import Unicode, Bool
 import nbformat.v4
 import bs4
 import bs4
@@ -84,7 +85,10 @@ class FormExporter(HTMLExporter):
     A/B testing with out requiring `nbconvert` or notebook knowleldge."""
 
     template_file = Unicode("semantic-forms/table.html.j2").tag(config=True)
-    exclude_anchor_links = True
+    include_axe = Bool(False).tag(config=True)
+    include_settings = Bool(False).tag(config=True)
+    include_cell_index = Bool(True).tag(config=True)
+    exclude_anchor_links = Bool(True).tag(config=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -109,6 +113,9 @@ class FormExporter(HTMLExporter):
         )
 
     def from_notebook_node(self, nb, resources=None, **kw):
+        resources = resources or dict()
+        resources.setdefault("include_axe", self.include_axe)
+        resources.setdefault("include_settings", self.include_settings)
         html, resources = super().from_notebook_node(nb, resources, **kw)
         html = self.post_process_html(html)
         return html, resources

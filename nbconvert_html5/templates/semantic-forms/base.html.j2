@@ -6,6 +6,9 @@ the notebook experiennce from browse to edit/focus mode.
 #}
 {%- extends 'semantic-forms/displays.j2.html' -%}
 {% from 'celltags.j2' import celltags %}
+{% from 'mathjax.html.j2' import mathjax %}
+{% from 'lab/mermaidjs.html.j2' import mermaid_js %}
+{% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
 {% set title = nb.metadata.get('title', resources['metadata']['name']) | escape_html_keep_quotes %}
 
 {%- block header -%}
@@ -27,8 +30,29 @@ the notebook experiennce from browse to edit/focus mode.
     <link rel="stylesheet" href="style.css">
     <link id="nb-light-theme" rel="stylesheet" href="light-code.css">
     <link id="nb-dark-theme" disabled rel="stylesheet" href="dark-code.css">
+
+
+    {%- block html_head_js -%}
+    {%- block html_head_js_requirejs -%}
+    <script src="{{ resources.require_js_url }}"></script>
+    {%- endblock html_head_js_requirejs -%}
+    {%- endblock html_head_js -%}
+
+    {% block jupyter_widgets %}
+    {%- if "widgets" in nb.metadata -%}
+    {{ jupyter_widgets(resources.jupyter_widgets_base_url, resources.html_manager_semver_range,
+    resources.widget_renderer_url) }}
+    {%- endif -%}
+    {% endblock jupyter_widgets %}
+
+    
+    {%- block html_head_js_mathjax -%}
+    {{ mathjax(resources.mathjax_url) }}
+    {%- endblock html_head_js_mathjax -%}
+    
     {%- endblock head -%}
-    {%- block html_head_js_mathjax -%}{%- endblock html_head_js_mathjax -%}
+
+
 </head>
 {%- endblock header -%}
 
@@ -69,8 +93,10 @@ the notebook experiennce from browse to edit/focus mode.
             <label><input id="nb-edit-mode" type="checkbox" name="edit">edit mode</label>
             <button aria-controls="nb-metadata" onclick="openDialog()">metadata</button>
             <button aria-controls="nb-audit" aria-describedby="nb-audit-desc" onclick="openDialog()">audit</button>
-            <button aria-controls="nb-expanded-dialog" onclick="openDialog()" accesskey="+">expand and collapse cells</button>
-            <button aria-controls="nb-visibility-dialog" onclick="openDialog()" accesskey="-">show and hide cell parts</button>
+            <button aria-controls="nb-expanded-dialog" onclick="openDialog()" accesskey="+">expand and collapse
+                cells</button>
+            <button aria-controls="nb-visibility-dialog" onclick="openDialog()" accesskey="-">show and hide cell
+                parts</button>
             <button onclick="openDialog()" aria-controls="nb-help" accesskey="?">help</button>
             <button type="submit">Run</button>
         </form>
@@ -99,6 +125,12 @@ the notebook experiennce from browse to edit/focus mode.
     </footer>
     <script src="settings.js"></script>
     <script src="axe.js" onload="auditNotebook()"></script>
+    {% set mimetype = 'application/vnd.jupyter.widget-state+json'%}
+    {% if mimetype in nb.metadata.get("widgets",{})%}
+    <script type="{{ mimetype }}">
+    {{ nb.metadata.widgets[mimetype] | json_dumps | escape_html_script }}
+    </script>
+    {% endif %}
     {#
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js" defer></script>'' #}
 </body>
