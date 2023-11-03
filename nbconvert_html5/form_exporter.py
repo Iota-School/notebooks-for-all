@@ -11,7 +11,6 @@ from pathlib import Path
 import json
 import builtins
 import bs4
-from polars import Boolean
 import pygments
 from traitlets import Unicode, Bool
 import nbformat.v4
