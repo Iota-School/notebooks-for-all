@@ -16,4 +16,4 @@ jobs:
         with:
           message: |
             A preview fo the exported examples will be rendered at 
-            https://iota-school.github.io/notebooks-for-all/branch/${{ github.event.pull_request.base.ref }}/exports/html
+            https://iota-school.github.io/notebooks-for-all/branch/${{ github.event.pull_request.head.ref }}/exports/html
