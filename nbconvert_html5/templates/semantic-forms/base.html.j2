@@ -6,6 +6,9 @@ the notebook experiennce from browse to edit/focus mode.
 #}
 {%- extends 'semantic-forms/displays.j2.html' -%}
 {% from 'celltags.j2' import celltags %}
+{% from 'mathjax.html.j2' import mathjax %}
+{% from 'lab/mermaidjs.html.j2' import mermaid_js %}
+{% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
 {% set title = nb.metadata.get('title', resources['metadata']['name']) | escape_html_keep_quotes %}
 
 {%- block header -%}
@@ -27,15 +30,32 @@ the notebook experiennce from browse to edit/focus mode.
     <link rel="stylesheet" href="style.css">
     <link id="nb-light-theme" rel="stylesheet" href="light-code.css">
     <link id="nb-dark-theme" disabled rel="stylesheet" href="dark-code.css">
+
+
+    {%- block html_head_js -%}
+    {%- block html_head_js_requirejs -%}
+    <script src="{{ resources.require_js_url }}"></script>
+    {%- endblock html_head_js_requirejs -%}
+    {%- endblock html_head_js -%}
+
+    {% block jupyter_widgets %}
+    {%- if "widgets" in nb.metadata -%}
+    {{ jupyter_widgets(resources.jupyter_widgets_base_url, resources.html_manager_semver_range,
+    resources.widget_renderer_url) }}
+    {%- endif -%}
+    {% endblock jupyter_widgets %}
+
+    
+    {%- block html_head_js_mathjax -%}
+    {{ mathjax(resources.mathjax_url) }}
+    {%- endblock html_head_js_mathjax -%}
+    
     {%- endblock head -%}
-    {%- block html_head_js_mathjax -%}{%- endblock html_head_js_mathjax -%}
 </head>
 {%- endblock header -%}
 
-{% block any_cell %}{{cell_section(cell, loop)}}{% endblock any_cell %}
 
 {% block body_header %}
-
 <body>
     <header aria-label="site header">
         <section id="skip-link">
@@ -46,10 +66,12 @@ the notebook experiennce from browse to edit/focus mode.
         {# site authors with include their site specific headers in this region. #}
         {# a subsequent tab stop will indicate to keyboard and AT users that there are
         accessibility settings that can be toggled. #}
-        {% include "a11y/settings.html.j2" %}
+        {% if resources.include_settings %}{% include "a11y/settings.html.j2" %}{% endif %}
+        {% if resources.include_axe %}{% include "a11y/audit.j2.html" %}{% endif %}
     </header>
     <main aria-labelledby="nb-notebook-label">
         <form name="notebook" id="notebook" aria-labelledby="nb-notebook-label">
+            {% if resources.include_toc %}
             <section aria-labelledby="nb-toc">
                 {# a notebook will provide visual structural navigation for a document.
                 this is a feature of screen readers that is not common to sighted users.
@@ -61,17 +83,24 @@ the notebook experiennce from browse to edit/focus mode.
                     #}
                     <summary id="toc"><span id="nb-toc">table of contents</span></summary>
                     {# the table of contents is populated in python. #}
+                    <a id="nb-toc-start"></a>
                     <ol></ol>
                 </details>
             </section>
+            {% endif %}
             <label><input id="nb-edit-mode" type="checkbox" name="edit">edit mode</label>
-            <button aria-controls="nb-metadata" onclick="openDialog()">Metadata</button>
-            <button aria-controls="nb-expanded-dialog" onclick="openDialog()" accesskey="+">expand and collapse cells</button>
-            <button aria-controls="nb-visibility-dialog" onclick="openDialog()" accesskey="-">show and hide cell parts</button>
-            <button onclick="openDialog()" aria-controls="nb-help" accesskey="?">help</button>
+            <button aria-controls="nb-metadata" onclick="openDialog()">metadata</button>
+            {% if resources.include_axe %}<button aria-controls="nb-audit" aria-describedby="nb-audit-desc" onclick="openDialog()">audit</button>{% endif %}
+            <button aria-controls="nb-expanded-dialog" onclick="openDialog()" accesskey="+">expand and collapse
+                cells</button>
+            <button aria-controls="nb-visibility-dialog" onclick="openDialog()" accesskey="-">show and hide cell
+                parts</button>
+            {% if resources.include_help %}<button onclick="openDialog()" aria-controls="nb-help" accesskey="?">help</button>{% endif %}
             <button type="submit">Run</button>
         </form>
         {% endblock body_header %}
+        
+        {% block any_cell %}{{cell_section(cell, loop)}}{% endblock any_cell %}
 
         {% block body_footer %}
         {# dialogs need to be outside the form because we cant nest forms #}
@@ -83,7 +112,7 @@ the notebook experiennce from browse to edit/focus mode.
                 {{nb.metadata}}
             </form>
         </dialog>
-        {% include "a11y/help.html.j2" %}
+        {% if resources.include_help %}{% include "a11y/help.html.j2" %}{% endif %}
     </main>
     {# a notebook begins as a static document that can progressively
     add features like run time computation. #}
@@ -94,8 +123,16 @@ the notebook experiennce from browse to edit/focus mode.
         {% include "a11y/activity-log.html.j2" %}
         <a href="#notebook" accesskey="0">skip to top</a>
     </footer>
-    <script src="settings.js"></script>
-    {# <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js" defer></script>'' #}
+    {% if resources.include_settings %}<script src="settings.js"></script>{% endif %}
+    {% if resources.include_axe %}<script src="{{resources.axe_url}}" onload="auditNotebook()"></script>{% endif %}
+    {% set mimetype = 'application/vnd.jupyter.widget-state+json'%}
+    {% if mimetype in nb.metadata.get("widgets",{})%}
+    <script type="{{ mimetype }}">
+    {{ nb.metadata.widgets[mimetype] | json_dumps | escape_html_script }}
+    </script>
+    {% endif %}
+    {#
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js" defer></script>'' #}
 </body>
 
 </html>

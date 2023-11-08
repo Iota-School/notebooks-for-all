@@ -21,3 +21,4 @@ tests/out.html
 docs/**/*.html
 docs/**/*.json
 settings.json
+nbconvert_html5/templates/a11y/axe.js

@@ -65,7 +65,7 @@
 {% macro cell_row(cell, loop) %}
 <tr role="listitem" class="cell {{cell.cell_type}}"
     aria-labelledby="nb-cell-label {{loop.index}} cell-{{loop.index}}-cell_type"
-    data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %} {% endif %}>
+    data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %} {% endif %} data-index="{{loop.index}}">
     <td role="none" class="nb-anchor">{{cell_anchor(loop.index, cell.cell_type)}}</td>
     <td role="none" class="nb-execution_count">{{cell_execution_count(loop.index, cell.execution_count)}}</td>
     <td role="none" class="nb-cell_type">{{cell_cell_type(loop.index, cell.cell_type)}}</td>

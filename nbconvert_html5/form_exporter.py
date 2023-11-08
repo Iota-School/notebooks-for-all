@@ -12,9 +12,8 @@ import json
 import builtins
 import bs4
 import pygments
-from traitlets import Unicode
+from traitlets import CUnicode, Unicode, Bool
 import nbformat.v4
-import bs4
 import bs4
 from bs4 import BeautifulSoup
 
@@ -84,7 +83,15 @@ class FormExporter(HTMLExporter):
     A/B testing with out requiring `nbconvert` or notebook knowleldge."""
 
     template_file = Unicode("semantic-forms/table.html.j2").tag(config=True)
-    exclude_anchor_links = True
+    include_axe = Bool(False).tag(config=True)
+    axe_url = CUnicode("https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.8.2/axe.min.js").tag(
+        config=True
+    )
+    include_settings = Bool(True).tag(config=True)
+    include_help = Bool(True).tag(config=True)
+    include_toc = Bool(True).tag(config=True)
+    include_cell_index = Bool(True).tag(config=True)
+    exclude_anchor_links = Bool(True).tag(config=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -109,6 +116,11 @@ class FormExporter(HTMLExporter):
         )
 
     def from_notebook_node(self, nb, resources=None, **kw):
+        resources = resources or dict()
+        resources.setdefault("include_axe", self.include_axe)
+        resources.setdefault("include_settings", self.include_settings)
+        resources.setdefault("include_help", self.include_help)
+        resources.setdefault("axe_url", self.axe_url)
         html, resources = super().from_notebook_node(nb, resources, **kw)
         html = self.post_process_html(html)
         return html, resources

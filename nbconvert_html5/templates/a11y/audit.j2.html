@@ -1,0 +1,95 @@
+<dialog id="nb-audit">
+    <h1>AXE accessibility violations</h1>
+    <table id="nb-audit-violations">
+        <caption aria-live="polite"><span role="status" id="nb-audit-desc"></span></caption>
+        <tbody>
+            <tr>
+                <th>id</th>
+                <th>impact</th>
+                <th>description</th>
+                <th>help</th>
+            </tr>
+        </tbody>
+    </table>
+    <table id="nb-audit-nodes">
+        <caption></caption>
+        <tbody>
+            <tr>
+                <th>id</th>
+                <th>impact</th>
+                <th>cell</th>
+                <th>summary</th>
+            </tr>
+        </tbody>
+    </table>
+</dialog>
+<script>
+    const VIOLATION_TABLE = document.getElementById("nb-audit-violations"),
+        VIOLATION_NODES_TABLE = document.getElementById("nb-audit-nodes"),
+        VIOLATION_COLS = ["id", "impact", "description", "help"];
+    async function auditNotebook() {
+        axe.reset()
+        await axe.run({
+            runOnly: {
+                type: 'tag',
+                values: ['wcag2a', 'wcag2aa', "wcag2aaa", "best-practice", "ACT"]
+            }
+        }, (err, results) => {
+            updateAuditTables(results)
+        })
+    }
+    function updateAuditTables(results) {
+        var total = 0, violations = { "serious": 0, "critical": 0, "moderate": 0, "minor": 0 };
+        if (results.violations) {
+            for (const x in results.violations) {
+                violations[results.violations[x].impact] = violations[results.violations[x].impact] + 1;
+                total++;
+            }
+            results.violations.forEach(updateViolation);
+            var caption = VIOLATION_TABLE.querySelector("caption>span");
+
+            caption.textContent = `${total} accessibility violations automatically detected. ${violations["serious"] + violations["critical"]} are serious or critical.`
+        }
+    }
+    function updateViolation(violation) {
+        var row = document.createElement("tr"),
+            id = document.createElement("td"),
+            impact = document.createElement("td"),
+            description = document.createElement("td"),
+            help = document.createElement("td"),
+            help_link = document.createElement("a");
+        id.textContent = violation.id;
+        impact.textContent = violation.impact;
+        description.textContent = violation.description;
+        help.appendChild(help_link);
+        help_link.textContent = violation.help;
+        help_link.setAttribute("href", violation.helpUrl);
+        VIOLATION_TABLE.querySelector("tbody").appendChild(row);
+        violation.nodes.forEach(node => updateViolationNode(violation, node));
+        row.appendChild(id), row.appendChild(impact), row.appendChild(description), row.appendChild(help);
+    }
+    function updateViolationNode(violation, node) {
+        var row = document.createElement("tr"),
+            id = document.createElement("td"),
+            impact = document.createElement("td"),
+            cell = document.createElement("td"),
+            failure_summary = document.createElement("td");
+        element = document.createElement("td");
+        id.textContent = violation.id;
+        impact.textContent = node.impact;
+        failure_summary.textContent = node.failureSummary;
+        element.textContent = node.target[0];
+        cell.textContent = getCell(document.querySelector(node.target[0])).getAttribute("data-index")
+        row.appendChild(id), row.appendChild(impact), row.appendChild(cell), row.appendChild(failure_summary);
+        VIOLATION_NODES_TABLE.querySelector("tbody").appendChild(row);
+    }
+    function getCell(node) {
+        if (node.tagName == "TR") {
+            return node
+        } else if (node.tagName == "BODY") {
+            return node;
+        } else {
+            return getCell(node.parentElement);
+        }
+    }
+</script>

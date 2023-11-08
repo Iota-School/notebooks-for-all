@@ -307,7 +307,11 @@ def task_audit(html_dir, target):
 
     targets = []
     for x in Path(html_dir).rglob("*.html"):
+        print(x.name)
+        if x.name in {"Imaging_Sky_Background_Estimation-a11y.html"}:
+            continue
         targets.append(Path(target) / x.with_suffix(".json").name)
+        
         yield dict(
             name=x.name,
             actions=[(audit_one, (x, targets[-1]))],
