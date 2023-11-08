@@ -13,10 +13,10 @@ const BODY = document.querySelector("body"), SELECTORS = {
         "cell": "none",
     }, "table": {
         "table": "table",
-        "body": null,
-        "row": null,
-        "header": null,
-        "cell": null,
+        "body": "rowgroup",
+        "row": "row",
+        "header": "rowheader",
+        "cell": "cell",
     }, "landmark": {
         "table": "presentation",
         "body": "group",
