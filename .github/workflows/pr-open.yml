@@ -15,4 +15,5 @@ jobs:
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            Exported examples are rendered at https://iota-school.github.io/notebooks-for-all/branch/${{ github.event.pull_request.base.ref }}/exports/html
+            A preview fo the exported examples will be rendered at 
+            https://iota-school.github.io/notebooks-for-all/branch/${{ github.event.pull_request.base.ref }}/exports/html
