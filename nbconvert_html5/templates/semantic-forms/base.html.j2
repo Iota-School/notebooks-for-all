@@ -124,7 +124,7 @@ the notebook experiennce from browse to edit/focus mode.
         <a href="#notebook" accesskey="0">skip to top</a>
     </footer>
     {% if resources.include_settings %}<script src="settings.js"></script>{% endif %}
-    {% if resources.include_axe %}<script src="axe.js" onload="auditNotebook()"></script>{% endif %}
+    {% if resources.include_axe %}<script src="{{resources.axe_url}}" onload="auditNotebook()"></script>{% endif %}
     {% set mimetype = 'application/vnd.jupyter.widget-state+json'%}
     {% if mimetype in nb.metadata.get("widgets",{})%}
     <script type="{{ mimetype }}">

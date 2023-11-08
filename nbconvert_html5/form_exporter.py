@@ -12,9 +12,8 @@ import json
 import builtins
 import bs4
 import pygments
-from traitlets import Unicode, Bool
+from traitlets import CUnicode, Unicode, Bool
 import nbformat.v4
-import bs4
 import bs4
 from bs4 import BeautifulSoup
 
@@ -85,6 +84,9 @@ class FormExporter(HTMLExporter):
 
     template_file = Unicode("semantic-forms/table.html.j2").tag(config=True)
     include_axe = Bool(False).tag(config=True)
+    axe_url = CUnicode("https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.8.2/axe.min.js").tag(
+        config=True
+    )
     include_settings = Bool(True).tag(config=True)
     include_help = Bool(True).tag(config=True)
     include_toc = Bool(True).tag(config=True)
@@ -118,6 +120,7 @@ class FormExporter(HTMLExporter):
         resources.setdefault("include_axe", self.include_axe)
         resources.setdefault("include_settings", self.include_settings)
         resources.setdefault("include_help", self.include_help)
+        resources.setdefault("axe_url", self.axe_url)
         html, resources = super().from_notebook_node(nb, resources, **kw)
         html = self.post_process_html(html)
         return html, resources
