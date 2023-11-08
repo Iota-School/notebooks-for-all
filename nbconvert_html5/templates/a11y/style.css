@@ -54,6 +54,7 @@ textarea[name=source] {
 
 
 table#cells+table,
+table#cells>tbody>tr:first-child,
 #cells .cell>.nb-loc,
 #cells .cell.markdown>.nb-source,
 #cells .nb-cell_type,

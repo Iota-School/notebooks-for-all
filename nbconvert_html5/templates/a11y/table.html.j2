@@ -1,10 +1,16 @@
 {%- extends 'semantic-forms/base.html.j2' -%}
-
+{% set COLUMNS = ["index", "execution_count", "cell_type", "toolbar", "started_at", "completed_at", "source", "loc",
+"metadata", "outputs"] %}
 {% block body_header %}
 {{super()}}
 {# the most consistent implementation would connect the input visibility to a form #}
 <table id="cells" role="presentation">
     <tbody role="list">
+        <tr>
+            {% for col in COLUMNS %}
+            <th scope="col">{{col}}</th>
+            {% endfor %}
+        </tr>
         {# the table caption is removed because testing on VoiceOver iOS encountered
         https://developer.apple.com/forums/thread/679841
 
@@ -19,6 +25,7 @@
     </tbody>
 </table>
 <table class="nb-cells-footer" hidden>
+
     <tbody>
         {# needs a header row #}
         <tr class="total">
@@ -62,18 +69,33 @@
 
 {% macro loc(cell) %}{{cell.source.splitlines().__len__()}}{% endmacro%}
 
+{% macro time(t) %}
+<time datetime="{{t}}">{{t}}</time>
+{% endmacro %}
+
 {% macro cell_row(cell, loop) %}
 <tr role="listitem" class="cell {{cell.cell_type}}"
     aria-labelledby="nb-cell-label {{loop.index}} cell-{{loop.index}}-cell_type"
-    data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %} {% endif %} data-index="{{loop.index}}">
+    data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %} {% endif %}
+    data-index="{{loop.index}}">
     <td role="none" class="nb-anchor">{{cell_anchor(loop.index, cell.cell_type)}}</td>
     <td role="none" class="nb-execution_count">{{cell_execution_count(loop.index, cell.execution_count)}}</td>
     <td role="none" class="nb-cell_type">{{cell_cell_type(loop.index, cell.cell_type)}}</td>
+    <td role="none" class="nb-toolbar">{{cell_form(loop.index)}}</td>
+    <td role="none" class="nb-start" id="cell-{{loop.index}}-start">
+        {% set t0 = cell.metadata.get("execution", {}).get("iopub.execute_input", "") %}
+        {{time(t0)}}
+    </td>
+    <td role="none" class="nb-end" id="cell-{{loop.index}}-end">
+        {% set t1 = cell.metadata.get("execution", {}).get("shell.execute_reply", "") %}
+        {{time(t1)}}
+    </td>
     <td role="none" class="nb-source">{{cell_source(loop.index, cell.source, cell.execution_count)}}</td>
+    <td role="none" class="nb-metadata">{{cell_metadata(loop.index, cell.metadata)}}</td>
+    {# it was noted in a video that lines of code were helpful in assistive descriptions.
+    lines of code are part of the gestalt of code forms. #}
+    <td role="none" class="nb-loc" id="cell-{{loop.index}}-loc">{{loc(cell)}}</td>
     <td role="none" class="nb-outputs">{{cell_output(loop.index, cell, cell.source, cell.outputs, cell.cell_type,
         cell.execution_count)}}</td>
-    <td role="none" class="nb-metadata">{{cell_metadata(loop.index, cell.metadata)}}</td>
-    <td role="none" class="nb-toolbar">{{cell_form(loop.index)}}</td>
-    <td role="none" class="nb-loc" id="cell-{{loop.index}}-loc">{{loc(cell)}}</td>
 </tr>
 {% endmacro %}
