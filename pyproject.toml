@@ -36,6 +36,9 @@ dynamic = ["version"]
 [project.optional-dependencies]
 test = [
     "pytest",
+    "pytest-xdist",
+    "pytest-sugar",
+    "pytest-playwright",
     "nbval",
     "matplotlib",
     "numpy",
@@ -43,8 +46,8 @@ test = [
     "beautifulsoup4",
     "scipy",
 ]
-task = ["doit", "tomli", "pandas", "tabulate", "requests", "requests_cache"]
-audit = ["playwright"]
+task = ["doit", "tomli", "pandas", "tabulate"]
+audit = ["requests", "requests_cache", "playwright"]
 docs = ["mkdocs-material", "mkdocstrings[python]"]
 
 
@@ -61,9 +64,7 @@ serve = "mkdocs serve -v"
 
 [project.entry-points."nbconvert.exporters"]
 html5_test = "nbconvert_html5.exporters:Html5Test"
-# html5 = "nbconvert_html5.form_exporter:FormExporter"
 a11y = "nbconvert_html5.form_exporter:A11yExporter"
-# html_post = "nbconvert_html5.exporters:PostProcessExporter"
 
 [tool.hatch.build.targets.wheel.shared-data]
 "nbconvert_html5/templates" = "share/jupyter/nbconvert/templates"
@@ -79,18 +80,23 @@ version-file = "nbconvert_html5/_version.py"
 source = "vcs"
 
 # testing setttings
+[tool.hatch.envs.test.scripts]
+run = "pytest"
+
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "--nbval --current-env -pno:importnb --rootdir=tests --sanitize-with=sanitize.cfg"
-testpaths = ["tests"]
-norecursedirs = ["tests/notebooks", "*checkpoints"]
+addopts = "--nbval --nbval-current-env -pno:importnb -n auto --nbval-sanitize-with=sanitize.cfg"
+testpaths = ["tests", "test_playwright.py"]
+norecursedirs = ["tests/exports", "tests/notebooks", "*checkpoints"]
 
 [tool.hatch.envs.test]
-features = ["test"]
+features = ["test", "audit"]
+post-install-commands = ["python -m playwright install chrome-beta"]
 
-[tool.hatch.envs.test.scripts]
-run = "pytest "
-
+[tool.hatch.envs.test.overrides]
+env.CI.post-install-commands = [
+    "python -m playwright install --with-deps chrome-beta",
+]
 
 # formatting settings
 [tool.isort]
@@ -116,6 +122,8 @@ post-install-commands = ["- python -m playwright install chrome-beta"]
 env.CI.post-install-commands = [
     "python -m playwright install --with-deps chrome-beta",
 ]
+[tool.hatch.envs.audit.scripts]
+axe = "doit audit"
 
 [tool.doit.commands.list]
 status = true
