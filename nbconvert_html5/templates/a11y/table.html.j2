@@ -70,7 +70,7 @@
 {% macro loc(cell) %}{{cell.source.splitlines().__len__()}}{% endmacro%}
 
 {% macro time(t) %}
-<time datetime="{{t}}">{{t}}</time>
+{% if t %}<time datetime="{{datetime.fromisoformat(t).isoformat(timespec="milliseconds")}}">{{t}}</time>{% endif %}
 {% endmacro %}
 
 {% macro cell_row(cell, loop) %}

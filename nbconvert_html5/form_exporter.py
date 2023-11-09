@@ -3,6 +3,7 @@
 this design assumes __notebooks are a feed of forms__.
 """
 
+from datetime import datetime
 from nbconvert.exporters.html import HTMLExporter
 from contextlib import suppress
 from functools import lru_cache
@@ -113,6 +114,7 @@ class FormExporter(HTMLExporter):
             count_code_cells=count_code_cells,
             ordered=ordered,
             schema=SCHEMA,
+            datetime=datetime
         )
 
     def from_notebook_node(self, nb, resources=None, **kw):
