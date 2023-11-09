@@ -5,6 +5,7 @@ on:
     branches-ignore:
       - gh-pages
     paths:
+      - .github/workflows/**
       - nbconvert_html5/**
       - "pyproject.toml"
 
