@@ -29,7 +29,7 @@ dependencies = [
     "IPython",
     "markdown-it-py[plugins,linkify]",
     "python-slugify",
-    "html5lib"
+    "html5lib",
 ]
 dynamic = ["version"]
 
@@ -43,15 +43,8 @@ test = [
     "beautifulsoup4",
     "scipy",
 ]
-audit = [
-    "doit",
-    "tomli",
-    "requests",
-    "requests_cache",
-    "playwright",
-    "pandas",
-    "tabulate",
-]
+task = ["doit", "tomli", "pandas", "tabulate", "requests", "requests_cache"]
+audit = ["playwright"]
 docs = ["mkdocs-material", "mkdocstrings[python]"]
 
 
@@ -109,14 +102,17 @@ line_length = 100
 # doit tasks
 [tool.hatch.envs.task.scripts]
 list = "doit list"
-export = "doit copy convert audit report"
+convert = "doit convert"
 run = "doit run"
 
 [tool.hatch.envs.task]
-features = ["audit"]
+features = ["task"]
+
+[tool.hatch.envs.audit]
+features = ["task", "audit"]
 post-install-commands = ["- python -m playwright install chrome-beta"]
 
-[tool.hatch.envs.task.overrides]
+[tool.hatch.envs.audit.overrides]
 env.CI.post-install-commands = [
     "python -m playwright install --with-deps chrome-beta",
 ]
