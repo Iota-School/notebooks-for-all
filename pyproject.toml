@@ -91,11 +91,11 @@ norecursedirs = ["tests/exports", "tests/notebooks", "*checkpoints"]
 
 [tool.hatch.envs.test]
 features = ["test", "audit"]
-post-install-commands = ["python -m playwright install chrome-beta"]
+post-install-commands = ["python -m playwright install chrome"]
 
 [tool.hatch.envs.test.overrides]
 env.CI.post-install-commands = [
-    "python -m playwright install --with-deps chrome-beta",
+    "python -m playwright install --with-deps chrome",
 ]
 
 # formatting settings
