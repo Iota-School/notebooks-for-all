@@ -28,6 +28,7 @@ jobs:
         channel-priority: strict
         environment-file: test-environment.yml
         use-only-tar-bz2: true 
+        miniforge-variant: Mambaforge
     - name: install browsers
       run: |
         playwright install --with-deps chrome
