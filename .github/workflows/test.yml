@@ -26,9 +26,11 @@ jobs:
       with:
         activate-environment: test-nbconvert-a11y
         channel-priority: strict
-        environment-file: test-environment.yml
+        auto-activate-base: true
+        environment-file: ""
         use-only-tar-bz2: true 
         miniforge-variant: Mambaforge
+        use-mamba: true
     - name: install browsers
       run: |
         playwright install --with-deps chrome
