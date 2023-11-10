@@ -31,6 +31,9 @@ jobs:
     - name: install browsers
       run: |
         playwright install --with-deps chrome
+    - name: install dev version
+      run: |
+        pip install -e.
     - name: test with pytest
       run: |
         pytest
