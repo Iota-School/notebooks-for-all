@@ -27,7 +27,7 @@ jobs:
         activate-environment: test-nbconvert-a11y
         channel-priority: strict
         auto-activate-base: true
-        environment-file: ""
+        environment-file: test-environment.yml
         use-only-tar-bz2: true 
         miniforge-variant: Mambaforge
         use-mamba: true
