@@ -1,6 +1,7 @@
 name: test-nbconvert-a11y
 channels:
   - conda-forge
+  - microsoft
 dependencies:
   - python=3.11
   - openjdk
