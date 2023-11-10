@@ -12,17 +12,25 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - name: setup python
-      uses: actions/setup-python@v4
+    - name: Cache conda
+      uses: actions/cache@v2
+      env:
+        # Increase this value to reset cache if etc/example-environment.yml has not changed
+        CACHE_NUMBER: 0
       with:
-        cache: pip
-        cache-dependency-path: pyproject.toml
-        python-version: "${{ matrix.python-version}}"
-    - name: upgrade dependencies
-      run: |-
-        python -m pip install --upgrade pip
-        python -m pip install hatch
-        hatch -etest run python -c "import sys;print(sys.executable)"
+        path: ~/conda_pkgs_dir
+        key:
+          ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
+          hashFiles('test-environment.yml') }}
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        activate-environment: test-nbconvert-a11y
+        channel-priority: strict
+        environment-file: test-environment.yml
+        use-only-tar-bz2: true 
+    - name: install browsers
+      run: |
+        playwright install --with-deps chrome
     - name: test with pytest
       run: |
-        hatch run test:run
+        pytest
