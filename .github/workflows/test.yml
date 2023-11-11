@@ -31,8 +31,9 @@ jobs:
         use-only-tar-bz2: true 
         miniforge-variant: Mambaforge
         use-mamba: true
-    - name: install browsers and development version
+    - name: init mamba playwright nbconvert-a11y
       run: |
+        mamba init
         mamba activate test-nbconvert-a11y
         playwright install --with-deps chrome
         pip install -e.
