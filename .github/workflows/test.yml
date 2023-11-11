@@ -31,12 +31,12 @@ jobs:
         use-only-tar-bz2: true 
         miniforge-variant: Mambaforge
         use-mamba: true
-    - name: install browsers
+    - name: install browsers and development version
       run: |
+        mamba activate test-nbconvert-a11y
         playwright install --with-deps chrome
-    - name: install dev version
-      run: |
         pip install -e.
     - name: test with pytest
       run: |
+        mamba activate test-nbconvert-a11y
         pytest
