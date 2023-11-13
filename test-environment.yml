@@ -20,7 +20,7 @@ dependencies:
   - pytest
   - pytest-xdist
   - pytest-sugar
-  - matplotlib
+  - matplotlib-base
   - numpy
   - ipywidgets
   - beautifulsoup4
