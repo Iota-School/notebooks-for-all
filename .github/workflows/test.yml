@@ -33,7 +33,7 @@ jobs:
         use-mamba: true
     - name: init playwright nbconvert-a11y
       run: |
-        playwright install --with-deps chrome
+        playwright install --with-deps chromium
         pip install -e.
     - name: test with pytest
       run: |
