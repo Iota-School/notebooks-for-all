@@ -29,7 +29,7 @@ body.wcag-aa a {
 
 /* satisfy AAA 2.5.5 */
 body.wcag-aaa button,
-body.wcag-aa input[type=checkbox] {
+body.wcag-aaa input[type=checkbox] {
     min-height: 44px;
     min-width: 44px;
 }
