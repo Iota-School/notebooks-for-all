@@ -38,6 +38,11 @@ body.wcag-aaa a {
     font-size: max(44px, var(--nb-font-size));
 }
 
+/* align checkboxes with buttons */
+input[type="checkbox"] {
+    vertical-align: middle;
+}
+
 table#cells,
 table#cells>.cell>td {
     display: block;
