@@ -30,7 +30,7 @@ def test_baseline_a11y_template(page, exporter, notebook):
     config.setdefault("runOnly", ["best-practice", "wcag22aa", "wcag2aaa"])
     config.setdefault("allowedOrigins", ["<same_origin>"])
     target = HTML / notebook.with_suffix(".html").name
-    target.mkdir(exist_ok=True, parents=True)
+    target.parent.mkdir(exist_ok=True, parents=True)
     LOGGER.debug(f"""injecting axe into {target.name}""")
     target.write_text(exporter.from_filename(notebook)[0])
     
