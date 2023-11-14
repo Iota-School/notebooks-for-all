@@ -25,3 +25,4 @@ dependencies:
   - ipywidgets
   - beautifulsoup4
   - scipy
+  - doit

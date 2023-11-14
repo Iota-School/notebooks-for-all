@@ -33,6 +33,7 @@ jobs:
       run: |
         playwright install --with-deps chromium
         pip install -e.
+        doit copy
     - name: test with pytest
       run: |
         pytest
