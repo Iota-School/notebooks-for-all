@@ -5,15 +5,38 @@
     --nb-background-color-dark: #2b2a33;
     --nb-background-color-light: #FFFFFF;
     --nb-margin: 5%;
+    --nb-font-size: medium;
 }
 
 body {
+    font-size: --var(--nb-font-size);
     overflow-x: hidden;
     accent-color: var(--nb-accent-color);
     margin-left: var(--nb-margin);
     margin-right: var(--nb-margin);
 }
 
+/* satisfy AA 2.5.8 minimum target requirement */
+body.wcag-aa button,
+body.wcag-aa input[type=checkbox] {
+    min-height: 24px;
+    min-width: 24px;
+}
+
+body.wcag-aa a {
+    font-size: max(24px, var(--nb-font-size));
+}
+
+/* satisfy AAA 2.5.5 */
+body.wcag-aaa button,
+body.wcag-aa input[type=checkbox] {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+body.wcag-aaa a {
+    font-size: max(44px, var(--nb-font-size));
+}
 
 table#cells,
 table#cells>.cell>td {
