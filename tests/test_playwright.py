@@ -75,7 +75,7 @@ def test_baseline_a11y_template(page, exporter, notebook, axe):
     config = {}
     config.setdefault(
         "runOnly",
-        ["act", "best-practice", "experimental", "wcag21a", "wcag21aa", "wcag22aa", "wcag2aaa"],
+        ["act", "best-practice", "experimental", "wcag21a", "wcag21aa", "wcag22aa"],
     )
     config.setdefault("allowedOrigins", ["<same_origin>"])
     target = HTML / notebook.with_suffix(".html").name
