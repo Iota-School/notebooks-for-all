@@ -25,12 +25,10 @@ jobs:
         key:
           ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
           hashFiles('test-environment.yml') }}
-    - uses: conda-incubator/setup-miniconda@v2
+    - uses: mamba-org/setup-micromamba@v1
       with:
-        channel-priority: strict
         environment-file: test-environment.yml
-        miniforge-variant: Mambaforge
-        use-mamba: true
+        cache-environment: true
     - name: init playwright nbconvert-a11y
       run: |
         playwright install --with-deps chromium
