@@ -1,7 +1,7 @@
 <details class="log">
-    <summary><span {% if LOGID %}aria-labelledby="nb-activity-log-label" {% endif %}>activity log</span></summary>
+    <summary><span {% if LOGID %}id="nb-activity-log-label" {% endif %}>activity log</span></summary>
 </details>
-<table aria-live="polite">
+<table aria-live="polite" aria-labelledby="nb-activity-log-label">
     <tr>
         <th>time</th>
         <td>message</td>
