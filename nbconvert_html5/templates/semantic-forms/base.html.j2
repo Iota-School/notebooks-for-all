@@ -109,7 +109,7 @@ the notebook experiennce from browse to edit/focus mode.
         <dialog id="nb-metadata">
             <form method="dialog">
                 <button formmethod="dialog">Close</button>
-                {{nb.metadata| json_dumps | escape_html_script }}
+                {{nb.metadata| json_dumps | escape_html_keep_quotes }}
             </form>
         </dialog>
         {% if resources.include_help %}{% include "a11y/help.html.j2" %}{% endif %}
