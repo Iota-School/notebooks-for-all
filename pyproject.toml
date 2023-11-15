@@ -29,13 +29,16 @@ dependencies = [
     "IPython",
     "markdown-it-py[plugins,linkify]",
     "python-slugify",
-    "html5lib"
+    "html5lib",
 ]
 dynamic = ["version"]
 
 [project.optional-dependencies]
 test = [
     "pytest",
+    "pytest-xdist",
+    "pytest-sugar",
+    "pytest-playwright",
     "nbval",
     "matplotlib",
     "numpy",
@@ -43,15 +46,8 @@ test = [
     "beautifulsoup4",
     "scipy",
 ]
-audit = [
-    "doit",
-    "tomli",
-    "requests",
-    "requests_cache",
-    "playwright",
-    "pandas",
-    "tabulate",
-]
+task = ["doit", "tomli", "pandas", "tabulate"]
+audit = ["requests", "requests_cache", "playwright"]
 docs = ["mkdocs-material", "mkdocstrings[python]"]
 
 
@@ -68,9 +64,7 @@ serve = "mkdocs serve -v"
 
 [project.entry-points."nbconvert.exporters"]
 html5_test = "nbconvert_html5.exporters:Html5Test"
-# html5 = "nbconvert_html5.form_exporter:FormExporter"
 a11y = "nbconvert_html5.form_exporter:A11yExporter"
-# html_post = "nbconvert_html5.exporters:PostProcessExporter"
 
 [tool.hatch.build.targets.wheel.shared-data]
 "nbconvert_html5/templates" = "share/jupyter/nbconvert/templates"
@@ -86,18 +80,23 @@ version-file = "nbconvert_html5/_version.py"
 source = "vcs"
 
 # testing setttings
+[tool.hatch.envs.test.scripts]
+run = "pytest"
+
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "--nbval --current-env -pno:importnb --rootdir=tests --sanitize-with=sanitize.cfg"
-testpaths = ["tests"]
-norecursedirs = ["tests/notebooks", "*checkpoints"]
+addopts = "--nbval --nbval-current-env -pno:importnb -n auto --nbval-sanitize-with=sanitize.cfg"
+testpaths = ["tests", "test_playwright.py"]
+norecursedirs = ["tests/exports", "tests/notebooks", "*checkpoints"]
 
 [tool.hatch.envs.test]
-features = ["test"]
+features = ["test", "audit"]
+post-install-commands = ["python -m playwright install chrome"]
 
-[tool.hatch.envs.test.scripts]
-run = "pytest "
-
+[tool.hatch.envs.test.overrides]
+env.CI.post-install-commands = [
+    "python -m playwright install --with-deps chrome",
+]
 
 # formatting settings
 [tool.isort]
@@ -109,17 +108,22 @@ line_length = 100
 # doit tasks
 [tool.hatch.envs.task.scripts]
 list = "doit list"
-export = "doit copy convert audit report"
+convert = "doit convert"
 run = "doit run"
 
 [tool.hatch.envs.task]
-features = ["audit"]
+features = ["task"]
+
+[tool.hatch.envs.audit]
+features = ["task", "audit"]
 post-install-commands = ["- python -m playwright install chrome-beta"]
 
-[tool.hatch.envs.task.overrides]
+[tool.hatch.envs.audit.overrides]
 env.CI.post-install-commands = [
     "python -m playwright install --with-deps chrome-beta",
 ]
+[tool.hatch.envs.audit.scripts]
+axe = "doit audit"
 
 [tool.doit.commands.list]
 status = true

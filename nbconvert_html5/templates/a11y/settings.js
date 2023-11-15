@@ -63,7 +63,7 @@ function flattenCss(x) {
 }
 function getStyle() {
     return {
-        "font-size": document.forms.settings["font-size"].value,
+        "--nb-font-size": document.forms.settings["font-size"].value,
         "font-family": document.forms.settings["font-family"].value,
         "--nb-margin": `${document.forms.settings.elements.margin.value}%`,
         "line-height": `${document.forms.settings.elements["line-height"].value}`,

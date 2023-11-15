@@ -43,6 +43,9 @@ def task_styles():
     def get_pygments(target, theme):
         import pygments.formatters
 
+        style = f"a11y-high-contrast-{theme}"
+        style = f"github-{theme}-high-contrast"
+
         target.write_text(
             """body {
                 background-color: var(--nb-background-color-%s);
