@@ -22,48 +22,50 @@ what about internationalization? how does scheme effect internalization? #}
                 <dl aria-labelledby="nb-notebook-label nb-defs-label">
                     <dt id="nb-root-metadata-label">metadata</dt>
                     <dd id="nb-root-metadata-desc">{{schema.properties.metadata.description}}</dd>
-                    <dl>
-                        <dt id="nb-kernelspec-label">kernelspec</dt>
-                        <dd>{{schema.properties.metadata.properties.kernelspec.description}}</dd>
-                        <dd>
-                            {# kernel is going to be problmenatic language for novice users. run? runtime? #}
-                            {# kernelspec and language info should appear as separate sections with widgets in the
-                            metadata dialog. #}
-                            <dl aria-labelledby="nb-kernelspec-label">
-                                <dt>kernel name</dt>
-                                <dd>{{schema.properties.metadata.properties.kernelspec.properties.name.description}}
-                                </dd>
-                                <dt>display name</dt>
-                                <dd>{{schema.properties.metadata.properties.kernelspec.properties.display_name.description}}
-                                </dd>
-                            </dl>
-                        </dd>
-                        <dt id="nb-language_info-label">language info</dt>
-                        <dd>{{schema.properties.metadata.properties.language_info.description}}</dd>
-                        <dd>
-                            <dl aria-labelledby="nb-language_info-label">
-                                <dt>programming language</dt>
-                                <dd>{{schema.properties.metadata.properties.language_info.properties.name.description}}
-                                </dd>
-                                <dt><a>codemirror mode</a></dt>
-                                <dd>{{schema.properties.metadata.properties.language_info.properties.codemirror_mode.description}}
-                                </dd>
-                                <dt>file extension</dt>
-                                <dd>{{schema.properties.metadata.properties.language_info.properties.file_extension.description}}
-                                </dd>
-                                <dt>mimetype</dt>
-                                <dd>{{schema.properties.metadata.properties.language_info.properties.mimetype.description}}
-                                </dd>
-                                <dt>pygments lexer</dt>
-                                <dd>{{schema.properties.metadata.properties.language_info.properties.pygments_lexer.description}}
-                                </dd>
-                            </dl>
-                        </dd>
-                        <dt>title</dt>
-                        <dd>{{schema.properties.metadata.properties.title.description}}</dd>
-                        <dt>authors</dt>
-                        <dd>{{schema.properties.metadata.properties.authors.description}}</dd>
-                    </dl>
+                    <dd>
+                        <dl>
+                            <dt id="nb-kernelspec-label">kernelspec</dt>
+                            <dd>{{schema.properties.metadata.properties.kernelspec.description}}</dd>
+                            <dd>
+                                {# kernel is going to be problmenatic language for novice users. run? runtime? #}
+                                {# kernelspec and language info should appear as separate sections with widgets in the
+                                metadata dialog. #}
+                                <dl aria-labelledby="nb-kernelspec-label">
+                                    <dt>kernel name</dt>
+                                    <dd>{{schema.properties.metadata.properties.kernelspec.properties.name.description}}
+                                    </dd>
+                                    <dt>display name</dt>
+                                    <dd>{{schema.properties.metadata.properties.kernelspec.properties.display_name.description}}
+                                    </dd>
+                                </dl>
+                            </dd>
+                            <dt id="nb-language_info-label">language info</dt>
+                            <dd>{{schema.properties.metadata.properties.language_info.description}}</dd>
+                            <dd>
+                                <dl aria-labelledby="nb-language_info-label">
+                                    <dt>programming language</dt>
+                                    <dd>{{schema.properties.metadata.properties.language_info.properties.name.description}}
+                                    </dd>
+                                    <dt><a>codemirror mode</a></dt>
+                                    <dd>{{schema.properties.metadata.properties.language_info.properties.codemirror_mode.description}}
+                                    </dd>
+                                    <dt>file extension</dt>
+                                    <dd>{{schema.properties.metadata.properties.language_info.properties.file_extension.description}}
+                                    </dd>
+                                    <dt>mimetype</dt>
+                                    <dd>{{schema.properties.metadata.properties.language_info.properties.mimetype.description}}
+                                    </dd>
+                                    <dt>pygments lexer</dt>
+                                    <dd>{{schema.properties.metadata.properties.language_info.properties.pygments_lexer.description}}
+                                    </dd>
+                                </dl>
+                            </dd>
+                            <dt>title</dt>
+                            <dd>{{schema.properties.metadata.properties.title.description}}</dd>
+                            <dt>authors</dt>
+                            <dd>{{schema.properties.metadata.properties.authors.description}}</dd>
+                        </dl>
+                    </dd>
                     <dt id="nb-cells-label">cells</dt>
                     <dd id="nb-cells-desc">{{schema.properties.cells.description}}</dd>
                 </dl>
@@ -90,15 +92,15 @@ what about internationalization? how does scheme effect internalization? #}
                             <dd id="nb-jupyter-desc">
                                 {{schema.definitions.raw_cell.properties.metadata.properties.jupyter.description}}</dd>
                             <dd>
-                                <dl id="nb-jupyter-desc">
+                                <dl>
                                     <dt>source hidden</dt>
                                     <dd>{{schema.definitions.code_cell.properties.metadata.properties.jupyter.source_hidden.description}}
                                     </dd>
                                     <dt>outputs hidden</dt>
                                     <dd>{{schema.definitions.code_cell.properties.metadata.properties.jupyter.outputs_hidden.description}}
                                     </dd>
-                                    <dt id="nb-exection-label">execution</dt>
-                                    <dd id="nb-exection-desc">
+                                    <dt id="nb-execution-label">execution</dt>
+                                    <dd id="nb-execution-desc">
                                         {{schema.definitions.code_cell.properties.metadata.properties.execution.description}}
                                     </dd>
                                     <dd>

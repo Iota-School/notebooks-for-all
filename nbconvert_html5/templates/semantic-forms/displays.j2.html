@@ -10,13 +10,13 @@
 
 {% block stream_stdout -%}
 <pre class="stdout">
-<code>{{- output.text -}}</code>
+<code>{{- output.text | escape_html -}}</code>
 </pre>
 {%- endblock stream_stdout %}
 
 {% block stream_stderr -%}
 <pre class="stdout">
-<code>{{- output.text -}}</code>
+<code>{{- output.text | escape_html -}}</code>
 </pre>
 {%- endblock stream_stderr %}
 
