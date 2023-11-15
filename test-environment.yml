@@ -1,0 +1,28 @@
+name: test-nbconvert-a11y
+channels:
+  - conda-forge
+  - microsoft
+dependencies:
+  - python=3.11
+  - openjdk
+  - pip
+  - pip:
+    - html5validator
+    - pytest-playwright
+    - nbval
+    - accessible-pygments
+    - requests-cache
+    - markdown-it-py[plugins,linkify]
+    - python-slugify
+    - html5lib
+  - playwright
+  - nbconvert
+  - pytest
+  - pytest-xdist
+  - pytest-sugar
+  - matplotlib-base
+  - numpy
+  - ipywidgets
+  - beautifulsoup4
+  - scipy
+  - doit
