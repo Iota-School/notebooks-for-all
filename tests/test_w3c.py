@@ -79,11 +79,6 @@ VALIDATOR = EXPORTS / "validator"
     ),
 )
 def test_baseline_w3c(page, exporter, notebook):
-    config = {}
-    config.setdefault(
-        "runOnly",
-        ["act", "best-practice", "experimental", "wcag21a", "wcag21aa", "wcag22aa"],
-    )
     target = HTML / notebook.with_suffix(".html").name
     target.parent.mkdir(exist_ok=True, parents=True)
     target.write_text(exporter.from_filename(notebook)[0])
