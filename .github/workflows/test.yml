@@ -40,3 +40,20 @@ jobs:
           # we run this script to generate assets and test the nbconvert-a11y module.
           pytest tests/test_smoke.py
           pytest --deselect tests/test_smoke.py
+      - name: mkdocs
+        run: |
+          mkdocs build -v
+      - name: Deploy main 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        if: ${{ github.ref_name == 'main' }}
+        with:
+          folder: site # The folder the action should deploy.
+          single-commit: true
+      - name: Deploy non-main 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        if: ${{ github.ref_name != 'main' }}
+        with:
+          folder: site # The folder the action should deploy.
+          single-commit: true
+          target-folder: branch/${{ github.ref_name }}                  
+      
