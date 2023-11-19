@@ -66,6 +66,10 @@ serve = "mkdocs serve -v"
 html5_test = "nbconvert_html5.exporters:Html5Test"
 a11y = "nbconvert_html5.form_exporter:A11yExporter"
 
+[project.entry-points.pytest11]
+axe = "nbconvert_html5.pytest_axe"
+a11y = "nbconvert_html5.form_exporter:A11yExporter"
+
 [tool.hatch.build.targets.wheel.shared-data]
 "nbconvert_html5/templates" = "share/jupyter/nbconvert/templates"
 

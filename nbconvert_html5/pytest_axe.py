@@ -1,0 +1,118 @@
+# requires node and axe
+# requires playwright
+import dataclasses
+from functools import lru_cache
+from itertools import chain
+from json import dumps, loads
+from os import environ
+from shlex import quote, split
+from subprocess import CalledProcessError, check_output
+from sys import argv
+from pathlib import Path
+from typing import Any
+from attr import dataclass
+import exceptiongroup
+from pytest import fixture, mark, param
+import pytest
+
+NBCONVERT_HTML5_DYNAMIC_TEST = "NBCONVERT_HTML5_DYNAMIC_TEST"
+
+axe_config_aa = {
+    "runOnly": ["act", "best-practice", "experimental", "wcag21a", "wcag21aa", "wcag22aa"],
+    "allowedOrigins": ["<same_origin>"],
+}
+
+axe_config_aaa = {
+    "runOnly": [
+        "act",
+        "best-practice",
+        "experimental",
+        "wcag21a",
+        "wcag21aa",
+        "wcag22aa",
+        "wcag2aaa",
+    ],
+    "allowedOrigins": ["<same_origin>"],
+}
+
+MATHJAX = "[id^=MathJax]"
+tests_axe = {"exclude": [MATHJAX]}
+
+
+def get_npm_directory(package, data=False):
+    try:
+        info = loads(check_output(split(f"npm ls --long --depth 0 --json {quote(package)}")))
+    except CalledProcessError:
+        return
+    if data:
+        return info
+    return Path(info.get("dependencies").get(package).get("path"))
+
+
+@dataclass
+class AxeResults:
+    data: Any
+
+    def raises(self):
+        if self.data["violations"]:
+            raise AxeException.from_violations(self.data)
+
+    def dump(self, file):
+        file.write_text(dumps(self.data))
+
+
+@dataclasses.dataclass
+class AxeException(Exception):
+    message: str
+    target: list
+    data: dict = dataclasses.field(repr=False)
+
+    types = {}
+
+    @classmethod
+    def new(cls, id, impact, message, data, target, **kwargs):
+        if id in cls.types:
+            cls = cls.types.get(id)
+        else:
+            cls = cls.types.setdefault(
+                id,
+                type(
+                    f"{impact.capitalize()}{''.join(map(str.capitalize, id.split('-')))}Exception",
+                    (cls,),
+                    dict(),
+                ),
+            )
+        return cls(message, target, data)
+
+    @classmethod
+    def from_violations(cls, data):
+        out = []
+        for violation in (violations := data.get("violations")):
+            for node in violation["nodes"]:
+                for exc in node["any"]:
+                    out.append(cls.new(**exc, target=["target"]))
+        return exceptiongroup.ExceptionGroup(f"{len(violations)} accessibility violations", out)
+
+
+@mark.parametrize("package", ["axe-core", param("axe-core-doesnt-ship-this", marks=mark.xfail)])
+def test_non_package(package):
+    assert get_npm_directory(package), "package not found."
+
+
+@lru_cache(1)
+def get_axe():
+    return (get_npm_directory("axe-core") / "axe.js").read_text()
+
+
+@fixture
+def axe(page):
+    def go(url, tests=tests_axe, axe_config=axe_config_aa):
+        page.goto(url)
+        page.evaluate(get_axe())
+        return AxeResults(
+            page.evaluate(
+                f"window.axe.run({tests and dumps(tests) or 'document'}, {dumps(axe_config)})"
+            )
+        )
+
+    yield go
