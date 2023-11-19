@@ -31,7 +31,7 @@ jobs:
       - name: init playwright nbconvert-a11y
         run: |
           playwright install --with-deps chromium
-          npm install vnu-jar
+          npm install vnu-jar axe-core
           pip install -e.
           doit copy
       - name: test with pytest
