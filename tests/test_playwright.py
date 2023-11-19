@@ -72,23 +72,12 @@ axe_config_aaa = {
 @aa_config_notebooks
 def test_axe_aa(axe, config, notebook):
     target = get_target_html(config, notebook)
-    results = axe(Path.as_uri(target))
-    AUDIT.mkdir(parents=True, exist_ok=True)
     audit = AUDIT / target.with_suffix(".json").name
-    try:
-        results.raises()
-    finally:
-        results.dump(audit)
+    axe(Path.as_uri(target)).dump(audit).raises()
 
 
 @aaa_config_notebooks
 def test_axe_aaa(axe, config, notebook):
     target = get_target_html(config, notebook)
-    # uses a different config
-    results = axe(Path.as_uri(target), axe_config=axe_config_aaa)
-    AUDIT.mkdir(parents=True, exist_ok=True)
     audit = AUDIT / target.with_suffix(".json").name
-    try:
-        results.raises()
-    finally:
-        results.dumps(results)
+    axe(Path.as_uri(target), axe_config=axe_config_aaa).dump(audit).raises()

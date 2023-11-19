@@ -56,9 +56,14 @@ class AxeResults:
     def raises(self):
         if self.data["violations"]:
             raise AxeException.from_violations(self.data)
+        return self
 
-    def dump(self, file):
+    def dump(self, file: Path):
+        if file.is_dir():
+            file /= "axe-results.json"
+        file.parent.mkdir(exist_ok=True, parents=True)
         file.write_text(dumps(self.data))
+        return self
 
 
 @dataclasses.dataclass
