@@ -1,3 +1,4 @@
+import contextlib
 import dataclasses
 from json import dumps, loads
 from logging import getLogger
@@ -7,10 +8,12 @@ import exceptiongroup
 from test_nbconvert_html5 import exporter
 
 
-from pytest import fixture, mark
+from pytest import fixture, mark, param
 
+from tests.test_smoke import CONFIGURATIONS, NOTEBOOKS, SKIPCI, get_target_html
+
+TPL_NOT_ACCESSIBLE = mark.xfail(reason="template is not accessible")
 HERE = Path(__file__).parent
-NOTEBOOKS = HERE / "notebooks"
 EXPORTS = HERE / "exports"
 HTML = EXPORTS / "html"
 LOGGER = getLogger(__name__)
@@ -19,6 +22,37 @@ AUDIT = EXPORTS / "audit"
 # ignore mathjax at the moment. we might be able to turne mathjax to have better
 # accessibility. https://github.com/Iota-School/notebooks-for-all/issues/81
 MATHJAX = "[id^=MathJax]"
+
+aa_config_notebooks = mark.parametrize(
+    "config,notebook",
+    [
+        param(
+            (CONFIGURATIONS / (a := "a11y")).with_suffix(".py"),
+            (NOTEBOOKS / (b := "lorenz-executed")).with_suffix(".ipynb"),
+            id="-".join((b, a)),
+        ),
+        param(
+            (CONFIGURATIONS / (a := "default")).with_suffix(".py"),
+            (NOTEBOOKS / (b := "lorenz-executed")).with_suffix(".ipynb"),
+            marks=[SKIPCI, TPL_NOT_ACCESSIBLE],
+            id="-".join((b, a)),
+        ),
+    ],
+)
+
+aaa_config_notebooks = mark.parametrize(
+    "config,notebook",
+    [
+        param(
+            (CONFIGURATIONS / (a := "a11y")).with_suffix(".py"),
+            (NOTEBOOKS / (b := "lorenz-executed")).with_suffix(".ipynb"),
+            id="-".join(
+                (b, a),
+            ),
+            marks=[TPL_NOT_ACCESSIBLE],
+        )
+    ],
+)
 
 
 @dataclasses.dataclass
@@ -54,45 +88,68 @@ class AxeException(Exception):
         return exceptiongroup.ExceptionGroup(f"{len(violations)} accessibility violations", out)
 
 
-@fixture
-def axe():
+def get_axe():
     from requests_cache import install_cache
     import requests
 
     install_cache("a11y-audit")
-    yield requests.get("https://cdn.jsdelivr.net/npm/axe-core").text
+    return requests.get("https://cdn.jsdelivr.net/npm/axe-core").text
 
 
-@mark.parametrize(
-    "notebook",
-    list(
-        x
-        for x in NOTEBOOKS.glob("*.ipynb")
-        if x.name not in {"Imaging_Sky_Background_Estimation.ipynb"}
-    ),
-)
-def test_baseline_a11y_template(page, exporter, notebook, axe):
-    config = {}
-    config.setdefault(
-        "runOnly",
-        ["act", "best-practice", "experimental", "wcag21a", "wcag21aa", "wcag22aa"],
-    )
-    config.setdefault("allowedOrigins", ["<same_origin>"])
-    target = HTML / notebook.with_suffix(".html").name
-    target.parent.mkdir(exist_ok=True, parents=True)
-    LOGGER.debug(f"""injecting axe into {target.name}""")
-    target.write_text(exporter.from_filename(notebook)[0])
+axe_config_aa = {
+    "runOnly": ["act", "best-practice", "experimental", "wcag21a", "wcag21aa", "wcag22aa"],
+    "allowedOrigins": ["<same_origin>"],
+}
 
-    test = dict(exclude=[MATHJAX])
-    page.goto(Path.as_uri(target))
-    LOGGER.debug(f"""injecting axe into {target.name}""")
-    page.evaluate(axe)
-    LOGGER.debug(f"""auditting {target.name} with axe""")
-    result = page.evaluate(f"window.axe.run({dumps(test)}, {dumps(config)})")
+axe_config_aaa = {
+    "runOnly": [
+        "act",
+        "best-practice",
+        "experimental",
+        "wcag21a",
+        "wcag21aa",
+        "wcag22aa",
+        "wcag2aaa",
+    ],
+    "allowedOrigins": ["<same_origin>"],
+}
+
+tests_axe = {"exclude": [MATHJAX]}
+
+
+@fixture
+def axe(page):
+    def go(url, tests=tests_axe, axe_config=axe_config_aa):
+        page.goto(url)
+        page.evaluate(get_axe())
+        return page.evaluate(
+            f"window.axe.run({tests and dumps(tests) or 'document'}, {dumps(axe_config)})"
+        )
+
+    yield go
+
+
+@aa_config_notebooks
+def test_axe_aa(axe, config, notebook):
+    target = get_target_html(config, notebook)
+    results = axe(Path.as_uri(target))
     AUDIT.mkdir(parents=True, exist_ok=True)
-    audit = AUDIT / notebook.with_suffix(".json").name
-    LOGGER.info(f"""writing {audit} with {len(result["violations"])} violations""")
-    audit.write_text(dumps(result))
+    audit = AUDIT / target.with_suffix(".json").name
+    LOGGER.info(f"""writing {audit} with {len(results["violations"])} violations""")
+    audit.write_text(dumps(results))
 
-    if result["violations"]:
-        raise AxeException.from_violations(result)
+    if results["violations"]:
+        raise AxeException.from_violations(results)
+
+
+@aaa_config_notebooks
+def test_axe_aaa(axe, config, notebook):
+    target = get_target_html(config, notebook)
+    results = axe(Path.as_uri(target), axe_config=axe_config_aaa)
+    AUDIT.mkdir(parents=True, exist_ok=True)
+    audit = AUDIT / target.with_suffix(".json").name
+    LOGGER.info(f"""writing {audit} with {len(results["violations"])} violations""")
+    audit.write_text(dumps(results))
+    print(results)
+    if results["violations"]:
+        raise AxeException.from_violations(results)

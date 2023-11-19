@@ -85,7 +85,7 @@ run = "pytest"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "--nbval --nbval-current-env -pno:importnb -n auto --nbval-sanitize-with=sanitize.cfg"
+addopts = "-vvv --nbval --nbval-current-env -pno:importnb -n auto --nbval-sanitize-with=sanitize.cfg"
 testpaths = ["tests", "test_playwright.py"]
 norecursedirs = ["tests/exports", "tests/notebooks", "*checkpoints"]
 

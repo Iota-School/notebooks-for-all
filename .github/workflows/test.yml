@@ -1,5 +1,5 @@
 on:
-- push
+  - push
 jobs:
   pypi:
     defaults:
@@ -8,33 +8,35 @@ jobs:
     strategy:
       matrix:
         python-version:
-        - "3.10"
+          - "3.10"
     runs-on: ubuntu-latest
     steps:
-    - name: fetch all history and tags
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: Cache conda
-      uses: actions/cache@v2
-      env:
-        # Increase this value to reset cache if etc/example-environment.yml has not changed
-        CACHE_NUMBER: 0
-      with:
-        path: ~/conda_pkgs_dir
-        key:
-          ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
-          hashFiles('test-environment.yml') }}
-    - uses: mamba-org/setup-micromamba@v1
-      with:
-        environment-file: test-environment.yml
-        cache-environment: true
-    - name: init playwright nbconvert-a11y
-      run: |
-        playwright install --with-deps chromium
-        npm install vnu-jar
-        pip install -e.
-        doit copy
-    - name: test with pytest
-      run: |
-        pytest
+      - name: fetch all history and tags
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Cache conda
+        uses: actions/cache@v2
+        env:
+          # Increase this value to reset cache if etc/example-environment.yml has not changed
+          CACHE_NUMBER: 0
+        with:
+          path: ~/conda_pkgs_dir
+          key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
+            hashFiles('test-environment.yml') }}
+      - uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-file: test-environment.yml
+          cache-environment: true
+      - name: init playwright nbconvert-a11y
+        run: |
+          playwright install --with-deps chromium
+          npm install vnu-jar
+          pip install -e.
+          doit copy
+      - name: test with pytest
+        run: |
+          # the smoke generate html assets that are used in the accessibility testing.
+          # we run this script to generate assets and test the nbconvert-a11y module.
+          pytest tests/test_smoke.py
+          pytest --deselect tests/test_smoke.py
