@@ -26,3 +26,5 @@ dependencies:
   - beautifulsoup4
   - scipy
   - doit
+  - mkdocs-material
+  - mkdocstrings[python]

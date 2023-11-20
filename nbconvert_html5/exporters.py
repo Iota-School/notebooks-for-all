@@ -8,7 +8,7 @@ from traitlets.config import Config
 from nbconvert.exporters.html import HTMLExporter
 from nbconvert.preprocessors import CSSHTMLHeaderPreprocessor
 from bs4 import BeautifulSoup, Tag
-from .selectors import MAIN, CODE, MD, OUT, PROMPT
+from ._selectors import MAIN, CODE, MD, OUT, PROMPT
 from re import compile
 
 DIR = Path(__file__).parent
