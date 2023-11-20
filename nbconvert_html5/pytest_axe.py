@@ -109,15 +109,23 @@ def get_axe():
     return (get_npm_directory("axe-core") / "axe.js").read_text()
 
 
+def inject_axe(page):
+    page.evaluate(get_axe())
+
+
+def run_axe_test(page, tests_config=None, axe_config=None):
+    return AxeResults(
+        page.evaluate(
+            f"window.axe.run({tests_config and dumps(tests_config) or 'document'}, {dumps(axe_config or {})})"
+        )
+    )
+
+
 @fixture
 def axe(page):
     def go(url, tests=tests_axe, axe_config=axe_config_aa):
         page.goto(url)
-        page.evaluate(get_axe())
-        return AxeResults(
-            page.evaluate(
-                f"window.axe.run({tests and dumps(tests) or 'document'}, {dumps(axe_config)})"
-            )
-        )
+        inject_axe(page)
+        return run_axe_test(page, tests, axe_config)
 
     yield go
