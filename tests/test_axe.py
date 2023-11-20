@@ -135,6 +135,15 @@ def test_dialogs(axe_page, config, notebook, dialog):
     page.click(dialog)
     run_axe_test(page).raises()
 
+
 @config_notebooks_dialog
-def test_settings(axe_page, config, notebook):
+def test_settings_font_size(axe_page, config, notebook):
     """test that the settings make their expected changes"""
+    page = axe_page(get_target_html(config, notebook).absolute().as_uri())
+    font_size = lambda: page.evaluate(
+        """window.getComputedStyle(document.querySelector("body")).getPropertyValue("font-size")"""
+    )
+    assert font_size() == "16px"
+    page.click("[aria-controls=nb-settings]")
+    page.locator("#nb-table-font-size-group").select_option("xx-large")
+    assert font_size() == "32px", "font size not changed"
