@@ -36,6 +36,7 @@ dependencies = [
   "markdown-it-py[linkify,plugins]",
   "nbconvert",
   "python-slugify",
+  "exceptiongroup; python_version < '3.11'",
 ]
 dynamic = ["version"]
 
@@ -69,6 +70,7 @@ serve = "mkdocs serve -v"
 [project.entry-points."nbconvert.exporters"]
 a11y = "nbconvert_a11y.form_exporter:A11yExporter"
 html5_test = "nbconvert_a11y.exporters:Html5Test"
+
 [project.entry-points.pytest11]
 a11y = "nbconvert_a11y.form_exporter:A11yExporter"
 axe = "nbconvert_a11y.pytest_axe"
@@ -110,7 +112,7 @@ env.CI.post-install-commands = [
 
 [tool.hatch.envs.release]
 # test a release on test-pypi
-dependencies = ["nbconvert-a11y", "pytest"]
+dependencies = ["nbconvert-a11y", "pytest", "pytest-html", "pytest-xdist"]
 
 [tool.hatch.envs.release.scripts]
 test = "pytest tests/test_smoke.py"
