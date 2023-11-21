@@ -132,8 +132,10 @@ profile = "black"
 [tool.black]
 line_length = 100
 
-# doit tasks
 
+[tool.hatch.envs.task]
+features = ["task"]
+description = "doit tasks"
 
 [tool.hatch.envs.task.scripts]
 list = "doit list"
@@ -142,12 +144,6 @@ run = "doit run"
 
 
 
-
-
-
-
-[tool.hatch.envs.task]
-features = ["task"]
 
 [tool.hatch.envs.audit]
 features = ["task", "audit"]
@@ -185,7 +181,6 @@ configurations = [
 notebooks_dir = "tests/exports/notebooks"
 configs_dir = "tests/exports/configs"
 target = "tests/exports/html"
-
 
 
 
