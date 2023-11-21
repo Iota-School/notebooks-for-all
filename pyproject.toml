@@ -2,7 +2,10 @@
 # it helps us manage virtual environments and build tasks
 [build-system]
 build-backend = "hatchling.build"
-requires = ["hatch-vcs", "hatchling"]
+requires = [
+  "hatch-vcs",
+  "hatchling",
+]
 
 [tool.hatch.build.targets.sdist]
 [tool.hatch.build.targets.wheel]
@@ -14,46 +17,61 @@ readme = "README.md"
 url = "https://github.com/Iota-School/notebooks-for-all"
 requires-python = ">=3.7"
 license = "BSD-3-Clause"
-keywords = []
+keywords = [
+]
 authors = [{ name = "tonyfast", email = "tony.fast@gmail.com" }]
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "License :: OSI Approved :: BSD License",
-    "Natural Language :: English",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: BSD License",
+  "Natural Language :: English",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "accessible-pygments",
-    "html5lib",
-    "IPython",
-    "markdown-it-py[linkify,plugins]",
-    "nbconvert",
-    "python-slugify",
+  "accessible-pygments",
+  "html5lib",
+  "IPython",
+  "markdown-it-py[linkify,plugins]",
+  "nbconvert",
+  "python-slugify",
 ]
-dynamic = ["version"]
+dynamic = [
+  "version",
+]
 
 [project.optional-dependencies]
-audit = ["playwright", "requests", "requests_cache"]
-docs = ["mkdocs-material", "mkdocstrings[python]"]
-task = ["doit", "pandas", "tabulate", "tomli"]
+audit = [
+  "playwright",
+  "requests",
+  "requests_cache",
+]
+docs = [
+  "mkdocs-material",
+  "mkdocstrings[python]",
+]
+task = [
+  "doit",
+  "pandas",
+  "tabulate",
+  "tomli",
+]
 test = [
-    "beautifulsoup4",
-    "ipywidgets",
-    "matplotlib",
-    "numpy",
-    "pytest",
-    "pytest-html",
-    "pytest-playwright",
-    "pytest-sugar",
-    "pytest-xdist",
-    "scipy",
+  "beautifulsoup4",
+  "ipywidgets",
+  "matplotlib",
+  "numpy",
+  "pytest",
+  "pytest-html",
+  "pytest-playwright",
+  "pytest-sugar",
+  "pytest-xdist",
+  "scipy",
 ]
 
 [tool.hatch.envs.docs]
@@ -123,6 +141,10 @@ convert = "doit convert"
 run = "doit run"
 
 
+
+
+
+
 [tool.hatch.envs.task]
 features = ["task"]
 
@@ -164,6 +186,10 @@ configs_dir = "tests/exports/configs"
 target = "tests/exports/html"
 
 
+
+
+
+
 [tool.hatch.envs.format]
 skip-install = true
 dependencies = ["ruff", "pyproject-fmt"]
@@ -180,7 +206,12 @@ ruff format .
 cache-dir = "build/.cache/ruff"
 line-length = 100
 extend-include = ["*.ipynb"]
-exclude = ["tests/user-tests", "tests/configurations", "tests/notebooks"]
+exclude = [
+    "tests/user-tests",
+    "tests/configurations",
+    "tests/notebooks",
+    "user-tests",
+]
 
 [tool.ruff.lint]
 isort.known-first-party = ["importnb"]
