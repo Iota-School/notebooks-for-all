@@ -1,34 +1,32 @@
-
 name: Python package
 on:
-  push:
-    tags:
-      - '*'
   release:
-    types: [published]      
+    types: [published]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.11
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install hatch
-    - name: Test the project  
-      run: hatch run test:run
-    - name: Build
-      run: hatch build
-    - name: Publish package
-      run: hatch publish -r test
-      if: github.event_name != 'release'
-    - name: Test the released packaged
-      run: hatch run release:test
-      if: github.event_name != 'release'
-    - name: Publish to mainline
-      run: hatch publish --user
-      if: github.event_name != 'release'
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install hatch
+      - name: Test the project
+        run: hatch run test:run
+      - name: Build
+        run: hatch build
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+        if: github.event_name != 'release'
+      - name: Test the released packaged
+        run: hatch run release:test
+        if: github.event_name != 'release'
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        if: github.event_name != 'release'
