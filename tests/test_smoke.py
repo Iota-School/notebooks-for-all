@@ -81,6 +81,7 @@ def test_static_assets(assets):
         assert target.exists(), f"{assets.name} doesn't exist."
     except AssertionError:
         copyfile(assets, target)
+        target.parent.mkdir(exist_ok=True, parents=True)
         assert target.exists(), f"{assets.name} couldn't be created"
 
 
