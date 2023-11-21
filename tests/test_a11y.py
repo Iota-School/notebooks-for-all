@@ -3,7 +3,7 @@
 
 from pytest import fixture, mark, param
 
-from nbconvert_html5.pytest_axe import inject_axe, run_axe_test
+from nbconvert_a11y.pytest_axe import inject_axe, run_axe_test
 from tests.test_smoke import CONFIGURATIONS, NOTEBOOKS, get_target_html
 
 NEEDS_WORK = "state needs work"

@@ -12,7 +12,7 @@ import exceptiongroup
 from attr import dataclass
 from pytest import fixture, mark, param
 
-NBCONVERT_HTML5_DYNAMIC_TEST = "NBCONVERT_HTML5_DYNAMIC_TEST"
+nbconvert_a11y_DYNAMIC_TEST = "nbconvert_a11y_DYNAMIC_TEST"
 
 axe_config_aa = {
     "runOnly": ["act", "best-practice", "experimental", "wcag21a", "wcag21aa", "wcag22aa"],

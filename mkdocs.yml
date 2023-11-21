@@ -63,8 +63,8 @@ nav:
     - exports/reports/experiment.md
     - exports/reports/notebooks.md
     - exports/reports/configs.md
-  - nbconvert_html5 module:
-    - nbconvert_html5.md
+  - nbconvert_a11y module:
+    - nbconvert_a11y.md
   - Notebooks for all media: media.md
 
 hooks:

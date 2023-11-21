@@ -1,4 +1,4 @@
-"""the default settings we recommend with the `nbconvert_html5` project."""
+"""the default settings we recommend with the `nbconvert_a11y` project."""
 
 c.NbConvertApp.export_format = "html5_test"
 c.CSSHTMLHeaderPreprocessor.style = "default"
