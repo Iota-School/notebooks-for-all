@@ -8,7 +8,7 @@ dependencies:
   - pip
   - pip:
     - pytest-playwright
-    - nbval
+    - pytest-html
     - accessible-pygments
     - requests-cache
     - markdown-it-py[plugins,linkify]
