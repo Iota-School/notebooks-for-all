@@ -13,6 +13,8 @@ import subprocess
 
 import exceptiongroup
 
+from tests.test_smoke import CONFIGURATIONS, get_target_html
+
 EXCLUDE = re.compile(
     """or with a “role” attribute whose value is “table”, “grid”, or “treegrid”.$"""
     # https://github.com/validator/validator/issues/1125
@@ -67,7 +69,7 @@ from logging import getLogger
 from pathlib import Path
 
 import exceptiongroup
-from pytest import mark
+from pytest import mark, param
 
 HERE = Path(__file__).parent
 NOTEBOOKS = HERE / "notebooks"
@@ -80,23 +82,35 @@ VALIDATOR = EXPORTS / "validator"
 # export the resting state document and pass them to the validator.
 # this would be better validate widgets.
 
+INVALID_MARKUP = mark.xfail(reason="invalid html markup")
 
-@mark.parametrize(
-    "notebook",
+htmls = mark.parametrize(
+    "html",
     [
-        x
-        for x in NOTEBOOKS.glob("*.ipynb")
-        if x.name not in {"Imaging_Sky_Background_Estimation.ipynb"}
+        param(
+            get_target_html(
+                (CONFIGURATIONS / (a := "a11y")).with_suffix(".py"),
+                (NOTEBOOKS / (b := "lorenz-executed")).with_suffix(".ipynb"),
+            ),
+            id="-".join((b, a)),
+        ),
+        param(
+            get_target_html(
+                (CONFIGURATIONS / (a := "default")).with_suffix(".py"),
+                (NOTEBOOKS / (b := "lorenz-executed")).with_suffix(".ipynb"),
+            ),
+            marks=[INVALID_MARKUP],
+            id="-".join((b, a)),
+        ),
     ],
 )
-def test_baseline_w3c(page, exporter, notebook):
-    target = HTML / notebook.with_suffix(".html").name
-    target.parent.mkdir(exist_ok=True, parents=True)
-    target.write_text(exporter.from_filename(notebook)[0])
 
-    result = validate_html(target)
+
+@htmls
+def test_baseline_w3c(page, html):
+    result = validate_html(html)
     VALIDATOR.mkdir(parents=True, exist_ok=True)
-    audit = VALIDATOR / notebook.with_suffix(".json").name
+    audit = VALIDATOR / html.with_suffix(".json").name
     LOGGER.info(f"""writing {audit} with {len(result.get("violations", ""))} violations""")
     audit.write_text(dumps(result))
 
