@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python 3.9
+    - name: Set up Python 3.11
       uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: 3.11
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -23,11 +23,12 @@ jobs:
       run: hatch run test:run
     - name: Build
       run: hatch build
-    - name: Publish to mainline
-      run: hatch publish --user ${{secrets.HATCH_INDEX_USER}} --auth ${{secrets.HATCH_INDEX_AUTH}}
+    - name: Publish package
+      run: hatch publish -r test
       if: github.event_name != 'release'
-    - name: Test pypi release
-      run: |
-        pip install nbconvert-a11y pytest
-        pytest
+    - name: Test the released packaged
+      run: hatch run release:test
+      if: github.event_name != 'release'
+    - name: Publish to mainline
+      run: hatch publish --user
       if: github.event_name != 'release'
