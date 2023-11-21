@@ -9,7 +9,7 @@
 }
 
 body {
-    font-size: --var(--nb-font-size);
+    font-size: var(--nb-font-size);
     overflow-x: hidden;
     accent-color: var(--nb-accent-color);
     margin-left: var(--nb-margin);

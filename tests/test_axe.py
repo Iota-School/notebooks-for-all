@@ -1,6 +1,9 @@
-import contextlib
-import dataclasses
-from json import dumps, loads
+"""axe accessibility testing on exported nbconvert scripts
+
+* test the accessibility of exported notebooks
+* test the accessibility of nbconvert-a11y dialogs
+"""
+
 from logging import getLogger
 from pathlib import Path
 
@@ -26,7 +29,7 @@ MATHJAX = "[id^=MathJax]"
 NEEDS_WORK = "state needs work"
 
 
-aa_config_notebooks = mark.parametrize(
+config_notebooks_aa = mark.parametrize(
     "config,notebook",
     [
         param(
@@ -43,7 +46,7 @@ aa_config_notebooks = mark.parametrize(
     ],
 )
 
-aaa_config_notebooks = mark.parametrize(
+config_notebooks_aaa = mark.parametrize(
     "config,notebook",
     [
         param(
@@ -72,14 +75,14 @@ axe_config_aaa = {
 }
 
 
-@aa_config_notebooks
+@config_notebooks_aa
 def test_axe_aa(axe, config, notebook):
     target = get_target_html(config, notebook)
     audit = AUDIT / target.with_suffix(".json").name
     axe(Path.as_uri(target)).dump(audit).raises()
 
 
-@aaa_config_notebooks
+@config_notebooks_aaa
 def test_axe_aaa(axe, config, notebook):
     target = get_target_html(config, notebook)
     audit = AUDIT / target.with_suffix(".json").name
@@ -114,7 +117,7 @@ def axe_page(page):
 @mark.parametrize(
     "dialog",
     [
-        param("[aria-controls=nb-settings]", marks=mark.xfail(reason=NEEDS_WORK)),
+        "[aria-controls=nb-settings]",
         "[aria-controls=nb-help]",
         "[aria-controls=nb-metadata]",
         "[aria-controls=nb-audit]",
@@ -124,6 +127,23 @@ def axe_page(page):
     ],
 )
 def test_dialogs(axe_page, config, notebook, dialog):
+    """test the controls in dialogs"""
+    # dialogs are not tested in the baseline axe test. they need to be active to test.
+    # these tests activate the dialogs to assess their accessibility with the active dialogs.
+
     page = axe_page(get_target_html(config, notebook).absolute().as_uri())
     page.click(dialog)
     run_axe_test(page).raises()
+
+
+@config_notebooks_dialog
+def test_settings_font_size(axe_page, config, notebook):
+    """test that the settings make their expected changes"""
+    page = axe_page(get_target_html(config, notebook).absolute().as_uri())
+    font_size = lambda: page.evaluate(
+        """window.getComputedStyle(document.querySelector("body")).getPropertyValue("font-size")"""
+    )
+    assert font_size() == "16px"
+    page.click("[aria-controls=nb-settings]")
+    page.locator("#nb-table-font-size-group").select_option("xx-large")
+    assert font_size() == "32px", "font size not changed"

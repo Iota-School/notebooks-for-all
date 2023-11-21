@@ -95,7 +95,7 @@ class AxeException(Exception):
         for violation in (violations := data.get("violations")):
             for node in violation["nodes"]:
                 for exc in node["any"]:
-                    out.append(cls.new(**exc, target=["target"]))
+                    out.append(cls.new(**exc, target=node["target"]))
         return exceptiongroup.ExceptionGroup(f"{len(violations)} accessibility violations", out)
 
 

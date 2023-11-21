@@ -74,6 +74,7 @@ function setStyle(msg) {
     activityLog(msg);
 }
 function changeFont() {
+    document.forms.settings["font-size"].value;
     setStyle(`font size change`);
 }
 function changeFontFamily() {
@@ -127,7 +128,9 @@ document.querySelectorAll("table[role=grid]").forEach(
 document.forms.settings.elements["color-scheme"].forEach(
     (x) => { x.addEventListener("change", toggleColorScheme) }
 );
-document.forms.settings.elements["font-size"].addEventListener("change", changeFont);
+document.forms.settings.elements["font-size"].addEventListener("change", (x) => {
+    setStyle("change font size");
+});
 document.forms.settings.elements["font-family"].forEach(
     (x) => { x.addEventListener("change", changeFontFamily) }
 );
