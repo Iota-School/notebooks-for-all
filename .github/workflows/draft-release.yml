@@ -1,0 +1,39 @@
+name: release python package
+
+on:
+  push:
+    tags:
+      - "*"
+jobs:
+  draft:
+    # the prerelease is created from a draft release. the draft release
+    # triggers the published type, but not the created type.
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install hatch
+      - name: Test the project
+        run: hatch run test:run
+      - name: Build
+        run: hatch build
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+        if: github.event_name != 'release'
+      - name: Test the released packaged
+        run: hatch run release:test
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "dist/*"
+          draft: true
