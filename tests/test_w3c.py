@@ -1,8 +1,17 @@
 # requires node
 # requires jvm
 
-import itertools, operator, functools, collections, exceptiongroup, re
-import pathlib, json, subprocess, shlex
+import collections
+import functools
+import itertools
+import json
+import operator
+import pathlib
+import re
+import shlex
+import subprocess
+
+import exceptiongroup
 
 EXCLUDE = re.compile(
     """or with a “role” attribute whose value is “table”, “grid”, or “treegrid”.$"""
@@ -38,26 +47,27 @@ def organize_validator_results(results):
             collect[error][msg].append(item)
     return collect
 
+
 def raise_if_errors(results, exclude=EXCLUDE):
     collect = organize_validator_results(results)
     exceptions = []
     for msg in collect["error"]:
         if not exclude or not exclude.search(msg):
-            exceptions.append(exceptiongroup.ExceptionGroup(msg, [Exception(x["extract"]) for x in collect["error"][msg]]))
+            exceptions.append(
+                exceptiongroup.ExceptionGroup(
+                    msg, [Exception(x["extract"]) for x in collect["error"][msg]]
+                )
+            )
     if exceptions:
-            raise exceptiongroup.ExceptionGroup("nu validator errors", exceptions)
+        raise exceptiongroup.ExceptionGroup("nu validator errors", exceptions)
 
 
-import dataclasses
-from json import dumps, loads
+from json import dumps
 from logging import getLogger
 from pathlib import Path
 
 import exceptiongroup
-from test_nbconvert_html5 import exporter
-
-
-from pytest import fixture, mark
+from pytest import mark
 
 HERE = Path(__file__).parent
 NOTEBOOKS = HERE / "notebooks"
@@ -67,16 +77,17 @@ LOGGER = getLogger(__name__)
 VALIDATOR = EXPORTS / "validator"
 
 # it would be possible to test loaded baseline documents with playwright.
-# export the resting state document and pass them to the validator. 
+# export the resting state document and pass them to the validator.
 # this would be better validate widgets.
+
 
 @mark.parametrize(
     "notebook",
-    list(
+    [
         x
         for x in NOTEBOOKS.glob("*.ipynb")
         if x.name not in {"Imaging_Sky_Background_Estimation.ipynb"}
-    ),
+    ],
 )
 def test_baseline_w3c(page, exporter, notebook):
     target = HTML / notebook.with_suffix(".html").name

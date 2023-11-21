@@ -1,22 +1,20 @@
-"""nbconvert exporters towards accessible notebook html"""
+"""nbconvert exporters towards accessible notebook html."""
 
-import os
-import os.path
 from pathlib import Path
-from traitlets import default, List, Callable, CUnicode, Instance, TraitType
-from traitlets.config import Config
-from nbconvert.exporters.html import HTMLExporter
-from nbconvert.preprocessors import CSSHTMLHeaderPreprocessor
-from bs4 import BeautifulSoup, Tag
-from ._selectors import MAIN, CODE, MD, OUT, PROMPT
 from re import compile
 
+from bs4 import BeautifulSoup, Tag
+from nbconvert.exporters.html import HTMLExporter
+from traitlets import Bool, Callable, CUnicode, List, TraitType
+
+from ._selectors import CODE, MAIN, MD, OUT, PROMPT
+
 DIR = Path(__file__).parent
-PROMPT_RE = compile("(In|Out)(\s|&nbsp;){0,1}\[(?P<n>[0-9]+)\]")
+PROMPT_RE = compile(r"(In|Out)(\s|&nbsp;){0,1}\[(?P<n>[0-9]+)\]")
 
 
 def soupify(body: str) -> BeautifulSoup:
-    """convert a string of html to an beautiful soup object"""
+    """Convert a string of html to an beautiful soup object."""
     return BeautifulSoup(body, features="html.parser")
 
 
@@ -31,18 +29,17 @@ class PostProcessExporter(HTMLExporter):
     post modifications make it possible to quick changes in manual testing scenarios or configure
     def post_process_code_cell(self, cell):
         pass
-    A/B testing with out requiring `nbconvert` or notebook knowleldge."""
+    A/B testing with out requiring `nbconvert` or notebook knowleldge.
+    """
+
     enabled = True
     extra_template_paths = List([(DIR / "templates").absolute().__str__()])
     post_processor = Callable(lambda x: x).tag(config=True)
 
 
-from traitlets import Bool, CUnicode
-
-
 class Html5Test(PostProcessExporter):
-    """the primary exporter produced by notebooks for all
-    
+    """the primary exporter produced by notebooks for all.
+
     this class has a lot of flags that we designed to test.
     the naming occurred organically as the project progressed.
     we try to limit the degrees of freedom of each trait
@@ -98,7 +95,8 @@ class Html5Test(PostProcessExporter):
     ).tag(config=True)
 
     include_toc = Bool(
-        False, help="include a top of contents in the page"  # this will likely need styling.
+        False,
+        help="include a top of contents in the page",  # this will likely need styling.
     )
     # add toc as as a markdown cell? can't cause there is no canonical plage for it.
     # the natural place for a table of contents is based on the dom structure.
@@ -109,9 +107,10 @@ class Html5Test(PostProcessExporter):
     scroll_to_top = Bool(False, help="include a scroll to top link").tag(config=True)
 
     def post_process_head(self, soup):
-        """post process the head of the document.
-        
-        add custom css based on flags"""
+        """Post process the head of the document.
+
+        add custom css based on flags
+        """
         script = soup.new_tag("style", type="text/css", rel="stylesheet")
         script.string = ""
         if self.increase_prompt_visibility:
@@ -130,7 +129,7 @@ class Html5Test(PostProcessExporter):
             css = (
                 """.jp-Cell:focus {
     %s
-} 
+}
 """
                 % self.cell_focus_style
             )
@@ -156,9 +155,9 @@ class Html5Test(PostProcessExporter):
             if not footer:
                 footer = Tag(name="footer")
                 soup.select_one("main").append(footer)
-            a = Tag(name="a", attrs=dict(href="#top"))
+            a = Tag(name="a", attrs={"href": "#top"})
             a.string = "Scroll to top"
-            b = Tag(name="span", attrs=dict(id="top"))
+            b = Tag(name="span", attrs={"id": "top"})
             footer.append(a)
             soup.select_one("main").insert(0, b)
         return str(soup)
@@ -176,7 +175,6 @@ class Html5Test(PostProcessExporter):
 
         if self.tab_to_code_cell:
             cell.attrs["tabindex"] = 0  # when we do this we need add styling
-
 
         if self.code_cell_label:
             # https://ericwbailey.website/published/aria-label-is-a-code-smell/
@@ -214,8 +212,6 @@ class Html5Test(PostProcessExporter):
             input.attrs["aria-labelledby"] = prompt.attrs["id"]
             input.attrs["tabindex"] = "0"
 
-
-
         if self.tab_to_code_cell:
             cell.attrs["tabindex"] = 0  # when we do this we need add styling
 
@@ -230,7 +226,7 @@ class Html5Test(PostProcessExporter):
             display.name = "section"
 
         if self.cell_display_label:
-            display.attrs["aria-label"] = f"display"
+            display.attrs["aria-label"] = "display"
             if self.prompt_is_label:
                 prompt = display.select_one(PROMPT)
                 if prompt:
@@ -250,9 +246,8 @@ class Html5Test(PostProcessExporter):
 
             if self.cell_describedby_heading:
                 heading = cell.select_one("h1,h2,h3,h4,h5,h6")
-                if heading:
-                    if "id" in heading.attrs:
-                        cell.attrs["aria-describedby"] = heading.attrs["id"]
+                if heading and "id" in heading.attrs:
+                    cell.attrs["aria-describedby"] = heading.attrs["id"]
 
         if self.tab_to_md_cell:
             cell.attrs["tabindex"] = 0  # when we do this we need add styling
@@ -283,11 +278,9 @@ c.CSSHTMLHeaderPreprocessor.style = "default"
 
     @classmethod
     def write_config(cls, dir=Path.cwd(), file="jupyter_nbconvert_config.py"):
-
         target = Path(dir, file)
         if target.exists():
             raise FileExistsError(target)
 
         print(f"writing config to {target}")
         target.write_text(cls.generate_config())
-

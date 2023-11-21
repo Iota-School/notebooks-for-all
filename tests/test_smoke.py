@@ -7,13 +7,14 @@ the tests verify:
 """
 
 from functools import lru_cache
-import itertools
 from logging import getLogger
 from os import environ
 from pathlib import Path
 from shutil import copyfile
-from pytest import fixture, mark, param
+
 import nbconvert.nbconvertapp
+from pytest import mark, param
+
 import nbconvert_html5
 
 TEMPLATES = Path(nbconvert_html5.__file__).parent / "templates/a11y"
@@ -30,11 +31,10 @@ SKIPCI = mark.skipif(not CI, reason=SKIP_BASELINE)
 
 @lru_cache
 def exporter_from_config(config: Path) -> nbconvert.Exporter:
-    """create a nbconvert exporter from an IPython configuration file."""
+    """Create a nbconvert exporter from an IPython configuration file."""
     app = nbconvert.nbconvertapp.NbConvertApp(config_file=str(config))
     app.load_config_file()
-    exporter = nbconvert.get_exporter(app.export_format)(config=app.config)
-    return exporter
+    return nbconvert.get_exporter(app.export_format)(config=app.config)
 
 
 def get_target_html(config, notebook):
@@ -69,13 +69,13 @@ assets = mark.parametrize("assets", [TEMPLATES / "settings.js", TEMPLATES / "sty
 
 @configs
 def test_config_loading(config):
-    """verify configs are loaded."""
+    """Verify configs are loaded."""
     exporter_from_config(config)  # will ExporterNameError if there is a failure.
 
 
 @assets
 def test_static_assets(assets):
-    """this is a bad test. it won't fail, but needs to run to collect testing assets."""
+    """This is a bad test. it won't fail, but needs to run to collect testing assets."""
     target = HTML / assets.name
     try:
         assert target.exists(), f"{assets.name} doesn't exist."
@@ -87,7 +87,7 @@ def test_static_assets(assets):
 @configs
 @notebooks
 def test_export_notebooks(config, notebook):
-    """verify that all the internals work sufficiently to export notebooks."""
+    """Verify that all the internals work sufficiently to export notebooks."""
     html, resources = exporter_from_config(config).from_filename(notebook)
     TARGET = get_target_html(config, notebook)
     TARGET.write_text(html)

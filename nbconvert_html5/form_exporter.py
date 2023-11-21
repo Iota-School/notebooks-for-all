@@ -3,20 +3,19 @@
 this design assumes __notebooks are a feed of forms__.
 """
 
-from datetime import datetime
-from nbconvert.exporters.html import HTMLExporter
-from contextlib import suppress
-from functools import lru_cache
-from json import loads
-from pathlib import Path
-import json
 import builtins
+import json
+from contextlib import suppress
+from datetime import datetime
+from functools import lru_cache
+from pathlib import Path
+
 import bs4
-import pygments
-from traitlets import CUnicode, Unicode, Bool
 import nbformat.v4
-import bs4
+import pygments
 from bs4 import BeautifulSoup
+from nbconvert.exporters.html import HTMLExporter
+from traitlets import Bool, CUnicode, Unicode
 
 singleton = lru_cache(1)
 
@@ -41,7 +40,7 @@ def get_markdown_renderer():
     from markdown_it import MarkdownIt
     from mdit_py_plugins.anchors import anchors_plugin
 
-    md = MarkdownIt("gfm-like", options_update=dict(inline_definitions=True, langPrefix=""))
+    md = MarkdownIt("gfm-like", options_update={"inline_definitions": True, "langPrefix": ""})
     md.use(anchors_plugin)
     md.options.update(highlight=highlight)
     return md
@@ -52,9 +51,11 @@ def get_markdown(md, **kwargs):
 
 
 def highlight(code, lang="python", attrs=None):
-    import pygments, html
+    import html
 
-    try:
+    import pygments
+
+    with suppress(BaseException):
         return pygments.highlight(
             code,
             pygments.lexers.get_lexer_by_name(lang or "python"),
@@ -62,8 +63,7 @@ def highlight(code, lang="python", attrs=None):
                 "html", debug_token_types=True, title=f"{lang} code", wrapcode=True
             ),
         )
-    except:
-        return f"""<pre><code>{html.escape(code)}</code></pre>"""
+    return f"""<pre><code>{html.escape(code)}</code></pre>"""
 
 
 def get_soup(x):
@@ -81,7 +81,8 @@ class FormExporter(HTMLExporter):
     post modifications make it possible to quick changes in manual testing scenarios or configure
     def post_process_code_cell(self, cell):
         pass
-    A/B testing with out requiring `nbconvert` or notebook knowleldge."""
+    A/B testing with out requiring `nbconvert` or notebook knowleldge.
+    """
 
     template_file = Unicode("semantic-forms/table.html.j2").tag(config=True)
     include_axe = Bool(False).tag(config=True)
@@ -94,14 +95,13 @@ class FormExporter(HTMLExporter):
     include_cell_index = Bool(True).tag(config=True)
     exclude_anchor_links = Bool(True).tag(config=True)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         from nbconvert.filters import strings
 
         for k, v in vars(strings).items():
-            if callable(v):
-                if not k.startswith("_"):
-                    self.environment.filters.setdefault(k, v)
+            if callable(v) and not k.startswith("_"):
+                self.environment.filters.setdefault(k, v)
         self.environment.globals.update(vars(builtins))
         import html
 
@@ -114,11 +114,11 @@ class FormExporter(HTMLExporter):
             count_code_cells=count_code_cells,
             ordered=ordered,
             schema=SCHEMA,
-            datetime=datetime
+            datetime=datetime,
         )
 
     def from_notebook_node(self, nb, resources=None, **kw):
-        resources = resources or dict()
+        resources = resources or {}
         resources.setdefault("include_axe", self.include_axe)
         resources.setdefault("include_settings", self.include_settings)
         resources.setdefault("include_help", self.include_help)
@@ -145,7 +145,7 @@ class A11yExporter(FormExporter):
 
 
 def soupify(body: str) -> BeautifulSoup:
-    """convert a string of html to an beautiful soup object"""
+    """Convert a string of html to an beautiful soup object."""
     return BeautifulSoup(body, features="html5lib")
 
 
@@ -163,8 +163,8 @@ def mdtoc(html):
         # there is missing logistics for managely role=heading
         # adding code group semantics will motivate this addition
 
-        l = int(header.name[-1])
-        toc.write("  " * (l - 1) + f"* [{header.string}](#{id})\n")
+        level = int(header.name[-1])
+        toc.write("  " * (level - 1) + f"* [{header.string}](#{id})\n")
     return toc.getvalue()
 
 
@@ -200,7 +200,7 @@ def count_outputs(nb):
 
 
 def count_code_cells(nb):
-    return len(list(None for x in nb.cells if x["cell_type"] == "code"))
+    return len([None for x in nb.cells if x["cell_type"] == "code"])
 
 
 def describe_main(soup):
@@ -208,19 +208,16 @@ def describe_main(soup):
     if x:
         x.attrs["aria-describedby"] = soup.select_one("main").attrs[
             "aria-describedby"
-        ] = (
-            desc
-        ) = "nb-cells-count-label nb-cells-label nb-code-cells nb-code-cells-label nb-ordered nb-loc nb-loc-label"
+        ] = "nb-cells-count-label nb-cells-label nb-code-cells nb-code-cells-label nb-ordered nb-loc nb-loc-label"
 
 
-def ordered(nb):
+def ordered(nb) -> str:
     start = 0
     for cell in nb.cells:
         if cell["cell_type"] == "code":
             start += 1
-            if start != cell["execution_count"]:
-                if start:
-                    return "executed out of order"
+            if start != cell["execution_count"] and start:
+                return "executed out of order"
     if start:
         return "executed in order"
     return "unexecuted"

@@ -4,9 +4,10 @@ import json
 import operator
 from functools import lru_cache
 from pathlib import Path
-from jinja2 import Environment, FileSystemLoader
-import pandas
+
+import pandas as pd
 import tomli
+from jinja2 import Environment, FileSystemLoader
 
 DIR = Path(__file__).parent.parent.parent
 PYPROJECT = DIR / "pyproject.toml"
@@ -21,8 +22,8 @@ config = tomli.loads(PYPROJECT.read_text())
 
 DOIT = config["tool"]["doit"]
 
-notebooks = list(Path(x).name for x in DOIT["tasks"]["copy"]["notebooks"])
-configs = list(Path(x).name for x in DOIT["tasks"]["copy"]["configurations"])
+notebooks = [Path(x).name for x in DOIT["tasks"]["copy"]["notebooks"]]
+configs = [Path(x).name for x in DOIT["tasks"]["copy"]["configurations"]]
 print(configs, notebooks)
 
 
@@ -35,8 +36,8 @@ def get_environment():
 
 @lru_cache
 def get_data():
-    df = pandas.DataFrame(
-        index=pandas.MultiIndex.from_product(
+    df = pd.DataFrame(
+        index=pd.MultiIndex.from_product(
             (
                 sorted(NBS.glob("*.ipynb"), key=lambda x: notebooks.index(x.name)),
                 sorted(CONFIGS.glob("*.py"), key=lambda x: configs.index(x.name)),
@@ -53,13 +54,11 @@ def get_data():
     print(df.html)
     assert df.html.apply(Path.exists).all(), "the translation of the config/nb pairs failed"
 
-    df = df.assign(
+    return df.assign(
         audit=df.html.apply(lambda x: (x.parent.parent / "audits" / x.name).with_suffix(".json"))
     )
 
     # assert df.audit.apply(Path.exists).all(), "the audit reports have not been generated"
-
-    return df
 
 
 def write_experiments():

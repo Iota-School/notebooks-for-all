@@ -1,12 +1,13 @@
-from shlex import split
-from subprocess import check_output, run
-from sys import executable
-from nbconvert import get_exporter, get_export_names
-from pytest import fixture, mark
-import nbconvert_html5, nbconvert, pathlib, bs4, traitlets
-from nbconvert_html5.form_exporter import get_soup
-from functools import partial
 from pathlib import Path
+from shlex import split
+from subprocess import check_output
+from sys import executable
+
+import traitlets
+from nbconvert import get_export_names, get_exporter
+from pytest import fixture, mark
+
+from nbconvert_html5.form_exporter import get_soup
 
 EXPORTER = "a11y"
 HERE = Path(__file__).parent
@@ -15,11 +16,11 @@ NOTEBOOKS = HERE / "notebooks"
 notebooks = mark.parametrize("notebook", [next(NOTEBOOKS.glob("lorenz-executed.ipynb"))])
 
 
-@fixture
+@fixture()
 def exporter():
     a11y = get_exporter(EXPORTER)()
     a11y.update_config(traitlets.config.PyFileConfigLoader(str(CONFIG.absolute())).load_config())
-    yield a11y
+    return a11y
 
 
 def test_entry_point_registration():
@@ -36,7 +37,6 @@ def test_a11y_exporter(exporter, notebook):
 def test_nbconvert_cli(notebook):
     target = notebook.with_suffix(".html")
     cmd = f"{executable} -m jupyter nbconvert --to {EXPORTER} --config {CONFIG} {notebook}"
-    output = check_output(split(cmd)).decode()    
+    output = check_output(split(cmd)).decode()
     assert target.exists(), output
     target.unlink(True)
-

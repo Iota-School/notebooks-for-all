@@ -1,11 +1,10 @@
-"""specific ui and accessibility tests for the custom a11y template"""
+"""specific ui and accessibility tests for the custom a11y template."""
 
 
 from pytest import fixture, mark, param
 
-from tests.test_smoke import CONFIGURATIONS, NOTEBOOKS, get_target_html
-
 from nbconvert_html5.pytest_axe import inject_axe, run_axe_test
+from tests.test_smoke import CONFIGURATIONS, NOTEBOOKS, get_target_html
 
 NEEDS_WORK = "state needs work"
 
@@ -40,7 +39,7 @@ def test_page(request, page):
     ],
 )
 def test_dialogs(test_page, dialog):
-    """test the controls in dialogs"""
+    """Test the controls in dialogs."""
     # dialogs are not tested in the baseline axe test. they need to be active to test.
     # these tests activate the dialogs to assess their accessibility with the active dialogs.
     test_page.click(dialog)
@@ -53,7 +52,7 @@ SNIPPET_FONT_SIZE = (
 
 
 def test_settings_font_size(test_page):
-    """test that the settings make their expected changes"""
+    """Test that the settings make their expected changes."""
     assert test_page.evaluate(SNIPPET_FONT_SIZE) == "16px", "the default font size is unexpected"
     test_page.click("[aria-controls=nb-settings]")
     test_page.locator("#nb-table-font-size-group").select_option("xx-large")

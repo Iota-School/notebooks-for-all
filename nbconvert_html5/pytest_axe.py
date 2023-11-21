@@ -2,18 +2,15 @@
 # requires playwright
 import dataclasses
 from functools import lru_cache
-from itertools import chain
 from json import dumps, loads
-from os import environ
+from pathlib import Path
 from shlex import quote, split
 from subprocess import CalledProcessError, check_output
-from sys import argv
-from pathlib import Path
 from typing import Any
-from attr import dataclass
+
 import exceptiongroup
+from attr import dataclass
 from pytest import fixture, mark, param
-import pytest
 
 NBCONVERT_HTML5_DYNAMIC_TEST = "NBCONVERT_HTML5_DYNAMIC_TEST"
 
@@ -43,7 +40,7 @@ def get_npm_directory(package, data=False):
     try:
         info = loads(check_output(split(f"npm ls --long --depth 0 --json {quote(package)}")))
     except CalledProcessError:
-        return
+        return None
     if data:
         return info
     return Path(info.get("dependencies").get(package).get("path"))
@@ -84,7 +81,7 @@ class AxeException(Exception):
                 type(
                     f"{impact.capitalize()}{''.join(map(str.capitalize, id.split('-')))}Exception",
                     (cls,),
-                    dict(),
+                    {},
                 ),
             )
         return cls(message, target, data)
@@ -121,11 +118,11 @@ def run_axe_test(page, tests_config=None, axe_config=None):
     )
 
 
-@fixture
+@fixture()
 def axe(page):
     def go(url, tests=tests_axe, axe_config=axe_config_aa):
         page.goto(url)
         inject_axe(page)
         return run_axe_test(page, tests, axe_config)
 
-    yield go
+    return go

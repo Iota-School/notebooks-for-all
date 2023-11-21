@@ -1,11 +1,12 @@
-"""__main__.py"""
+"""__main__.py."""
 # this application can have a few developer affordances.
 # * rendering & serving templates
 # * run accessibility tests
-from typer import Typer
 from pathlib import Path
-from .audit import main as audit
 
+from typer import Typer
+
+from .audit import main as audit
 
 app = Typer(
     context_settings={"help_option_names": ["-h", "--help"]},
@@ -16,13 +17,14 @@ app = Typer(
 
 
 @app.command()
-def generate_config(dir: Path = Path.cwd(), name: str = "jupyter_nbconvert_config.py", force: bool=False):
-    """generate a default config file for accessibility testing"""
+def generate_config(
+    dir: Path = Path.cwd(), name: str = "jupyter_nbconvert_config.py", force: bool = False
+):
+    """Generate a default config file for accessibility testing."""
     from .exporters import Html5
 
-    if force:
-        if (dir / name).exists(): 
-            (dir / name).unlink()
+    if force and (dir / name).exists():
+        (dir / name).unlink()
     Html5.write_config(dir, name)
 
 
