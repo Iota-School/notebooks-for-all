@@ -145,6 +145,7 @@ run = "doit run"
 
 
 
+
 [tool.hatch.envs.task]
 features = ["task"]
 
@@ -184,6 +185,7 @@ configurations = [
 notebooks_dir = "tests/exports/notebooks"
 configs_dir = "tests/exports/configs"
 target = "tests/exports/html"
+
 
 
 
