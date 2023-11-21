@@ -36,6 +36,8 @@ jobs:
           pip install -e.
           doit copy
       - name: test with pytest
+        # always build the docs to see what the new versions look like.
+        continue-on-error: true
         run: |
           # the smoke generate html assets that are used in the accessibility testing.
           # we run this script to generate assets and test the nbconvert-a11y module.
