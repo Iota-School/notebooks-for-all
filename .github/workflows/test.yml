@@ -70,7 +70,7 @@ jobs:
         # always build the docs to see what the new versions look like.
         continue-on-error: true
         run: |
-          pytest --deselect tests/test_smoke.py
+          pytest --deselect tests/test_smoke.py -n auto --self-contained-html --html=tests/exports/pytest/report.html
       - name: mkdocs
         run: |
           mkdocs build -v

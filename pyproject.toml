@@ -36,7 +36,7 @@ dependencies = [
   "markdown-it-py[linkify,plugins]",
   "nbconvert",
   "python-slugify",
-  "exceptiongroup; python_version < '3.11'",
+  "exceptiongroup; python_version < '3.12'",
 ]
 dynamic = ["version"]
 
@@ -45,16 +45,8 @@ audit = ["playwright", "requests", "requests_cache"]
 docs = ["mkdocs-material", "mkdocstrings[python]"]
 task = ["doit", "pandas", "tabulate", "tomli"]
 test = [
-  "beautifulsoup4",
-  "ipywidgets",
-  "matplotlib",
-  "numpy",
   "pytest",
-  "pytest-html",
-  "pytest-playwright",
   "pytest-sugar",
-  "pytest-xdist",
-  "scipy",
 ]
 
 [tool.hatch.envs.docs]
@@ -89,25 +81,18 @@ version-file = "nbconvert_a11y/_version.py"
 [tool.hatch.version]
 source = "vcs"
 
+[tool.hatch.envs.test]
+features = ["test"]
+
 # testing setttings
 [tool.hatch.envs.test.scripts]
-run = "pytest"
+run = "pytest tests/test_smoke.py"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-vvv -pno:importnb -n auto --self-contained-html --html=tests/exports/pytest/report.html"
+addopts = "-vvv -pno:importnb"
 testpaths = ["tests", "test_playwright.py"]
 norecursedirs = ["tests/exports", "tests/notebooks", "*checkpoints"]
-
-
-[tool.hatch.envs.test]
-features = ["test", "audit"]
-post-install-commands = ["python -m playwright install chrome"]
-
-[tool.hatch.envs.test.overrides]
-env.CI.post-install-commands = [
-  "python -m playwright install --with-deps chrome",
-]
 
 
 [tool.hatch.envs.release]
@@ -115,6 +100,7 @@ env.CI.post-install-commands = [
 dependencies = ["nbconvert-a11y", "pytest", "pytest-html", "pytest-xdist"]
 
 [tool.hatch.envs.release.scripts]
+run = "pytest -n auto --self-contained-html --html=tests/exports/pytest/report.html"
 test = "pytest tests/test_smoke.py"
 
 [tools.hatch.envs.release.overrides]
