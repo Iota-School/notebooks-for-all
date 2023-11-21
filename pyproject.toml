@@ -142,9 +142,6 @@ list = "doit list"
 convert = "doit convert"
 run = "doit run"
 
-
-
-
 [tool.hatch.envs.audit]
 features = ["task", "audit"]
 post-install-commands = ["- python -m playwright install chrome-beta"]
@@ -182,18 +179,14 @@ notebooks_dir = "tests/exports/notebooks"
 configs_dir = "tests/exports/configs"
 target = "tests/exports/html"
 
-
-
-
-
-
 [tool.hatch.envs.format]
 skip-install = true
 dependencies = ["ruff", "pyproject-fmt"]
 
 [tool.hatch.envs.format.scripts]
+# cant reach steady state using pyproject.toml
+# pyproject-fmt pyproject.toml
 code = """
-pyproject-fmt pyproject.toml
 ruff --fix-only .
 ruff format .
 """
