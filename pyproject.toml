@@ -39,7 +39,7 @@ test = [
     "pytest-xdist",
     "pytest-sugar",
     "pytest-playwright",
-    "nbval",
+    "pytest-html",
     "matplotlib",
     "numpy",
     "ipywidgets",
@@ -89,7 +89,7 @@ run = "pytest"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-vvv --nbval --nbval-current-env -pno:importnb -n auto --nbval-sanitize-with=sanitize.cfg"
+addopts = "-vvv -pno:importnb -n auto --self-contained-html --html=tests/exports/pytest/report.html"
 testpaths = ["tests", "test_playwright.py"]
 norecursedirs = ["tests/exports", "tests/notebooks", "*checkpoints"]
 
