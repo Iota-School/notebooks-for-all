@@ -30,7 +30,6 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
-        if: github.event_name != 'release'
       - name: Test the released packaged
         run: hatch run release:test
       - uses: ncipollo/release-action@v1
