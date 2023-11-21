@@ -1,4 +1,4 @@
-"""axe accessibility testing on exported nbconvert scripts
+"""axe accessibility testing on exported nbconvert scripts.
 
 * test the accessibility of exported notebooks
 * test the accessibility of nbconvert-a11y dialogs
@@ -6,7 +6,6 @@
 
 from logging import getLogger
 from pathlib import Path
-
 
 from pytest import mark, param
 

@@ -1,20 +1,27 @@
-"""accessibility auditing tools"""
+"""accessibility auditing tools."""
 import asyncio
+import traceback
+from contextlib import AsyncExitStack, asynccontextmanager
 from json import dumps
 from logging import getLogger
 from pathlib import Path
-from contextlib import AsyncExitStack, asynccontextmanager
-import requests
+from typing import List, Optional
+
 import playwright.async_api
-from typing import List
-import traceback
+import requests
 
 logger = getLogger("a11y-tasks")
 
-async def _main(
-    ids: list, headless: bool = True, tasks=[], output: Path = Path("docs/data"), cache: bool = True
-):
 
+async def _main(
+    ids: list,
+    headless: bool = True,
+    tasks=None,
+    output: Path = Path("docs/data"),
+    cache: bool = True,
+):
+    if tasks is None:
+        tasks = []
     if cache:
         import requests_cache
 
@@ -42,7 +49,8 @@ async def get_browser():
             headless=True,
             channel="chrome-beta",
         )
-    
+
+
 @asynccontextmanager
 async def get_page(browser, id):
     page = await browser.new_page()
@@ -68,28 +76,28 @@ async def test_axe_one(file: Path, browser=None, **config):
                 logger.error(f"AXE FAILED {page.url}")
                 traceback.print_exception(type(e), e, e.__traceback__)
 
+
 async def _audit_one(file: Path, browser=None, output=None, **config):
     async with AsyncExitStack() as stack:
         if browser is None:
             browser = await stack.enter_async_context(get_browser())
         results = await test_axe_one(file, browser)
         if output is None:
-            output =file.parent / "audit" / file.name 
+            output = file.parent / "audit" / file.name
         _write_json(output, results)
 
-      
+
 def audit_one(file, output=None):
     return asyncio.run(_audit_one(file, output=output))
 
+
 def _write_json(file: Path, data):
-    logger.info(F"writing data to {file}")
+    logger.info(f"writing data to {file}")
     file.parent.mkdir(parents=True, exist_ok=True)
     file.with_suffix(".json").write_text(dumps(data, indent=2))
 
-async def _main(
-    ids: list, headless: bool = True, output: Path = "audit", cache: bool = True
-):
 
+async def _main(ids: list, headless: bool = True, output: Path = "audit", cache: bool = True):
     if cache:
         import requests_cache
 
@@ -98,13 +106,14 @@ async def _main(
     async with get_browser() as browser:
         for id in ids:
             await _audit_one(Path(id), browser)
-            
 
 
-def main(file: List[str] = ["tests/notebooks/lorenz.ipynb"], dir: Path = "audit"):
-    """audit notebooks"""
+def main(file: Optional[List[str]] = None, dir: Path = "audit"):
+    """Audit notebooks."""
     import asyncio
 
+    if file is None:
+        file = ["tests/notebooks/lorenz.ipynb"]
     asyncio.run(_main(ids=file, output=dir))
 
 

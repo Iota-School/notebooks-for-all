@@ -1,57 +1,79 @@
 # use the hatch build system for building and developing nbconvert_html5
 # it helps us manage virtual environments and build tasks
 [build-system]
-requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
+requires = [
+  "hatch-vcs",
+  "hatchling",
+]
 
-# we build both sdist and wheel versions of the module
 [tool.hatch.build.targets.sdist]
 [tool.hatch.build.targets.wheel]
 
 [project]
-name = "nbconvert_html5"
+name = "nbconvert-html5"
 description = "nbconvert templates using modern standards"
 readme = "README.md"
 url = "https://github.com/Iota-School/notebooks-for-all"
 requires-python = ">=3.7"
 license = "BSD-3-Clause"
-keywords = []
+keywords = [
+]
 authors = [{ name = "tonyfast", email = "tony.fast@gmail.com" }]
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "Natural Language :: English",
-    "Programming Language :: Python",
-    "License :: OSI Approved :: BSD License",
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: BSD License",
+  "Natural Language :: English",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "nbconvert",
-    "accessible-pygments",
-    "IPython",
-    "markdown-it-py[plugins,linkify]",
-    "python-slugify",
-    "html5lib",
+  "accessible-pygments",
+  "html5lib",
+  "IPython",
+  "markdown-it-py[linkify,plugins]",
+  "nbconvert",
+  "python-slugify",
 ]
-dynamic = ["version"]
+dynamic = [
+  "version",
+]
 
 [project.optional-dependencies]
-test = [
-    "pytest",
-    "pytest-xdist",
-    "pytest-sugar",
-    "pytest-playwright",
-    "pytest-html",
-    "matplotlib",
-    "numpy",
-    "ipywidgets",
-    "beautifulsoup4",
-    "scipy",
+audit = [
+  "playwright",
+  "requests",
+  "requests_cache",
 ]
-task = ["doit", "tomli", "pandas", "tabulate"]
-audit = ["requests", "requests_cache", "playwright"]
-docs = ["mkdocs-material", "mkdocstrings[python]"]
+docs = [
+  "mkdocs-material",
+  "mkdocstrings[python]",
+]
+task = [
+  "doit",
+  "pandas",
+  "tabulate",
+  "tomli",
+]
+test = [
+  "beautifulsoup4",
+  "ipywidgets",
+  "matplotlib",
+  "numpy",
+  "pytest",
+  "pytest-html",
+  "pytest-playwright",
+  "pytest-sugar",
+  "pytest-xdist",
+  "scipy",
+]
 
-
-# documentation
 [tool.hatch.envs.docs]
 features = ["docs"]
 
@@ -63,12 +85,11 @@ build = "mkdocs build -v"
 serve = "mkdocs serve -v"
 
 [project.entry-points."nbconvert.exporters"]
+a11y = "nbconvert_html5.form_exporter:A11yExporter"
 html5_test = "nbconvert_html5.exporters:Html5Test"
-a11y = "nbconvert_html5.form_exporter:A11yExporter"
-
 [project.entry-points.pytest11]
-axe = "nbconvert_html5.pytest_axe"
 a11y = "nbconvert_html5.form_exporter:A11yExporter"
+axe = "nbconvert_html5.pytest_axe"
 
 [tool.hatch.build.targets.wheel.shared-data]
 "nbconvert_html5/templates" = "share/jupyter/nbconvert/templates"
@@ -76,6 +97,7 @@ a11y = "nbconvert_html5.form_exporter:A11yExporter"
 # versioning is automatically synced using scm tools
 [tool.setuptools_scm]
 write_to = "nbconvert_html5/_version.py"
+
 
 [tool.hatch.build.hooks.vcs]
 version-file = "nbconvert_html5/_version.py"
@@ -93,6 +115,7 @@ addopts = "-vvv -pno:importnb -n auto --self-contained-html --html=tests/exports
 testpaths = ["tests", "test_playwright.py"]
 norecursedirs = ["tests/exports", "tests/notebooks", "*checkpoints"]
 
+
 [tool.hatch.envs.test]
 features = ["test", "audit"]
 post-install-commands = ["python -m playwright install chrome"]
@@ -109,14 +132,15 @@ profile = "black"
 [tool.black]
 line_length = 100
 
-# doit tasks
+
+[tool.hatch.envs.task]
+features = ["task"]
+description = "doit tasks"
+
 [tool.hatch.envs.task.scripts]
 list = "doit list"
 convert = "doit convert"
 run = "doit run"
-
-[tool.hatch.envs.task]
-features = ["task"]
 
 [tool.hatch.envs.audit]
 features = ["task", "audit"]
@@ -154,3 +178,79 @@ configurations = [
 notebooks_dir = "tests/exports/notebooks"
 configs_dir = "tests/exports/configs"
 target = "tests/exports/html"
+
+[tool.hatch.envs.format]
+skip-install = true
+dependencies = ["ruff", "pyproject-fmt"]
+
+[tool.hatch.envs.format.scripts]
+# cant reach steady state using pyproject.toml
+# pyproject-fmt pyproject.toml
+code = """
+ruff --fix-only .
+ruff format .
+"""
+
+[tool.ruff]
+# formatting cause linting sucks
+cache-dir = "build/.cache/ruff"
+line-length = 100
+extend-include = ["*.ipynb"]
+exclude = [
+    "tests/user-tests",
+    "tests/configurations",
+    "tests/notebooks",
+    "user-tests",
+]
+
+[tool.ruff.lint]
+isort.known-first-party = ["importnb"]
+ignore = ["D203", "D213", "COM812", "ISC001"]
+select = [
+    "A",
+    "ANN",
+    "ARG",
+    "B",
+    "BLE",
+    "C4",
+    "C90",
+    "COM",
+    "D",
+    "DJ",
+    "DTZ",
+    "E",
+    "EM",
+    "ERA",
+    "EXE",
+    "F",
+    "FBT",
+    "G",
+    "I",
+    "ICN",
+    "INP",
+    "ISC",
+    "N",
+    "NPY",
+    "PD",
+    "PGH",
+    "PIE",
+    "PL",
+    "PT",
+    "PTH",
+    "PYI",
+    "Q",
+    "RET",
+    "RSE",
+    "RUF",
+    "S",
+    "SIM",
+    "SLF",
+    "T10",
+    "T20",
+    "TCH",
+    "TID",
+    "TRY",
+    "UP",
+    "W",
+    "YTT",
+]
