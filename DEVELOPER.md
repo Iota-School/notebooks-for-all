@@ -1,4 +1,4 @@
-# developing and using the `nbconvert_html5` python module
+# developing and using the `nbconvert_a11y` python module
 
 this project digs hooks into `nbconvert` to modify the accessible experience for static jupyter notebooks.
 
