@@ -8,6 +8,6 @@ nbconvert suits our needs, and  it is well integrated into the jupyter command l
 we found that nbconvert's configuration system was valuable for recording
 the state of manual testing sessions.
 
-we called this library `nbconvert_html5` because we hope discover html5 patterns
+we called this library `nbconvert_a11y` because we hope discover html5 patterns
 that offer a POUR notebook reading experience for assistive tech.
 """

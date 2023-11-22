@@ -1,0 +1,101 @@
+{
+    "title": "nb-settings",
+    "description": "application level settings",
+    "$comment": "these settings are independent of content.",
+    "type": [
+        "null",
+        "object"
+    ],
+    "properties": {
+        "color": {
+            "title": "color settings",
+            "description": "modify color scheme, accent colors, and apply color filters",
+            "properties": {
+                "type": "object",
+                "scheme": {
+                    "type": [
+                        "null",
+                        "string"
+                    ],
+                    "description": "light mode or dark mode.",
+                    "enum": [
+                        null,
+                        "light",
+                        "dark"
+                    ],
+                    "default": null
+                },
+                "accent": {
+                    "description": "accent color for interactive elements",
+                    "format": "color",
+                    "type": "string"
+                },
+                "filters": {
+                    "description": "color filters",
+                    "properties": {
+                        "invert": {
+                            "description": "invert all colors",
+                            "type": "boolean",
+                            "default": false
+                        },
+                        "sepia": {
+                            "description": "apply a sepia filter to all the contents",
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
+                }
+            }
+        },
+        "layout": {
+            "type": "object",
+            "description": "configure text and layout settings",
+            "properties": {
+                "margin": {
+                    "description": "increase or decrease viewport margins",
+                    "type": "integer",
+                    "multipleOf": 5,
+                    "minimum": 0,
+                    "maximum": 40
+                },
+                "font-size": {
+                    "description": "make the font size smaller or larger",
+                    "type": "string",
+                    "enum": [
+                        "xx-small",
+                        "x-small",
+                        "small",
+                        "medium",
+                        "large",
+                        "x-large",
+                        "xx-large"
+                    ],
+                    "default": "medium"
+                },
+                "serif": {
+                    "description": "include extra serif strokes on letters",
+                    "$comment": "serifs improve readability on larger screens",
+                    "type": "boolean",
+                    "default": true
+                }
+            }
+        },
+        "sound": {
+            "description": "configure sound effects and screen settings",
+            "properties": {
+                "role": {
+                    "description": "screen reader's primary navigation mode",
+                    "default": "list",
+                    "enum": [
+                        "list", "table", "landmark"
+                    ]
+                },
+                "synthetic": {
+                    "description": "activate synthetic speech",
+                    "type": "boolean",
+                    "default": false
+                }
+            }
+        }
+    }
+}

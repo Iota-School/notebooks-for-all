@@ -1,18 +1,18 @@
 # experiment contents
 
 in these experiments, our inputs are are pairs of configuration files and reference notebooks.
-our inputs are passed to `nbconvert` to export an html version of the pair. `nbconvert` consumes the configuration files and passes the values to our `nbconvert_html5` project that applies mediations.
+our inputs are passed to `nbconvert` to export an html version of the pair. `nbconvert` consumes the configuration files and passes the values to our `nbconvert_a11y` project that applies mediations.
     
 
 ```mermaid
 flowchart LR
     py[.py]--configuration-->nbconvert
     nb[.ipynb notebook]--content-->nbconvert
-    nbconvert--nbconvert_html5-->html
+    nbconvert--nbconvert_a11y-->html
     html-->manual[manual\ntest]
-    manual--->nbconvert_html5
-    html--axe-->auto[automated\ntesting]--->nbconvert_html5
-    nbconvert_html5--->nbconvert
+    manual--->nbconvert_a11y
+    html--axe-->auto[automated\ntesting]--->nbconvert_a11y
+    nbconvert_a11y--->nbconvert
 ```
 
 configuration files

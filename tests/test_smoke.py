@@ -15,9 +15,9 @@ from shutil import copyfile
 import nbconvert.nbconvertapp
 from pytest import mark, param
 
-import nbconvert_html5
+import nbconvert_a11y
 
-TEMPLATES = Path(nbconvert_html5.__file__).parent / "templates/a11y"
+TEMPLATES = Path(nbconvert_a11y.__file__).parent / "templates/a11y"
 SKIP_BASELINE = "baseline tests skipped locally"
 LOGGER = getLogger(__name__)
 HERE = Path(__file__).parent

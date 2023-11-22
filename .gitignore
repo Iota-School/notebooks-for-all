@@ -1,19 +1,19 @@
 docs
 site
 tests/exports
-nbconvert_html5/templates/a11y/light-code.css
-nbconvert_html5/templates/a11y/dark-code.css
+nbconvert_a11y/templates/a11y/light-code.css
+nbconvert_a11y/templates/a11y/dark-code.css
 
 *~
 *#
 .#*
 *.pyc
 .python-version
-nbconvert_html5.egg-info
+nbconvert_a11y.egg-info
 node_modules
 __pycache__
 .doit.db.*
-nbconvert_html5/_version.py
+nbconvert_a11y/_version.py
 tests/outputs/*.html
 build/*
 tests/out.html
@@ -21,4 +21,4 @@ tests/out.html
 docs/**/*.html
 docs/**/*.json
 settings.json
-nbconvert_html5/templates/a11y/axe.js
+nbconvert_a11y/templates/a11y/axe.js

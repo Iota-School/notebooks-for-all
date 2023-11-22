@@ -16,7 +16,7 @@ CONFIGS = EXPORTS / "configs"
 HTML = EXPORTS / "html"
 AUDITS = EXPORTS / "audits"
 REPORTS = EXPORTS / "reports"
-TEMPLATES = Path("nbconvert_html5/templates/a11y")
+TEMPLATES = Path("nbconvert_a11y/templates/a11y")
 
 
 def do(cmd, *args):
@@ -180,7 +180,7 @@ def task_copy(notebooks, configurations, target):
 #             )
 
 #     if audit:
-#         from nbconvert_html5.audit import main
+#         from nbconvert_a11y.audit import main
 
 #         audits = [x["audit"] for x in configs]
 #         yield dict(
@@ -305,7 +305,7 @@ def task_audit(html_dir, target):
             body += f"* [{t.name}]({t.relative_to(target)})\n"
         (target / "README.md").write_text(body)
 
-    from nbconvert_html5.audit import audit_one
+    from nbconvert_a11y.audit import audit_one
 
     targets = []
     for x in Path(html_dir).rglob("*.html"):
@@ -365,7 +365,7 @@ def task_report():
 #     ]
 # )
 # def task_audit(dir, folder="audit"):
-#     from nbconvert_html5.audit import audit_one
+#     from nbconvert_a11y.audit import audit_one
 #     for x in Path(dir).rglob("*.html"):
 #         a = x.parent / folder / x.name
 #         yield dict(
@@ -413,7 +413,7 @@ def task_report():
 
 #         rel_targets = [x.parent / "data" / ("axe-" + x.name + ".json") for x in rel]
 #     if audit:
-#         from nbconvert_html5.audit import main
+#         from nbconvert_a11y.audit import main
 
 #         yield dict(
 #             name=f"audit",
