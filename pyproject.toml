@@ -15,7 +15,7 @@ name = "nbconvert-a11y"
 description = "nbconvert templates using modern standards"
 readme = "README.md"
 url = "https://github.com/Iota-School/notebooks-for-all"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 license = "BSD-3-Clause"
 keywords = [
 ]
@@ -26,7 +26,6 @@ classifiers = [
   "Natural Language :: English",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.7",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
