@@ -94,7 +94,8 @@ jobs:
     needs: [test]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: checkout repo
+        uses: actions/checkout@v3
       - uses: actions/download-artifact@v3
         with:
           name: site
@@ -119,7 +120,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: fetch contents
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - uses: actions/download-artifact@v3
         with:
           name: dist
