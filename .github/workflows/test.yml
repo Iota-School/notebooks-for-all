@@ -134,13 +134,10 @@ jobs:
           cache-dependency-path: pyproject.toml
       - name: install hatch
         run: |
-          pip install hatch pytest accessible-pygments html5lib markdown-it-py[linkify,plugins] nbconvert python-slugify
+          pip install hatch pytest
       - name: Publish package distributions to TestPyPI
         run: |
           hatch publish -r test --user __token__ --auth ${{secrets.HATCH_TEST_INDEX_AUTH}}
-      - name: install test release deps
-        run: |
-          pip install pytest accessible-pygments html5lib markdown-it-py[linkify,plugins] nbconvert python-slugify
       - name: install nbconvert-a11y dependencies from test pip
         env:
           PIP_INDEX_URL: https://test.pypi.org/simple/
