@@ -152,5 +152,5 @@ jobs:
           pytest tests/test_smoke.py
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "dist/.*
+          artifacts: "dist/.*"
           draft: true # does not trigger a created event
