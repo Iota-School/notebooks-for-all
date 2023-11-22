@@ -36,6 +36,7 @@ classifiers = [
 dependencies = [
   "accessible-pygments",
   "html5lib",
+  "IPython",
   "markdown-it-py[linkify,plugins]",
   "nbconvert",
   "python-slugify",
