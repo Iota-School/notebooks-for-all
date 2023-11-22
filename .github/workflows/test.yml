@@ -74,7 +74,8 @@ jobs:
         # always build the docs to see what the new versions look like.
         continue-on-error: true
         run: |
-          pytest --deselect tests/test_smoke.py  -n auto --self-contained-html --html=tests/exports/pytest/report.html
+          pytest --deselect tests/test_smoke.py  \
+          -n auto --self-contained-html --html=tests/exports/pytest/report.html
       - name: build wheel and sdist
         run: |
           python -m build
@@ -132,18 +133,19 @@ jobs:
           python-version: "3.11"
           cache: pip
           cache-dependency-path: pyproject.toml
-      - name: install hatch
+      - name: install twine and pytest
         run: |
-          pip install hatch pytest
+          pip install twine pytest
       - name: Publish package distributions to TestPyPI
         run: |
-          hatch publish -r test --user __token__ --auth ${{secrets.HATCH_TEST_INDEX_AUTH}}
+          twine upload --repository testpypi \
+          --user __token__ --password ${{secrets.HATCH_TEST_INDEX_AUTH}}
       - name: install nbconvert-a11y dependencies from test pip
-        env:
-          PIP_INDEX_URL: https://test.pypi.org/simple/
-          PIP_EXTRA_INDEX_URL: https://pypi.org/simple/
         run: |
-          pip install nbconvert-a11y
+          pip install \
+          --index-url 'https://test.pypi.org/simple/' \
+          --extra-index-url 'https://pypi.org/simple/' \
+          nbconvert-a11y
       - name: test test release
         run: |
           pytest tests/test_smoke.py
