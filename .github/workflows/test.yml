@@ -1,6 +1,8 @@
 name: pytest nbconvert-a11y, axe test exports, build docs.
 on:
-  - push
+  - push:
+      tags:
+        - "*"
 jobs:
   format:
     name: format
@@ -81,6 +83,18 @@ jobs:
       - name: mkdocs
         run: |
           mkdocs build -v
+      - uses: actions/upload-artifact@v3
+        with:
+          name: site
+          path: site
+  publish:
+    name: publish the mkdocs build to github pages
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist
       - name: Deploy main 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         if: ${{ github.ref_name == 'main' }}
@@ -94,3 +108,39 @@ jobs:
           folder: site # The folder the action should deploy.
           single-commit: true
           target-folder: branch/${{ github.ref_name }}
+  release:
+    name: draft release when tagged
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [test]
+    strategy:
+      matrix:
+        python-version:
+          - "3.10"
+    runs-on: ubuntu-latest
+    steps:
+      - name: fetch contents
+        uses: actions/checkout@v2
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist
+      - name: Publish package distributions to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: install nbconvert-a11y dependencies from pip
+        run: |
+          pip install pytest accessible-pygments html5lib markdown-it-py[linkify,plugins] nbconvert python-slugify
+      - name: install nbconvert-a11y dependencies from test pip
+        env:
+          PIP_INDEX_URL: https://test.pypi.org/simple/
+          PIP_EXTRA_INDEX_URL: https://pypi.org/simple/
+        run: |
+          pip install nbconvert-a11y
+      - name: test test release
+        run: |
+          pytest tests/test_smoke.py
