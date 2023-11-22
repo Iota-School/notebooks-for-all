@@ -14,7 +14,7 @@ requires = [
 name = "nbconvert-a11y"
 description = "nbconvert templates using modern standards"
 readme = "README.md"
-url = "https://github.com/Iota-School/notebooks-for-all"
+url = "https://github.com/deathbeds/nbconvert-a11y"
 requires-python = ">=3.8"
 license = "BSD-3-Clause"
 keywords = [
