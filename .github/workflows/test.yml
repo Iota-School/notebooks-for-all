@@ -71,6 +71,13 @@ jobs:
         continue-on-error: true
         run: |
           pytest --deselect tests/test_smoke.py
+      - name: build wheel and sdist
+        run: |
+          python -m build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist
       - name: mkdocs
         run: |
           mkdocs build -v
