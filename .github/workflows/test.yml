@@ -57,9 +57,10 @@ jobs:
       - name: init plawright
         run: |
           playwright install --with-deps chromium
-      - name: init node
+      - name: init node & files
         run: |
           npm install vnu-jar axe-core
+          doit copy
       - name: init dev module
         run: |
           pip install -e.
