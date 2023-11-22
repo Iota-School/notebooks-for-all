@@ -54,12 +54,15 @@ jobs:
         with:
           environment-file: test-environment.yml
           cache-environment: true
-      - name: init playwright nbconvert-a11y
+      - name: init plawright
         run: |
           playwright install --with-deps chromium
+      - name: init node
+        run: |
           npm install vnu-jar axe-core
+      - name: init dev module
+        run: |
           pip install -e.
-          doit copy
       - name: smoke test
         run: |
           # the smoke generate html assets that are used in the accessibility testing.
