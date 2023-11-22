@@ -121,6 +121,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
+      contents: write
     steps:
       - name: fetch contents
         uses: actions/checkout@v3
@@ -149,3 +150,7 @@ jobs:
       - name: test test release
         run: |
           pytest tests/test_smoke.py
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "dist/.*
+          draft: true # does not trigger a created event
