@@ -140,7 +140,8 @@ jobs:
       - name: Publish package distributions to TestPyPI
         run: |
           twine upload --repository testpypi \
-          --user __token__ --password ${{secrets.HATCH_TEST_INDEX_AUTH}}
+          --user __token__ --password ${{secrets.HATCH_TEST_INDEX_AUTH}} \
+          dist/*
       - name: install nbconvert-a11y dependencies from test pip
         run: |
           pip install \
