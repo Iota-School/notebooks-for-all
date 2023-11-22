@@ -97,7 +97,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: site
-          path: dist
+          path: site
       - name: Deploy main 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         if: ${{ github.ref_name == 'main' }}
