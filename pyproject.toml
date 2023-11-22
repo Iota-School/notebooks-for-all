@@ -1,4 +1,4 @@
-# use the hatch build system for building and developing nbconvert_html5
+# use the hatch build system for building and developing nbconvert_a11y
 # it helps us manage virtual environments and build tasks
 [build-system]
 build-backend = "hatchling.build"
@@ -11,7 +11,7 @@ requires = [
 [tool.hatch.build.targets.wheel]
 
 [project]
-name = "nbconvert-html5"
+name = "nbconvert-a11y"
 description = "nbconvert templates using modern standards"
 readme = "README.md"
 url = "https://github.com/Iota-School/notebooks-for-all"
@@ -36,7 +36,6 @@ classifiers = [
 dependencies = [
   "accessible-pygments",
   "html5lib",
-  "IPython",
   "markdown-it-py[linkify,plugins]",
   "nbconvert",
   "python-slugify",
@@ -85,22 +84,22 @@ build = "mkdocs build -v"
 serve = "mkdocs serve -v"
 
 [project.entry-points."nbconvert.exporters"]
-a11y = "nbconvert_html5.form_exporter:A11yExporter"
-html5_test = "nbconvert_html5.exporters:Html5Test"
+a11y = "nbconvert_a11y.form_exporter:A11yExporter"
+html5_test = "nbconvert_a11y.exporters:Html5Test"
 [project.entry-points.pytest11]
-a11y = "nbconvert_html5.form_exporter:A11yExporter"
-axe = "nbconvert_html5.pytest_axe"
+a11y = "nbconvert_a11y.form_exporter:A11yExporter"
+axe = "nbconvert_a11y.pytest_axe"
 
 [tool.hatch.build.targets.wheel.shared-data]
-"nbconvert_html5/templates" = "share/jupyter/nbconvert/templates"
+"nbconvert_a11y/templates" = "share/jupyter/nbconvert/templates"
 
 # versioning is automatically synced using scm tools
 [tool.setuptools_scm]
-write_to = "nbconvert_html5/_version.py"
+write_to = "nbconvert_a11y/_version.py"
 
 
 [tool.hatch.build.hooks.vcs]
-version-file = "nbconvert_html5/_version.py"
+version-file = "nbconvert_a11y/_version.py"
 
 [tool.hatch.version]
 source = "vcs"
