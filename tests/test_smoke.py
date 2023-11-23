@@ -16,8 +16,8 @@ import nbconvert.nbconvertapp
 from pytest import mark, param
 
 import nbconvert_a11y
+import jupyter_core.paths
 
-TEMPLATES = Path(nbconvert_a11y.__file__).parent / "templates/a11y"
 SKIP_BASELINE = "baseline tests skipped locally"
 LOGGER = getLogger(__name__)
 HERE = Path(__file__).parent
@@ -64,7 +64,7 @@ notebooks = mark.parametrize(
 )
 
 
-assets = mark.parametrize("assets", [TEMPLATES / "settings.js", TEMPLATES / "style.css"])
+assets = mark.parametrize("asset", ["settings.js", "style.css"])
 
 
 @configs
@@ -74,14 +74,15 @@ def test_config_loading(config):
 
 
 @assets
-def test_static_assets(assets):
+def test_static_assets(asset):
     """This is a bad test. it won't fail, but needs to run to collect testing assets."""
-    target = HTML / assets.name
-    try:
-        assert target.exists(), f"{assets.name} doesn't exist."
-    except AssertionError:
-        copyfile(assets, target)
-        assert target.exists(), f"{assets.name} couldn't be created"
+    target = HTML / asset
+    target.parent.mkdir(exist_ok=True, parents=True)
+    for path in map(Path, jupyter_core.paths.jupyter_path("nbconvert", "templates", "a11y", asset)):
+        if path.exists():
+            copyfile(path, target)
+            break
+    assert target.exists(), f"{asset} couldn't be created"
 
 
 @configs

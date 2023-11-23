@@ -1,0 +1,34 @@
+name: release the package to pypi
+on:
+  release:
+    types:
+      - created
+jobs:
+  release:
+    name: draft release when tagged
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - name: fetch contents
+        uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: install twine and pytest
+        run: |
+          pip install twine pytest
+      - name: Publish package distributions to TestPyPI
+        run: |
+          twine upload --user __token__ --password ${{secrets.HATCH_PYPI_AUTH}} dist/*
+      - name: install nbconvert-a11y dependencies from test pip
+        run: |
+          pip install nbconvert-a11y
+      - name: test test release
+        run: |
+          pytest tests/test_smoke.py

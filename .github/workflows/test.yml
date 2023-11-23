@@ -45,7 +45,7 @@ jobs:
         uses: actions/cache@v2
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
-          CACHE_NUMBER: 0
+          CACHE_NUMBER: 1
         with:
           path: ~/conda_pkgs_dir
           key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
@@ -54,12 +54,16 @@ jobs:
         with:
           environment-file: test-environment.yml
           cache-environment: true
-      - name: init playwright nbconvert-a11y
+      - name: init plawright
         run: |
           playwright install --with-deps chromium
+      - name: init node & files
+        run: |
           npm install vnu-jar axe-core
-          pip install -e.
           doit copy
+      - name: init dev module
+        run: |
+          pip install -e.
       - name: smoke test
         run: |
           # the smoke generate html assets that are used in the accessibility testing.
@@ -70,10 +74,33 @@ jobs:
         # always build the docs to see what the new versions look like.
         continue-on-error: true
         run: |
-          pytest --deselect tests/test_smoke.py
+          pytest --deselect tests/test_smoke.py  \
+          -n auto --self-contained-html --html=tests/exports/pytest/report.html
+      - name: build wheel and sdist
+        run: |
+          python -m build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist
       - name: mkdocs
         run: |
           mkdocs build -v
+      - uses: actions/upload-artifact@v3
+        with:
+          name: site
+          path: site
+  publish:
+    name: publish the mkdocs build to github pages
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: site
+          path: site
       - name: Deploy main 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         if: ${{ github.ref_name == 'main' }}
@@ -87,3 +114,44 @@ jobs:
           folder: site # The folder the action should deploy.
           single-commit: true
           target-folder: branch/${{ github.ref_name }}
+  release:
+    name: draft release when tagged
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [test]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - name: fetch contents
+        uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: install twine and pytest
+        run: |
+          pip install twine pytest
+      - name: Publish package distributions to TestPyPI
+        run: |
+          twine upload --repository testpypi \
+          --user __token__ --password ${{secrets.HATCH_TEST_INDEX_AUTH}} \
+          dist/*
+      - name: install nbconvert-a11y dependencies from test pip
+        run: |
+          pip install \
+          --index-url 'https://test.pypi.org/simple/' \
+          --extra-index-url 'https://pypi.org/simple/' \
+          nbconvert-a11y
+      - name: test test release
+        run: |
+          pytest tests/test_smoke.py
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "dist/.*"
+          draft: true # does not trigger a created event

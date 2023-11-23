@@ -11,8 +11,8 @@ requires = ["hatch-vcs", "hatchling"]
 name = "nbconvert-a11y"
 description = "nbconvert templates using modern standards"
 readme = "README.md"
-url = "https://github.com/Iota-School/notebooks-for-all"
-requires-python = ">=3.7"
+url = "https://github.com/deathbeds/nbconvert-a11y"
+requires-python = ">=3.8"
 license = "BSD-3-Clause"
 keywords = []
 authors = [{ name = "tonyfast", email = "tony.fast@gmail.com" }]
@@ -22,7 +22,6 @@ classifiers = [
   "Natural Language :: English",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.7",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
@@ -32,10 +31,10 @@ classifiers = [
 dependencies = [
   "accessible-pygments",
   "html5lib",
-  "IPython",
   "markdown-it-py[linkify,plugins]",
   "nbconvert",
   "python-slugify",
+  "exceptiongroup; python_version < '3.12'"
 ]
 dynamic = ["version"]
 
@@ -93,7 +92,7 @@ run = "pytest"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-vvv -pno:importnb -n auto --self-contained-html --html=tests/exports/pytest/report.html"
+addopts = "-vvv -pno:importnb"
 testpaths = ["tests", "test_playwright.py"]
 norecursedirs = ["tests/exports", "tests/notebooks", "*checkpoints"]
 
