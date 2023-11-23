@@ -18,7 +18,6 @@ from pytest import mark, param
 import nbconvert_a11y
 import jupyter_core.paths
 
-TEMPLATES = Path(jupyter_core.paths.jupyter_data_dir()) / "nbconvert/templates/a11y"
 SKIP_BASELINE = "baseline tests skipped locally"
 LOGGER = getLogger(__name__)
 HERE = Path(__file__).parent
