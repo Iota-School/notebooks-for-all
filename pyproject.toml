@@ -2,10 +2,7 @@
 # it helps us manage virtual environments and build tasks
 [build-system]
 build-backend = "hatchling.build"
-requires = [
-  "hatch-vcs",
-  "hatchling",
-]
+requires = ["hatch-vcs", "hatchling"]
 
 [tool.hatch.build.targets.sdist]
 [tool.hatch.build.targets.wheel]
@@ -17,8 +14,7 @@ readme = "README.md"
 url = "https://github.com/deathbeds/nbconvert-a11y"
 requires-python = ">=3.8"
 license = "BSD-3-Clause"
-keywords = [
-]
+keywords = []
 authors = [{ name = "tonyfast", email = "tony.fast@gmail.com" }]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -40,26 +36,12 @@ dependencies = [
   "python-slugify",
   "exceptiongroup; python_version < '3.12'"
 ]
-dynamic = [
-  "version",
-]
+dynamic = ["version"]
 
 [project.optional-dependencies]
-audit = [
-  "playwright",
-  "requests",
-  "requests_cache",
-]
-docs = [
-  "mkdocs-material",
-  "mkdocstrings[python]",
-]
-task = [
-  "doit",
-  "pandas",
-  "tabulate",
-  "tomli",
-]
+audit = ["playwright", "requests", "requests_cache"]
+docs = ["mkdocs-material", "mkdocstrings[python]"]
+task = ["doit", "pandas", "tabulate", "tomli"]
 test = [
   "beautifulsoup4",
   "ipywidgets",
@@ -121,7 +103,23 @@ post-install-commands = ["python -m playwright install chrome"]
 
 [tool.hatch.envs.test.overrides]
 env.CI.post-install-commands = [
-    "python -m playwright install --with-deps chrome",
+  "python -m playwright install --with-deps chrome",
+]
+
+
+[tool.hatch.envs.release]
+# test a release on test-pypi
+dependencies = ["nbconvert-a11y", "pytest"]
+
+[tool.hatch.envs.release.scripts]
+test = "pytest tests/test_smoke.py"
+
+[tools.hatch.envs.release.overrides]
+env.CI.dev-mode = false
+env.CI.env-vars = [
+  { key = "PIP_INDEX_URL", value = "https://test.pypi.org/simple/" },
+  { key = "PIP_EXTRA_INDEX_URL", value = "https://pypi.org/simple/" },
+  { key = "PIP_PRE", value = "1" },
 ]
 
 # formatting settings
@@ -147,7 +145,7 @@ post-install-commands = ["- python -m playwright install chrome-beta"]
 
 [tool.hatch.envs.audit.overrides]
 env.CI.post-install-commands = [
-    "python -m playwright install --with-deps chrome-beta",
+  "python -m playwright install --with-deps chrome-beta",
 ]
 [tool.hatch.envs.audit.scripts]
 axe = "doit audit"
@@ -163,14 +161,14 @@ process = 2
 
 [tool.doit.tasks.copy]
 notebooks = [
-    "tests/notebooks/lorenz.ipynb",
-    "tests/notebooks/lorenz-executed.ipynb",
-    "user-tests/1-navigation/stsci_example_notebook.ipynb",
-    "user-tests/2-content/Imaging_Sky_Background_Estimation.ipynb",
+  "tests/notebooks/lorenz.ipynb",
+  "tests/notebooks/lorenz-executed.ipynb",
+  "user-tests/1-navigation/stsci_example_notebook.ipynb",
+  "user-tests/2-content/Imaging_Sky_Background_Estimation.ipynb",
 ]
 configurations = [
-    "tests/configurations/default.py",
-    "tests/configurations/a11y.py",
+  "tests/configurations/default.py",
+  "tests/configurations/a11y.py",
 ]
 
 [tool.doit.tasks.convert]
@@ -196,60 +194,60 @@ cache-dir = "build/.cache/ruff"
 line-length = 100
 extend-include = ["*.ipynb"]
 exclude = [
-    "tests/user-tests",
-    "tests/configurations",
-    "tests/notebooks",
-    "user-tests",
+  "tests/user-tests",
+  "tests/configurations",
+  "tests/notebooks",
+  "user-tests",
 ]
 
 [tool.ruff.lint]
 isort.known-first-party = ["importnb"]
 ignore = ["D203", "D213", "COM812", "ISC001"]
 select = [
-    "A",
-    "ANN",
-    "ARG",
-    "B",
-    "BLE",
-    "C4",
-    "C90",
-    "COM",
-    "D",
-    "DJ",
-    "DTZ",
-    "E",
-    "EM",
-    "ERA",
-    "EXE",
-    "F",
-    "FBT",
-    "G",
-    "I",
-    "ICN",
-    "INP",
-    "ISC",
-    "N",
-    "NPY",
-    "PD",
-    "PGH",
-    "PIE",
-    "PL",
-    "PT",
-    "PTH",
-    "PYI",
-    "Q",
-    "RET",
-    "RSE",
-    "RUF",
-    "S",
-    "SIM",
-    "SLF",
-    "T10",
-    "T20",
-    "TCH",
-    "TID",
-    "TRY",
-    "UP",
-    "W",
-    "YTT",
+  "A",
+  "ANN",
+  "ARG",
+  "B",
+  "BLE",
+  "C4",
+  "C90",
+  "COM",
+  "D",
+  "DJ",
+  "DTZ",
+  "E",
+  "EM",
+  "ERA",
+  "EXE",
+  "F",
+  "FBT",
+  "G",
+  "I",
+  "ICN",
+  "INP",
+  "ISC",
+  "N",
+  "NPY",
+  "PD",
+  "PGH",
+  "PIE",
+  "PL",
+  "PT",
+  "PTH",
+  "PYI",
+  "Q",
+  "RET",
+  "RSE",
+  "RUF",
+  "S",
+  "SIM",
+  "SLF",
+  "T10",
+  "T20",
+  "TCH",
+  "TID",
+  "TRY",
+  "UP",
+  "W",
+  "YTT",
 ]
