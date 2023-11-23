@@ -78,6 +78,7 @@ def test_config_loading(config):
 def test_static_assets(asset):
     """This is a bad test. it won't fail, but needs to run to collect testing assets."""
     target = HTML / asset
+    target.parent.mkdir(exist_ok=True, parents=True)
     for path in map(Path, jupyter_core.paths.jupyter_path("nbconvert", "templates", "a11y", asset)):
         if path.exists():
             copyfile(path, target)
