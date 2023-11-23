@@ -13,16 +13,15 @@ jobs:
     steps:
       - name: fetch contents
         uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
-        with:
-          name: dist
-          path: dist
       - uses: actions/setup-python@v4
         with:
           python-version: "3.11"
       - name: install twine and pytest
         run: |
-          pip install twine pytest
+          pip install twine build pytest
+      - name: build the package
+        run: |
+          python -m build
       - name: Publish package distributions to TestPyPI
         run: |
           twine upload --user __token__ --password ${{secrets.HATCH_PYPI_AUTH}} dist/*
