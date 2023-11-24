@@ -133,18 +133,18 @@ def task_copy(notebooks, configurations, target):
     }
     # this is missing the file_deps and targets
     # they can be computed
-    for d in "user-tests resources".split():
-        DIR = Path(d)
-        files = [x for x in DIR.rglob("*") if x.is_file()]
-        targets = [EXPORTS / x for x in files]
-        print(EXPORTS / DIR)
-        yield {
-            "name": d,
-            "actions": [(cp, (DIR, EXPORTS / DIR))],
-            "clean": [f"""rm -rf {EXPORTS / DIR}"""],
-            "file_dep": files,
-            "targets": targets,
-        }
+    # for d in "user-tests resources".split():
+    #     DIR = Path(d)
+    #     files = [x for x in DIR.rglob("*") if x.is_file()]
+    #     targets = [EXPORTS / x for x in files]
+    #     print(EXPORTS / DIR)
+    #     yield {
+    #         "name": d,
+    #         "actions": [(cp, (DIR, EXPORTS / DIR))],
+    #         "clean": [f"""rm -rf {EXPORTS / DIR}"""],
+    #         "file_dep": files,
+    #         "targets": targets,
+    #     }
 
 
 # @task_params(

@@ -34,7 +34,7 @@ dependencies = [
   "markdown-it-py[linkify,plugins]",
   "nbconvert",
   "python-slugify",
-  "exceptiongroup; python_version < '3.12'"
+  "exceptiongroup; python_version < '3.12'",
 ]
 dynamic = ["version"]
 
@@ -163,8 +163,6 @@ process = 2
 notebooks = [
   "tests/notebooks/lorenz.ipynb",
   "tests/notebooks/lorenz-executed.ipynb",
-  "user-tests/1-navigation/stsci_example_notebook.ipynb",
-  "user-tests/2-content/Imaging_Sky_Background_Estimation.ipynb",
 ]
 configurations = [
   "tests/configurations/default.py",
