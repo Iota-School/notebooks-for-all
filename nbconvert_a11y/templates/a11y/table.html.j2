@@ -1,8 +1,7 @@
 {%- extends 'a11y/base.html.j2' -%}
 {% set COLUMNS = ["index", "execution_count", "cell_type", "toolbar", "started_at", "completed_at", "source", "loc",
 "metadata", "outputs"] %}
-{% block body_header %}
-{{super()}}
+{% block body_loop %}
 {# the most consistent implementation would connect the input visibility to a form #}
 <table id="cells" role="presentation">
     <tbody role="list">
@@ -11,21 +10,12 @@
             <th scope="col">{{col}}</th>
             {% endfor %}
         </tr>
-        {# the table caption is removed because testing on VoiceOver iOS encountered
-        https://developer.apple.com/forums/thread/679841
-
-        the best course of action is to remove the caption and provide label support with aria.
-        we wont use captions on any tables for this reason. #}
-        {# <caption hidden>contents</caption> #}
-        {% endblock body_header %}
-
-        {% block any_cell %}{{cell_row(cell, loop)}}{% endblock any_cell %}
-
-        {% block body_footer %}
+        {%- for cell in nb.cells -%}
+        {% block any_cell scoped %}{{cell_row(cell, loop)}}{% endblock any_cell %}
+        {%- endfor -%}
     </tbody>
 </table>
 <table class="nb-cells-footer" hidden>
-
     <tbody>
         {# needs a header row #}
         <tr class="total">
@@ -64,13 +54,13 @@
         </tr>
     </tbody>
 </table>
-{{super()}}
-{% endblock body_footer %}
+{% endblock body_loop %}
 
 {% macro loc(cell) %}{{cell.source.splitlines().__len__()}}{% endmacro%}
 
 {% macro time(t) %}
-{% if t %}{% if t.endswith("Z") %}{% set t = t[:-1] + "+00:00" %}{% endif %}<time datetime="{{datetime.fromisoformat(t).isoformat(timespec="milliseconds")}}">{{t}}</time>{% endif %}
+{% if t %}{% if t.endswith("Z") %}{% set t = t[:-1] + "+00:00" %}{% endif %}<time
+    datetime="{{datetime.fromisoformat(t).isoformat(timespec="milliseconds")}}">{{t}}</time>{% endif %}
 {% endmacro %}
 
 {% macro cell_row(cell, loop) %}
