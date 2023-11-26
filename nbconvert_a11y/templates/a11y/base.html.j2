@@ -1,4 +1,4 @@
-`{# # a base template for accessible notebook representations.
+{# # a base template for accessible notebook representations.
 
 the base template defines notebook independent components.
 an accessible base template provides a substrate to progressively enchance
@@ -16,7 +16,6 @@ the notebook experiennce from browse to edit/focus mode.
 <html lang="en">
 
 <head>
-    {%- block head -%}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {# add page description #}
@@ -50,14 +49,10 @@ the notebook experiennce from browse to edit/focus mode.
     {%- block html_head_js_mathjax -%}
     {{ mathjax(resources.mathjax_url) }}
     {%- endblock html_head_js_mathjax -%}
-
-    {%- endblock head -%}
 </head>
 {%- endblock header -%}
 
-
 {% block body_header %}
-
 <body class="wcag-a wcag-aa wcag-aaa">
     <header aria-label="site header">
         <section id="skip-link">
