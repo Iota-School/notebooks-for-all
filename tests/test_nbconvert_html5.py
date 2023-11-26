@@ -7,7 +7,7 @@ import traitlets
 from nbconvert import get_export_names, get_exporter
 from pytest import fixture, mark
 
-from nbconvert_a11y.form_exporter import get_soup
+from nbconvert_a11y.a11y_exporter import get_soup
 
 EXPORTER = "a11y"
 HERE = Path(__file__).parent

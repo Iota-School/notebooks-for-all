@@ -34,7 +34,7 @@ dependencies = [
   "markdown-it-py[linkify,plugins]",
   "nbconvert",
   "python-slugify",
-  "exceptiongroup; python_version < '3.12'"
+  "exceptiongroup; python_version < '3.12'",
 ]
 dynamic = ["version"]
 
@@ -66,10 +66,9 @@ build = "mkdocs build -v"
 serve = "mkdocs serve -v"
 
 [project.entry-points."nbconvert.exporters"]
-a11y = "nbconvert_a11y.form_exporter:A11yExporter"
+a11y = "nbconvert_a11y.a11y_exporter:A11yExporter"
 
 [project.entry-points.pytest11]
-a11y = "nbconvert_a11y.form_exporter:A11yExporter"
 axe = "nbconvert_a11y.pytest_axe"
 
 [tool.hatch.build.targets.wheel.shared-data]
