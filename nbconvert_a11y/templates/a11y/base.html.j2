@@ -4,7 +4,7 @@ the base template defines notebook independent components.
 an accessible base template provides a substrate to progressively enchance
 the notebook experiennce from browse to edit/focus mode.
 #}
-{%- extends 'semantic-forms/displays.j2.html' -%}
+{%- extends 'a11y/components/displays.html.j2' -%}
 {% from 'celltags.j2' import celltags %}
 {% from 'mathjax.html.j2' import mathjax %}
 {% from 'lab/mermaidjs.html.j2' import mermaid_js %}
@@ -19,6 +19,7 @@ the notebook experiennce from browse to edit/focus mode.
     {%- block head -%}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {# add page description #}
     {# use technique [h25] to provide a title to satisfy [2.4.2A]. #}
     <title>{{title}}</title>
     {# color scheme signals that notebooks can viewed in light and dark mode.
@@ -66,8 +67,8 @@ the notebook experiennce from browse to edit/focus mode.
         {# site authors with include their site specific headers in this region. #}
         {# a subsequent tab stop will indicate to keyboard and AT users that there are
         accessibility settings that can be toggled. #}
-        {% if resources.include_settings %}{% include "a11y/settings.html.j2" %}{% endif %}
-        {% if resources.include_axe %}{% include "a11y/audit.j2.html" %}{% endif %}
+        {% if resources.include_settings %}{% include "a11y/components/settings.html.j2" %}{% endif %}
+        {% if resources.include_axe %}{% include "a11y/components/audit.html.j2" %}{% endif %}
     </header>
     <main aria-labelledby="nb-notebook-label">
         <form name="notebook" id="notebook" aria-labelledby="nb-notebook-label">
@@ -104,15 +105,15 @@ the notebook experiennce from browse to edit/focus mode.
 
         {% block body_footer %}
         {# dialogs need to be outside the form because we cant nest forms #}
-        {% include "a11y/expanded.html.j2"%}
-        {% include "a11y/visibility.html.j2"%}
+        {% include "a11y/components/expanded.html.j2"%}
+        {% include "a11y/components/visibility.html.j2"%}
         <dialog id="nb-metadata">
             <form method="dialog">
                 <button formmethod="dialog">Close</button>
                 {{nb.metadata| json_dumps | escape_html_keep_quotes }}
             </form>
         </dialog>
-        {% if resources.include_help %}{% include "a11y/help.html.j2" %}{% endif %}
+        {% if resources.include_help %}{% include "a11y/components/help.html.j2" %}{% endif %}
     </main>
     {# a notebook begins as a static document that can progressively
     add features like run time computation. #}
@@ -120,7 +121,7 @@ the notebook experiennce from browse to edit/focus mode.
     it is difficult to access for keyboard users. #}
     <footer>
         {% set LOGID = True %}
-        {% include "a11y/activity-log.html.j2" %}
+        {% include "a11y/components/activity-log.html.j2" %}
         <a href="#notebook" accesskey="0">skip to top</a>
     </footer>
     {% if resources.include_settings %}<script src="settings.js"></script>{% endif %}

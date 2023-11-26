@@ -1,7 +1,0 @@
-MAIN = "#notebook, .jp-Notebook"
-CELL = ".cell, .jp-Cell"
-CODE = ".code_cell, .jp-CodeCell"
-MD = ".text_cell, .jp-MarkdownCell"
-OUT = ".output, .jp-OutputArea.jp-Cell-outputArea"
-IN = ".code_cell .input .input_area, .jp-Editor"
-PROMPT = ".input_prompt, .jp-InputPrompt, .jp-OutputPrompt"
