@@ -1,4 +1,4 @@
-{# # a base template for accessible notebook representations.
+`{# # a base template for accessible notebook representations.
 
 the base template defines notebook independent components.
 an accessible base template provides a substrate to progressively enchance
@@ -46,17 +46,18 @@ the notebook experiennce from browse to edit/focus mode.
     {%- endif -%}
     {% endblock jupyter_widgets %}
 
-    
+
     {%- block html_head_js_mathjax -%}
     {{ mathjax(resources.mathjax_url) }}
     {%- endblock html_head_js_mathjax -%}
-    
+
     {%- endblock head -%}
 </head>
 {%- endblock header -%}
 
 
 {% block body_header %}
+
 <body class="wcag-a wcag-aa wcag-aaa">
     <header aria-label="site header">
         <section id="skip-link">
@@ -71,36 +72,9 @@ the notebook experiennce from browse to edit/focus mode.
         {% if resources.include_axe %}{% include "a11y/components/audit.html.j2" %}{% endif %}
     </header>
     <main aria-labelledby="nb-notebook-label">
-        <form name="notebook" id="notebook" aria-labelledby="nb-notebook-label">
-            {% if resources.include_toc %}
-            <section aria-labelledby="nb-toc">
-                {# a notebook will provide visual structural navigation for a document.
-                this is a feature of screen readers that is not common to sighted users.
-                the implementation here is very naive. users will need to know to collapse the heading
-                to skip the link tree. the best implementation is a tree that will consume a single tab stop
-                and allow arrow key navigation. #}
-                <details open>
-                    {# if the label is on the summary then the bullet is announced as the label and it should not be
-                    #}
-                    <summary id="toc"><span id="nb-toc">table of contents</span></summary>
-                    {# the table of contents is populated in python. #}
-                    <a id="nb-toc-start"></a>
-                    <ol></ol>
-                </details>
-            </section>
-            {% endif %}
-            <label><input id="nb-edit-mode" type="checkbox" name="edit">edit mode</label>
-            <button aria-controls="nb-metadata" onclick="openDialog()">metadata</button>
-            {% if resources.include_axe %}<button aria-controls="nb-audit" aria-describedby="nb-audit-desc" onclick="openDialog()">audit</button>{% endif %}
-            <button aria-controls="nb-expanded-dialog" onclick="openDialog()" accesskey="+">expand and collapse
-                cells</button>
-            <button aria-controls="nb-visibility-dialog" onclick="openDialog()" accesskey="-">show and hide cell
-                parts</button>
-            {% if resources.include_help %}<button onclick="openDialog()" aria-controls="nb-help" accesskey="?">help</button>{% endif %}
-            <button type="submit">Run</button>
-        </form>
+        {% include "a11y/components/nb-toolbar.html.j2" %}
         {% endblock body_header %}
-        
+
         {% block any_cell %}{{cell_section(cell, loop)}}{% endblock any_cell %}
 
         {% block body_footer %}
@@ -124,18 +98,12 @@ the notebook experiennce from browse to edit/focus mode.
         {% include "a11y/components/activity-log.html.j2" %}
         <a href="#notebook" accesskey="0">skip to top</a>
     </footer>
-    {% if resources.include_settings %}<script src="settings.js"></script>{% endif %}
-    {% if resources.include_axe %}<script src="{{resources.axe_url}}" onload="auditNotebook()"></script>{% endif %}
-    {% set mimetype = 'application/vnd.jupyter.widget-state+json'%}
-    {% if mimetype in nb.metadata.get("widgets",{})%}
-    <script type="{{ mimetype }}">
-    {{ nb.metadata.widgets[mimetype] | json_dumps | escape_html_script }}
-    </script>
-    {% endif %}
-    {#
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js" defer></script>'' #}
+    {% if resources.include_settings %}
+    <script src="settings.js"></script>{% endif %}
+    {%- if resources.include_axe -%}
+    <script src="{{resources.axe_url}}" onload="auditNotebook()"></script>
+    {%- endif -%}
 </body>
-
 </html>
 {% endblock body_footer %}
 

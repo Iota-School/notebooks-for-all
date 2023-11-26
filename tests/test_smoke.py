@@ -18,6 +18,8 @@ from pytest import mark, param
 import nbconvert_a11y
 import jupyter_core.paths
 
+from nbconvert_a11y.a11y_exporter import get_soup
+
 SKIP_BASELINE = "baseline tests skipped locally"
 LOGGER = getLogger(__name__)
 HERE = Path(__file__).parent
@@ -95,3 +97,9 @@ def test_export_notebooks(config, notebook):
     TARGET = get_target_html(config, notebook)
     TARGET.write_text(html)
     LOGGER.debug(f"writing html to {TARGET}")
+
+@mark.parametrize("target", [get_target_html(CONFIGURATIONS / "a11y.py", NOTEBOOKS / "lorenz-executed.ipynb")])
+def test_a11y_template_content(target):
+    soup = get_soup(target.read_text())
+
+    assert soup.select_one("#toc"), "toc does not exist"
