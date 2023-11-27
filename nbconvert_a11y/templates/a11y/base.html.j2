@@ -4,59 +4,30 @@ the base template defines notebook independent components.
 an accessible base template provides a substrate to progressively enchance
 the notebook experiennce from browse to edit/focus mode.
 #}
-{%- extends 'a11y/components/displays.html.j2' -%}
+{%- extends 'lab/index.html.j2' -%}
+{% from "a11y/components/displays.html.j2" import cell_display_priority with context %}
 {% from 'celltags.j2' import celltags %}
 {% from 'mathjax.html.j2' import mathjax %}
 {% from 'lab/mermaidjs.html.j2' import mermaid_js %}
 {% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
 {% set title = nb.metadata.get('title', resources['metadata']['name']) | escape_html_keep_quotes %}
 
-{%- block header -%}
-<!DOCTYPE html>
-<html lang="en">
+{%- block html_head_js -%}
+<meta name="color-scheme" content="light">
+{{super()}}
+{%- endblock html_head_js -%}
 
-<head>
-    {%- block head -%}
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {# add page description #}
-    {# use technique [h25] to provide a title to satisfy [2.4.2A]. #}
-    <title>{{title}}</title>
-    {# color scheme signals that notebooks can viewed in light and dark mode.
-    the html representation is used instead of the css representation so it is immediately avaiable.
-    https://css-tricks.com/almanac/properties/c/color-scheme/ #}
-    <meta name="color-scheme" content="light">
+{% block notebook_css %}
+{{ resources.include_css("a11y/static/style.css") }}
+{% endblock notebook_css %}
 
-    {# non-html resources, css and javascript, are served as external resources to optimize load times. #}
-    <link rel="stylesheet" href="style.css">
-    <link id="nb-light-theme" rel="stylesheet" href="light-code.css">
-    <link id="nb-dark-theme" disabled rel="stylesheet" href="dark-code.css">
-
-
-    {%- block html_head_js -%}
-    {%- block html_head_js_requirejs -%}
-    <script src="{{ resources.require_js_url }}"></script>
-    {%- endblock html_head_js_requirejs -%}
-    {%- endblock html_head_js -%}
-
-    {% block jupyter_widgets %}
-    {%- if "widgets" in nb.metadata -%}
-    {{ jupyter_widgets(resources.jupyter_widgets_base_url, resources.html_manager_semver_range,
-    resources.widget_renderer_url) }}
-    {%- endif -%}
-    {% endblock jupyter_widgets %}
-
-    
-    {%- block html_head_js_mathjax -%}
-    {{ mathjax(resources.mathjax_url) }}
-    {%- endblock html_head_js_mathjax -%}
-    
-    {%- endblock head -%}
-</head>
-{%- endblock header -%}
-
+{% block extra_css %}
+<link id="nb-light-theme" rel="stylesheet" href="light-code.css">
+<link id="nb-dark-theme" disabled rel="stylesheet" href="dark-code.css">
+{% endblock extra_css %}
 
 {% block body_header %}
+
 <body class="wcag-a wcag-aa wcag-aaa">
     <header aria-label="site header">
         <section id="skip-link">
@@ -71,37 +42,8 @@ the notebook experiennce from browse to edit/focus mode.
         {% if resources.include_axe %}{% include "a11y/components/audit.html.j2" %}{% endif %}
     </header>
     <main aria-labelledby="nb-notebook-label">
-        <form name="notebook" id="notebook" aria-labelledby="nb-notebook-label">
-            {% if resources.include_toc %}
-            <section aria-labelledby="nb-toc">
-                {# a notebook will provide visual structural navigation for a document.
-                this is a feature of screen readers that is not common to sighted users.
-                the implementation here is very naive. users will need to know to collapse the heading
-                to skip the link tree. the best implementation is a tree that will consume a single tab stop
-                and allow arrow key navigation. #}
-                <details open>
-                    {# if the label is on the summary then the bullet is announced as the label and it should not be
-                    #}
-                    <summary id="toc"><span id="nb-toc">table of contents</span></summary>
-                    {# the table of contents is populated in python. #}
-                    <a id="nb-toc-start"></a>
-                    <ol></ol>
-                </details>
-            </section>
-            {% endif %}
-            <label><input id="nb-edit-mode" type="checkbox" name="edit">edit mode</label>
-            <button aria-controls="nb-metadata" onclick="openDialog()">metadata</button>
-            {% if resources.include_axe %}<button aria-controls="nb-audit" aria-describedby="nb-audit-desc" onclick="openDialog()">audit</button>{% endif %}
-            <button aria-controls="nb-expanded-dialog" onclick="openDialog()" accesskey="+">expand and collapse
-                cells</button>
-            <button aria-controls="nb-visibility-dialog" onclick="openDialog()" accesskey="-">show and hide cell
-                parts</button>
-            {% if resources.include_help %}<button onclick="openDialog()" aria-controls="nb-help" accesskey="?">help</button>{% endif %}
-            <button type="submit">Run</button>
-        </form>
+        {% include "a11y/components/nb-toolbar.html.j2" %}
         {% endblock body_header %}
-        
-        {% block any_cell %}{{cell_section(cell, loop)}}{% endblock any_cell %}
 
         {% block body_footer %}
         {# dialogs need to be outside the form because we cant nest forms #}
@@ -124,24 +66,19 @@ the notebook experiennce from browse to edit/focus mode.
         {% include "a11y/components/activity-log.html.j2" %}
         <a href="#notebook" accesskey="0">skip to top</a>
     </footer>
-    {% if resources.include_settings %}<script src="settings.js"></script>{% endif %}
-    {% if resources.include_axe %}<script src="{{resources.axe_url}}" onload="auditNotebook()"></script>{% endif %}
-    {% set mimetype = 'application/vnd.jupyter.widget-state+json'%}
-    {% if mimetype in nb.metadata.get("widgets",{})%}
-    <script type="{{ mimetype }}">
-    {{ nb.metadata.widgets[mimetype] | json_dumps | escape_html_script }}
-    </script>
-    {% endif %}
-    {#
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js" defer></script>'' #}
 </body>
-
-</html>
 {% endblock body_footer %}
 
+{% block footer_js %}
+{% if resources.include_settings %}
+<script src="settings.js"></script>{% endif %}
+{%- if resources.include_axe -%}
+<script src="{{resources.axe_url}}" onload="auditNotebook()"></script>
+{%- endif -%}
+{%- endblock footer_js -%}
 
-{% macro cell_section(cell, loop) %}
-<section class="cell {{cell.cell_type}}" aria-labelledby="cell-{{loop.index}}-cell_type {{loop.index}}"
+{% macro cell_section(cell, loop, tag="section") %}
+<{{tag}} class="cell {{cell.cell_type}}" aria-labelledby="cell-{{loop.index}}-cell_type {{loop.index}}"
     data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %}
     data-outputs="{{cell.outputs.__len__()}}" {% endif %}>
     {{cell_anchor(loop.index, cell.cell_type)}}
@@ -151,8 +88,9 @@ the notebook experiennce from browse to edit/focus mode.
     {{cell_source(loop.index, cell.source, cell.execution_count)}}
     {{cell_output(loop.index, cell, cell.source, cell.outputs, cell.cell_type, cell.execution_count)}}
     {{cell_metadata(loop.index, cell.metadata)}}
-</section>
+</{{tag}}>
 {% endmacro%}
+
 {% macro cell_anchor(i, cell_type)%}
 <a href="#{{i}}" id="{{i}}" aria-labelledby="nb-cell-label {{i}}"
     aria-describedby="nb-{{cell_type}}-label nb-cell-label cell-{{i}}-loc nb-loc-label">{{i}}</a>
@@ -230,6 +168,13 @@ In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span 
 </details>
 {% endif %}
 {%- endmacro -%}
+
+{% macro loc(cell) %}{{cell.source.splitlines().__len__()}}{% endmacro%}
+
+{% macro time(t) %}
+{% if t %}{% if t.endswith("Z") %}{% set t = t[:-1] + "+00:00" %}{% endif %}<time
+    datetime={{'"'}}{{datetime.fromisoformat(t).isoformat(timespec="milliseconds" )}}">{{t}}</time>{% endif %}
+{% endmacro %}
 
 {#
 

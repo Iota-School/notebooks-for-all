@@ -122,6 +122,7 @@ class FormExporter(HTMLExporter):
         resources.setdefault("include_axe", self.include_axe)
         resources.setdefault("include_settings", self.include_settings)
         resources.setdefault("include_help", self.include_help)
+        resources.setdefault("include_toc", self.include_toc)
         resources.setdefault("axe_url", self.axe_url)
         html, resources = super().from_notebook_node(nb, resources, **kw)
         html = self.post_process_html(html)
