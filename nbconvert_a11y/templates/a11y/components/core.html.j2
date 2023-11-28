@@ -1,0 +1,59 @@
+{% macro select(title, values={}, default=None, disabled=None, hide_label=False) %}
+{% set name="-".join(map(str.lower, title.split()))%}
+{% if default == None %}
+{% set default = next(iter(values), None)%}
+{% endif %}
+{% if isinstance(values, [].__class__) %}
+{% set values = dict(zip(values, values))%}
+{% endif %}
+{% if isinstance(disabled, [].__class__) %}
+{% set disabled = dict(zip(disabled, disabled))%}
+{% endif %}
+<label id="nb-{{name}}-select">{%- if not hide_label -%}{{title}}{%- endif -%}
+    <select name="{{name}}">
+        {% for k, v in values.items() %}
+        <option value="{{v}}">{{k}}</option>
+        {% endfor %}
+        {% for k, v in (disabled or {}).items() %}
+        <option value="{{v}}" disabled>{{k}}</option>
+        {% endfor %}
+    </select>
+</label>
+{% endmacro %}
+
+
+{% macro activity_log(id=False) %}
+<details class="log">
+    <summary><span {% if id %}id="nb-activity-log-label" {% endif %}>activity log</span></summary>
+</details>
+<table aria-live="polite" aria-labelledby="nb-activity-log-label">
+    <tr>
+        <th>time</th>
+        <td>message</td>
+        {# all forward behaviors should be reversible except code execution #}
+        {# <td>action</td> #}
+    </tr>
+</table>
+{% endmacro %}
+
+{% macro input_number(title, value, min=None, max=None, step=None, extra_title="")%}
+{% set name="-".join(map(str.lower, title.split()))%}
+<label>
+    {{title}}<input type="number" min="{{min | default('')}}" max="{{max | default('')}}" step="{{step | default('')}}"
+        name="{{name}}" value="{{value}}">{{extra_title}}
+</label>
+{% endmacro%}
+
+{% macro checkbox(title, value)%}
+{% set name="-".join(map(str.lower, title.split()))%}
+<label><input type="checkbox" name="{{name}}" {%- if value %} checked{% endif %}>{{title}}</label>
+{% endmacro%}
+
+{% macro dialog_close() %}
+<button formmethod="dialog">Close</button>
+{% endmacro %}
+
+{% macro h(level, title)%}
+{% set name="-".join(map(str.lower, title.split()))%}
+<h{{level}} id="nb-{{name}}-label">{{title}}</h{{level}}>
+{% endmacro%}
