@@ -1,4 +1,5 @@
 {% from "a11y/components/visibility.html.j2" import header_row, checkbox_row%}
+{% from "a11y/components/core.html.j2" import activity_log %}
 <dialog id="nb-expanded-dialog">
     <form name="expanded">
         <button formmethod="dialog">Close</button>
@@ -12,6 +13,6 @@
             </tbody>
         </table>
     </form>
-    {% include "a11y/components/activity-log.html.j2" %}
+    {{activity_log()}}
 
 </dialog>

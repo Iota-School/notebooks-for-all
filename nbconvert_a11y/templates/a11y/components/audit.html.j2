@@ -1,5 +1,7 @@
+{% from "a11y/components/core.html.j2" import dialog_close %}
 <dialog id="nb-audit">
     <h1>AXE accessibility violations</h1>
+    {{dialog_close()}}
     <table id="nb-audit-violations">
         <caption aria-live="polite"><span role="status" id="nb-audit-desc"></span></caption>
         <tbody>

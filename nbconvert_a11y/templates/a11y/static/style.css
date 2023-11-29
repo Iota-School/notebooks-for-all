@@ -5,37 +5,18 @@
     --nb-background-color-dark: #2b2a33;
     --nb-background-color-light: #FFFFFF;
     --nb-margin: 5%;
-    --nb-font-size: medium;
+    --nb-font-size: 16px;
+    --nb-font-family: serif;
+    --nb-line-height: 1.5;
 }
 
 body {
     font-size: var(--nb-font-size);
-    overflow-x: hidden;
+    font-family: var(--nb-font-family);
     accent-color: var(--nb-accent-color);
     margin-left: var(--nb-margin);
     margin-right: var(--nb-margin);
-}
-
-/* satisfy AA 2.5.8 minimum target requirement */
-body.wcag-aa button,
-body.wcag-aa input[type=checkbox] {
-    min-height: 24px;
-    min-width: 24px;
-}
-
-body.wcag-aa a {
-    font-size: max(24px, var(--nb-font-size));
-}
-
-/* satisfy AAA 2.5.5 */
-body.wcag-aaa button,
-body.wcag-aaa input[type=checkbox] {
-    min-height: 44px;
-    min-width: 44px;
-}
-
-body.wcag-aaa a {
-    font-size: max(44px, var(--nb-font-size));
+    line-height: var(--nb-line-height);
 }
 
 /* align checkboxes with buttons */
@@ -43,19 +24,14 @@ input[type="checkbox"] {
     vertical-align: middle;
 }
 
-table#cells,
-table#cells>.cell>td {
-    display: block;
-}
 
-table#cells .cell,
-table#cells>tbody {
+#cells .cell,
+#cells tbody {
     display: flex;
     flex-direction: column;
 }
 
-
-/* the input and output become interactive when there is overflow.*/
+/* on firefox, the input and output become interactive when there is overflow.*/
 textarea[name=source],
 .cell>td>details {
     overflow: auto;
@@ -63,48 +39,40 @@ textarea[name=source],
 }
 
 
+#nb-settings li::marker,
 summary[inert]::marker {
     content: "";
 }
 
-textarea {
+input,
+select,
+button {
     font-family: inherit;
     font-size: inherit;
+}
+
+textarea {
+    font-family: monospace;
+    font-size: inherit;
     line-height: inherit;
+    overflow: auto;
+    color: unset;
 }
 
 textarea[name=source] {
     box-sizing: border-box;
-    /* https://davidwalsh.name/textarea-width */
     width: 100%;
+    resize: vertical;
 }
 
-
-
-table#cells+table,
-table#cells>tbody>tr:first-child,
-#cells .cell>.nb-loc,
-#cells .cell.markdown>.nb-source,
-#cells .nb-cell_type,
-#cells .nb-metadata,
-#cells .nb-execution_count,
-#cells .nb-start,
-#cells .nb-end,
-#cells details>summary[inert]~textarea[name=source],
-#cells details>summary:not([inert])~textarea[name=source]~* {
-    display: none;
-}
-
-header:focus-within,
 .cell:focus-within,
 :focus-visible {
     outline: max(var(--nb-focus-width), 1px) solid;
     box-shadow: 0 0 0 calc(2 * max(var(--nb-focus-width), 1px));
 }
 
-/* we visually hide the logs so that the screen reader announces them. hiding them hides them from AT. */
+legend:not(:focus-within):not(:active),
 details.log:not([open])+table,
-details.log:not([open])+ul[aria-live],
 .visually-hidden:not(:focus-within):not(:active) {
     clip: rect(0 0 0 0);
     clip-path: inset(50%);
@@ -115,58 +83,35 @@ details.log:not([open])+ul[aria-live],
     width: 1px;
 }
 
-/* default tag settings. */
-textarea {
-    overflow: auto;
+#nb-settings>form>* {
+    display: block;
 }
 
-textarea: {
-    color: unset;
+/* satisfy AA 2.5.8 minimum target requirement */
+.wcag-aa button,
+.wcag-aa input[type=checkbox] {
+    min-height: 24px;
+    min-width: 24px;
 }
 
-
-/* hide legends and use labels instead. they increase the hit area.
-https://adrianroselli.com/2022/07/use-legend-and-fieldset.html */
-legend:not(:focus):not(:active) {
-    position: absolute;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    width: 1px;
-    height: 1px;
-    white-space: nowrap;
+.wcag-aa a {
+    font-size: max(24px, var(--nb-font-size));
 }
 
-[role=log] li::marker {
+/* satisfy AAA 2.5.5 */
+.wcag-aaa button,
+.wcag-aaa input[type=checkbox] {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+.wcag-aaa a {
+    font-size: max(44px, var(--nb-font-size));
+}
+
+.wcag-a #cells details>summary[inert]~textarea[name=source],
+.wcag-aa #cells details>summary[inert]~textarea[name=source],
+.wcag-aaa #cells details>summary[inert]~textarea[name=source]~*,
+#cells details>summary:not([inert])~textarea[name=source]~* {
     display: none;
-}
-
-#skip-link {
-    position: fixed;
-    transform: translateY(-200%);
-    display: inline-flex;
-    justify-content: space-evenly;
-    align-items: center;
-    width: 100vw;
-    background-color: inherit;
-}
-
-#skip-link:focus-within {
-    transform: translateY(0);
-}
-
-a[href="#notebook"] {
-    position: sticky;
-    float: right;
-    bottom: 0;
-}
-
-/* small devices */
-@media (max-width: 576px) {}
-
-/* medium devices */
-@media (max-width: 768px) {
-    :root {
-        --nb-margin: 0px;
-    }
 }

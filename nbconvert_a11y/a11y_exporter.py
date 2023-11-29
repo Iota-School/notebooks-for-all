@@ -15,14 +15,15 @@ import nbformat.v4
 import pygments
 from bs4 import BeautifulSoup
 from nbconvert.exporters.html import HTMLExporter
-from traitlets import Bool, CUnicode, Unicode
+from traitlets import Bool, CUnicode, Enum, Unicode
 
 singleton = lru_cache(1)
 
 HERE = Path(__file__).parent
 TEMPLATES = HERE / "templates"
 
-
+AXE_VERSION = "4.8.2"
+AXE = f"https://cdnjs.cloudflare.com/ajax/libs/axe-core/{AXE_VERSION}/axe.min.js"
 SCHEMA = nbformat.validator._get_schema_json(nbformat.v4)
 
 
@@ -86,12 +87,12 @@ class FormExporter(HTMLExporter):
 
     template_file = Unicode("semantic-forms/table.html.j2").tag(config=True)
     include_axe = Bool(False).tag(config=True)
-    axe_url = CUnicode("https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.8.2/axe.min.js").tag(
-        config=True
-    )
+    axe_url = CUnicode(AXE).tag(config=True)
     include_settings = Bool(True).tag(config=True)
     include_help = Bool(True).tag(config=True)
     include_toc = Bool(True).tag(config=True)
+    wcag_priority = Enum(["AAA", "AA", "A"], "AA").tag(config=True)
+    accesskey_navigation = Bool(True).tag(config=True)
     include_cell_index = Bool(True).tag(config=True)
     exclude_anchor_links = Bool(True).tag(config=True)
 
@@ -123,6 +124,9 @@ class FormExporter(HTMLExporter):
         resources.setdefault("include_settings", self.include_settings)
         resources.setdefault("include_help", self.include_help)
         resources.setdefault("include_toc", self.include_toc)
+        resources.setdefault("wcag_priority", self.wcag_priority)
+        resources.setdefault("accesskey_navigation", self.accesskey_navigation)
+
         resources.setdefault("axe_url", self.axe_url)
         html, resources = super().from_notebook_node(nb, resources, **kw)
         html = self.post_process_html(html)

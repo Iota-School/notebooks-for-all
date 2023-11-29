@@ -70,12 +70,6 @@ jobs:
           # we run this script to generate assets and test the nbconvert-a11y module.
           # failures here will stop any docs builds
           pytest tests/test_smoke.py
-      - name: a11y tests
-        # always build the docs to see what the new versions look like.
-        continue-on-error: true
-        run: |
-          pytest --deselect tests/test_smoke.py  \
-          -n auto --self-contained-html --html=tests/exports/pytest/report.html
       - name: build wheel and sdist
         run: |
           python -m build
@@ -90,6 +84,12 @@ jobs:
         with:
           name: site
           path: site
+      - name: a11y tests
+        # always build the docs to see what the new versions look like.
+        # continue-on-error: true
+        run: |
+          pytest --deselect tests/test_smoke.py  \
+          -n auto --self-contained-html --html=tests/exports/pytest/report.html
   publish:
     name: publish the mkdocs build to github pages
     needs: [test]

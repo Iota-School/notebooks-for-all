@@ -41,7 +41,7 @@ function toggleColorScheme() {
     activityLog(`${value} mode activated`)
 }
 function toggleRole() {
-    let value = document.forms.settings["table-role"].value;
+    let value = document.forms.settings["cell-navigation"].value;
     for (const [k, selector] of Object.entries(SELECTORS)) {
         document.querySelectorAll(selector).forEach(
             (x) => {
@@ -55,22 +55,20 @@ function toggleRole() {
     }
     activityLog(`notebook cell navigation set to ${event.target.value}.`);
 }
-document.forms.settings.elements["table-role"].forEach(
-    (x) => { x.addEventListener("change", toggleRole) }
-)
 function flattenCss(x) {
     return Object.entries(x).map(x => x.join(": ")).join("; ");
 }
 function getStyle() {
     return {
         "--nb-font-size": document.forms.settings["font-size"].value,
-        "font-family": document.forms.settings["font-family"].value,
+        "--nb-font-family": document.forms.settings["font-family"].value,
         "--nb-margin": `${document.forms.settings.elements.margin.value}%`,
-        "line-height": `${document.forms.settings.elements["line-height"].value}`,
+        "--nb-line-height": `${document.forms.settings.elements["line-height"].value}`,
     }
 }
 function setStyle(msg) {
     BODY.setAttribute("style", flattenCss(getStyle()));
+    setWCAG(); toggleColorScheme(); toggleColorScheme();
     activityLog(msg);
 }
 function changeFont() {
@@ -90,12 +88,12 @@ function activityLog(msg, silent = false, first = false) {
                 td = document.createElement("td"),
                 out = document.createElement("output"),
                 now = Date.now();
-            time.setAttribute("datetime", now), time.setAttribute("aria-hidden", "true");
+            time.setAttribute("datetime", now), th.setAttribute("aria-live", "off"), th.setAttribute("hidden", null);
             time.textContent = now;
             body.append(tr), th.append(time), tr.append(th), tr.append(td), td.append(out);
             silent ? out.setAttribute("aria-live", "off") : null;
             out.textContent = msg;
-            if (!i && document.forms.settings.elements.speech.checked) {
+            if (!i && document.forms.settings.elements["synthetic-speech"].checked) {
                 // a non-screen reader solution for audible activity.
                 speechSynthesis.speak(new SpeechSynthesisUtterance(msg));
             }
@@ -125,16 +123,14 @@ document.querySelectorAll("table[role=grid]").forEach(
         })
     }
 );
-document.forms.settings.elements["color-scheme"].forEach(
-    (x) => { x.addEventListener("change", toggleColorScheme) }
-);
+document.forms.settings.elements["cell-navigation"].addEventListener("change", toggleRole)
+
+document.forms.settings.elements["color-scheme"].addEventListener("change", toggleColorScheme);
 document.forms.settings.elements["font-size"].addEventListener("change", (x) => {
     setStyle("change font size");
 });
-document.forms.settings.elements["font-family"].forEach(
-    (x) => { x.addEventListener("change", changeFontFamily) }
-);
-document.forms.settings.elements.speech.addEventListener("change", (x) => {
+document.forms.settings.elements["font-family"].addEventListener("change", changeFontFamily);
+document.forms.settings.elements["synthetic-speech"].addEventListener("change", (x) => {
     activityLog("speech on")
 });
 document.forms.settings.elements.margin.addEventListener("change", (x) => {
@@ -143,7 +139,19 @@ document.forms.settings.elements.margin.addEventListener("change", (x) => {
 document.forms.settings.elements["line-height"].addEventListener("change", (x) => {
     setStyle("line height changed");
 });
-
+function setWCAG() {
+    var priority = document.forms.settings["accessibility-priority"].value.toLowerCase();
+    ["a", "aa", "aaa"].forEach(
+        (x) => {
+            if (x == priority) {
+                BODY.classList.add(`wcag-${x}`)
+            } else {
+                BODY.classList.remove(`wcag-${x}`)
+            }
+        }
+    );
+}
+document.forms.settings.elements["accessibility-priority"].addEventListener("change", setWCAG);
 function toggleActive() {
     if (document.forms.notebook.elements.edit.checked) {
         document.querySelectorAll("tr.cell>td>details>summary[inert]").forEach(
@@ -170,7 +178,7 @@ function toggleActive() {
     }
 }
 document.forms.notebook.elements.edit.addEventListener("change", () => toggleActive())
-
+setStyle("initialize saved settings.")
 // async function runSource(target) {
 //     {
 //         let pyodide = await loadPyodide();

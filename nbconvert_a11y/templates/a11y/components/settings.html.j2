@@ -1,56 +1,51 @@
+{#
+settings provides multiple screen reader navigation techniques when the dialog is active.
+
+#}
+
+{% from "a11y/components/core.html.j2" import h, radiogroup, select, activity_log, input_number, checkbox, dialog_close
+%}
 <button onclick="openDialog()" aria-controls="nb-settings" accesskey=",">Settings</button>
 <dialog id="nb-settings">
     <form name="settings">
-        <h1 role="presentation">Settings</h1>
-        <button formmethod="dialog">Close</button>
-        <fieldset id="nb-color-scheme-radio">
-            <legend>color scheme</legend>
-            <span aria-hidden="true">color scheme</span>
-            <label>light mode<input value="light" name="color-scheme" type="radio" checked></label>
-            <label>dark mode<input value="dark" name="color-scheme" type="radio"></label>
-        </fieldset>
-        <label>
-            margin<input type="number" min="0" max="40" step="5" name="margin" value="5">%
-        </label>
-        <fieldset id="nb-table-role-radio">
-            <legend>cell navigation</legend>
-            <b aria-hidden="true">cell navigation</b>
-            <i>modify the screen reader's cell navigation preference,
-                there is no visual effect.</i>
-            <label>list<input value="list" name="table-role" type="radio" checked></label>
-            <label>table<input value="table" name="table-role" type="radio"></label>
-            <label>landmark<input value="landmark" name="table-role" type="radio"></label>
-            <label>presentation<input value="presentation" name="table-role" type="radio"></label>
-            <label>grid<input value="grid" name="table-role" type="radio" disabled></label>
-            <label>treegrid<input value="treegrid" name="table-role" type="radio" disabled></label>
-            <label>tree<input value="tree" name="table-role" type="radio" disabled></label>
-        </fieldset>
-        <fieldset id="nb-table-font-group">
-            <legend>font settings</legend>
-            <label aria-hidden="true" id="nb-table-font-size-group-label">font size</label>
-            <select name="font-size" id="nb-table-font-size-group" aria-labelledby="nb-table-font-size-group-label">
-                <option value="xx-small">xx-small</option>
-                <option value="x-small">x-small</option>
-                <option value="small">small</option>
-                <option value="medium" selected>medium</option>
-                <option value="large">large</option>
-                <option value="x-large">x-large</option>
-                <option value="xx-large">xx-large</option>
-            </select>
-            <fieldset id="nb-font-serif-radio">
-                <legend>serif</legend>
-                <label>serif<input value="serif" name="font-family" type="radio" checked></label>
-                <label>sans-serif<input value="sans-serif" name="font-family" type="radio"></label>
-            </fieldset>
-            <label>
-                line height<input type="number" min=".5" max="3" step=".1" name="line-height" value="1.2">
-            </label>
-        </fieldset>
-
-        <fieldset id="nb-sound-group">
-            <legend>sound settings</legend>
-            <label><input type="checkbox" name="speech">Synthetic speech</label>
-        </fieldset>
-        {% include "a11y/components/activity-log.html.j2" %}
+        {{h(1, "accessibility settings")}}
+        {{dialog_close()}}
+        <ul aria-labelledby="nb-accessibility-settings-label">
+            <li>
+                {{h(2, "notebook layout")}}
+                <ul aria-labelledby="nb-notebook-layout-label">
+                    <li>{{select("color scheme", {"light mode": "light", "dark mode": "dark"})}}</li>
+                    <li>{{input_number("margin", 5, min=0, max=40, step=5, extra_title="%")}}</li>
+                    <li>{{input_number("line height", 1.5, min=0.5, max=3, step=0.1)}}</li>
+                    <li>{{select("cell navigation", values="list table landmark presentation".split(), disabled="grid
+                        treegrid
+                        tree".split())}}</li>
+                    <li>{{select("accessibility priority", "AAA AA A".split(), "{{resources.wcag_priority}}")}}</li>
+                    <li>{{checkbox("accesskey navigation", True)}}</li>
+                </ul>
+            </li>
+            <li>
+                {{h(2, "font settings")}}
+                <ul aria-labelledby="nb-font-settings-label">
+                    <li>{{select("font size", "xx-small x-small small medium large x-large xx-large".split(),
+                        "medium")}}</li>
+                    <li>
+                        {{select("font family", "serif sans-serif".split())}}
+                    </li>
+                </ul>
+            </li>
+            <li>
+                {{h(2, "sound settings")}}
+                <ul aria-labelledby="nb-sound-settings-label">
+                    <li>
+                        {{checkbox("synthetic speech", False)}}
+                    </li>
+                    <li>
+                        {{checkbox("aria live", True)}}
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        {{activity_log(False)}}
     </form>
 </dialog>

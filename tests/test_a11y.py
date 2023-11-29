@@ -55,5 +55,5 @@ def test_settings_font_size(test_page):
     """Test that the settings make their expected changes."""
     assert test_page.evaluate(SNIPPET_FONT_SIZE) == "16px", "the default font size is unexpected"
     test_page.click("[aria-controls=nb-settings]")
-    test_page.locator("#nb-table-font-size-group").select_option("xx-large")
+    test_page.locator("[name=font-size]").select_option("xx-large")
     assert test_page.evaluate(SNIPPET_FONT_SIZE) == "32px", "font size not changed"

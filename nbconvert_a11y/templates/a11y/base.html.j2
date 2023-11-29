@@ -6,6 +6,7 @@ the notebook experiennce from browse to edit/focus mode.
 #}
 {%- extends 'lab/index.html.j2' -%}
 {% from "a11y/components/displays.html.j2" import cell_display_priority with context %}
+{% from "a11y/components/core.html.j2" import activity_log with context %}
 {% from 'celltags.j2' import celltags %}
 {% from 'mathjax.html.j2' import mathjax %}
 {% from 'lab/mermaidjs.html.j2' import mermaid_js %}
@@ -28,18 +29,14 @@ the notebook experiennce from browse to edit/focus mode.
 
 {% block body_header %}
 
-<body class="wcag-a wcag-aa wcag-aaa">
+<body class="wcag-{{resources.wcag_priority.lower()}}">
     <header aria-label="site header">
-        <section id="skip-link">
-            <a href="#cells" tabindex="0" accesskey="1">skip to main content</a>
-        </section>
+        <a href="#1">skip to main content</a>
         {# the skip link is the first tab stop in the site to skip repetitive information
         and directly access the content. #}
         {# site authors with include their site specific headers in this region. #}
         {# a subsequent tab stop will indicate to keyboard and AT users that there are
         accessibility settings that can be toggled. #}
-        {% if resources.include_settings %}{% include "a11y/components/settings.html.j2" %}{% endif %}
-        {% if resources.include_axe %}{% include "a11y/components/audit.html.j2" %}{% endif %}
     </header>
     <main aria-labelledby="nb-notebook-label">
         {% include "a11y/components/nb-toolbar.html.j2" %}
@@ -47,25 +44,30 @@ the notebook experiennce from browse to edit/focus mode.
 
         {% block body_footer %}
         {# dialogs need to be outside the form because we cant nest forms #}
-        {% include "a11y/components/expanded.html.j2"%}
-        {% include "a11y/components/visibility.html.j2"%}
         <dialog id="nb-metadata">
             <form method="dialog">
                 <button formmethod="dialog">Close</button>
                 {{nb.metadata| json_dumps | escape_html_keep_quotes }}
             </form>
         </dialog>
-        {% if resources.include_help %}{% include "a11y/components/help.html.j2" %}{% endif %}
     </main>
     {# a notebook begins as a static document that can progressively
     add features like run time computation. #}
     {# skip to top is needed for long notebooks.
     it is difficult to access for keyboard users. #}
     <footer>
-        {% set LOGID = True %}
-        {% include "a11y/components/activity-log.html.j2" %}
+        {% if resources.include_settings %}{% include "a11y/components/settings.html.j2" %}{% endif %}
+        {% if resources.include_axe %}<button aria-controls="nb-audit" aria-describedby="nb-audit-desc"
+            onclick="openDialog()">audit</button>{% endif %}
+        {% if resources.include_help %}<button onclick="openDialog()" aria-controls="nb-help"
+            accesskey="?">help</button>{% endif %}
+        {{activity_log()}}
         <a href="#notebook" accesskey="0">skip to top</a>
     </footer>
+    {% if resources.include_help %}{% include "a11y/components/help.html.j2" %}{% endif %}
+    {% if resources.include_axe %}{% include "a11y/components/audit.html.j2" %}{% endif %}
+    {% include "a11y/components/expanded.html.j2"%}
+    {% include "a11y/components/visibility.html.j2"%}
 </body>
 {% endblock body_footer %}
 
@@ -92,7 +94,8 @@ the notebook experiennce from browse to edit/focus mode.
 {% endmacro%}
 
 {% macro cell_anchor(i, cell_type)%}
-<a href="#{{i}}" id="{{i}}" aria-labelledby="nb-cell-label {{i}}"
+<a href="#{{i}}" id="{{i}}" aria-labelledby="nb-cell-label {{i}}" {% if resources.accesskey_navigation and (i < 10)
+    %}accesskey="{{i}}" {% endif %}
     aria-describedby="nb-{{cell_type}}-label nb-cell-label cell-{{i}}-loc nb-loc-label">{{i}}</a>
 {% endmacro %}
 

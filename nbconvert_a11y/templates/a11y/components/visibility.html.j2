@@ -1,3 +1,5 @@
+{% from "a11y/components/core.html.j2" import activity_log %}
+
 {% macro header_row(names) %}
 <tr>
     <th></th>
@@ -39,5 +41,6 @@
             </tbody>
         </table>
     </form>
-    {% include "a11y/components/activity-log.html.j2" %}
+    {{activity_log()}}
+
 </dialog>
