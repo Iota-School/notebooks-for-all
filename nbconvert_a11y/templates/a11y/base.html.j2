@@ -31,7 +31,7 @@ the notebook experiennce from browse to edit/focus mode.
 
 <body class="wcag-{{resources.wcag_priority.lower()}}">
     <header aria-label="site header">
-        <a href="#1">skip to main content</a>
+        <a href="#1" id="TOP">skip to main content</a>
         {# the skip link is the first tab stop in the site to skip repetitive information
         and directly access the content. #}
         {# site authors with include their site specific headers in this region. #}
@@ -39,7 +39,7 @@ the notebook experiennce from browse to edit/focus mode.
         accessibility settings that can be toggled. #}
     </header>
     <main aria-labelledby="nb-notebook-label">
-        {% include "a11y/components/nb-toolbar.html.j2" %}
+        {%- if resources.include_toc -%}{% include "a11y/components/toc.html.j2" %}{%- endif -%}
         {% endblock body_header %}
 
         {% block body_footer %}
@@ -50,6 +50,7 @@ the notebook experiennce from browse to edit/focus mode.
                 {{nb.metadata| json_dumps | escape_html_keep_quotes }}
             </form>
         </dialog>
+        {% include "a11y/components/nb-toolbar.html.j2" %}
     </main>
     {# a notebook begins as a static document that can progressively
     add features like run time computation. #}
@@ -62,11 +63,10 @@ the notebook experiennce from browse to edit/focus mode.
         {% if resources.include_help %}<button onclick="openDialog()" aria-controls="nb-help"
             accesskey="?">help</button>{% endif %}
         {{activity_log()}}
-        <a href="#notebook" accesskey="0">skip to top</a>
+        <a href="#TOP">skip to top</a>
     </footer>
     {% if resources.include_help %}{% include "a11y/components/help.html.j2" %}{% endif %}
     {% if resources.include_axe %}{% include "a11y/components/audit.html.j2" %}{% endif %}
-    {% include "a11y/components/expanded.html.j2"%}
     {% include "a11y/components/visibility.html.j2"%}
 </body>
 {% endblock body_footer %}

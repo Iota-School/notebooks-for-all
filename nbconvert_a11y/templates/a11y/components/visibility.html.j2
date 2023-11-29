@@ -41,6 +41,18 @@
             </tbody>
         </table>
     </form>
+    <form name="expanded">
+        <button formmethod="dialog">Close</button>
+        <table role="grid">
+            <tbody>
+                {% set labels = "cell source outputs" %}
+                {{header_row(labels)}}
+                {{checkbox_row("code", labels)}}
+                {{checkbox_row("markdown", labels)}}
+                {{checkbox_row("raw", labels)}}
+            </tbody>
+        </table>
+    </form>
     {{activity_log()}}
 
 </dialog>
