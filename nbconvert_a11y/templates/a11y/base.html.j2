@@ -32,11 +32,7 @@ the notebook experiennce from browse to edit/focus mode.
 <body class="wcag-{{resources.wcag_priority.lower()}}">
     <header aria-label="site header">
         <a href="#1" id="TOP">skip to main content</a>
-        {# the skip link is the first tab stop in the site to skip repetitive information
-        and directly access the content. #}
-        {# site authors with include their site specific headers in this region. #}
-        {# a subsequent tab stop will indicate to keyboard and AT users that there are
-        accessibility settings that can be toggled. #}
+        {{site_navigation | default("")}}
     </header>
     <main aria-labelledby="nb-notebook-label">
         {%- if resources.include_toc -%}{% include "a11y/components/toc.html.j2" %}{%- endif -%}
@@ -63,7 +59,7 @@ the notebook experiennce from browse to edit/focus mode.
         {% if resources.include_help %}<button onclick="openDialog()" aria-controls="nb-help"
             accesskey="?">help</button>{% endif %}
         {{activity_log()}}
-        <a href="#TOP">skip to top</a>
+        <a href="#TOP" accesskey="0">skip to top</a>
     </footer>
     {% if resources.include_help %}{% include "a11y/components/help.html.j2" %}{% endif %}
     {% if resources.include_axe %}{% include "a11y/components/audit.html.j2" %}{% endif %}
@@ -126,10 +122,12 @@ that would include talking to the kernel. #}
 
 {% macro cell_source(i, source, cell_type, execution_count) %}
 {% set label -%}
-In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span aria-hidden="true">]</span>
+<span id="cell-{{i}}-source-label">
+    <span>In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span aria-hidden="true">]</span>
+</span>
 {%- endset %}
 <details open aria-labelledby="cell-{{i}}-source-label">
-    <summary inert id="cell-{{i}}-source-label">{{label}}</summary>
+    <summary inert>{{label}}</summary>
     <textarea form="cell-{{i}}" id="cell-{{i}}-source" name="source" rows="{{source.splitlines().__len__()}}"
         aria-labelledby="cell-{{i}}-source-label nb-source-label" readonly>{{source}}</textarea>
     {{highlight(source, cell_type)}}
