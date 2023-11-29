@@ -30,7 +30,7 @@
                 {{time(t1)}}
             </td>
             <td role="none" class="nb-source" {{hide(cell.cell_type=="markdown" )}}>{{cell_source(loop.index,
-                cell.source, cell.execution_count)}}</td>
+                cell.source, cell.cell_type, cell.execution_count)}}</td>
             <td role="none" class="nb-metadata" hidden>{{cell_metadata(loop.index, cell.metadata)}}</td>
             {# it was noted in a video that lines of code were helpful in assistive descriptions.
             lines of code are part of the gestalt of code forms. #}

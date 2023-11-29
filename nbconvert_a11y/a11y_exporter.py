@@ -51,19 +51,28 @@ def get_markdown(md, **kwargs):
     return get_markdown_renderer().render("".join(md), **kwargs)
 
 
-def highlight(code, lang="python", attrs=None):
+def highlight(code, lang="python", attrs=None, experimental=True):
     import html
 
     import pygments
 
-    with suppress(BaseException):
+    if lang == "code":
+        lang = "python"
+    elif lang == "raw":
+        return ""
+
+    lang = lang or pygments.lexers.get_lexer_by_name(lang or "python")
+
+    formatter = pygments.formatters.get_formatter_by_name(
+        "html", debug_token_types=True, title=f"{lang} code", wrapcode=True
+    )
+    try:
         return pygments.highlight(
-            code,
-            pygments.lexers.get_lexer_by_name(lang or "python"),
-            pygments.formatters.get_formatter_by_name(
-                "html", debug_token_types=True, title=f"{lang} code", wrapcode=True
-            ),
+            code, pygments.lexers.get_lexer_by_name(lang or "python"), formatter
         )
+    except BaseException as e:
+        print(code, e)
+
     return f"""<pre><code>{html.escape(code)}</code></pre>"""
 
 

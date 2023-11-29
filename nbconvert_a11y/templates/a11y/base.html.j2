@@ -87,7 +87,7 @@ the notebook experiennce from browse to edit/focus mode.
     {{cell_form(i)}}
     {{cell_execution_count(loop.index, cell.execution_count)}}
     {{cell_cell_type(loop.index, cell.cell_type)}}
-    {{cell_source(loop.index, cell.source, cell.execution_count)}}
+    {{cell_source(loop.index, cell.source, cell.cell_type, cell.execution_count)}}
     {{cell_output(loop.index, cell, cell.source, cell.outputs, cell.cell_type, cell.execution_count)}}
     {{cell_metadata(loop.index, cell.metadata)}}
 </{{tag}}>
@@ -124,16 +124,15 @@ that would include talking to the kernel. #}
 {% endmacro %}
 
 
-{% macro cell_source(i, source, execution_count) %}
+{% macro cell_source(i, source, cell_type, execution_count) %}
 {% set label -%}
 In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span aria-hidden="true">]</span>
 {%- endset %}
 <details open aria-labelledby="cell-{{i}}-source-label">
     <summary inert id="cell-{{i}}-source-label">{{label}}</summary>
     <textarea form="cell-{{i}}" id="cell-{{i}}-source" name="source" rows="{{source.splitlines().__len__()}}"
-        aria-labelledby="cell-{{i}}-source-label nb-source-label" aria-describedby="nb-source-desc"
-        readonly>{{source}}</textarea>
-    {{highlight(source)}}
+        aria-labelledby="cell-{{i}}-source-label nb-source-label" readonly>{{source}}</textarea>
+    {{highlight(source, cell_type)}}
 </details>
 {% endmacro %}
 
