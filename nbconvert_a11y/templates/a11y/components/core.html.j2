@@ -81,3 +81,97 @@
     </select>
 </label>
 {% endmacro %}
+
+{% macro cell_anchor(i, cell_type)%}
+<a href="#{{i}}" id="{{i}}" aria-labelledby="nb-cell-label {{i}}" {% if resources.accesskey_navigation and (i < 10)
+    %}accesskey="{{i}}" {% endif %}
+    aria-describedby="nb-{{cell_type}}-label nb-cell-label cell-{{i}}-loc nb-loc-label">{{i}}</a>
+{% endmacro %}
+
+{% macro cell_form(i, cell_type) %}
+{# the cell form acts a formal reference for each cell. as a form, each cell can handle a submission process
+that would include talking to the kernel. #}
+<form class="nb-toolbar" id="cell-{{i}}" name="cell-{{i}}" aria-labelledby="cell-{{i}}-source-label" hidden>
+    <fieldset>
+        <legend>actions</legend>
+        <button type="submit">Run Cell</button>
+    </fieldset>
+</form>
+{% endmacro %}
+
+{% macro cell_cell_type(i, cell_type) %}
+<select form="cell-{{i}}" name="cell_type" aria-describedby="nb-cell_type-desc">
+    <option value="markdown" {%- if cell_type=="markdown" %} selected{% endif%}>markdown</option>
+    <option value="code" {%- if cell_type=="code" %} selected{% endif%}>code</option>
+    <option value="raw" {%- if cell_type=="raw" %} selected{% endif%}>raw</option>
+</select>
+<span id="cell-{{i}}-cell_type">{{cell_type}}</span>
+{% endmacro %}
+
+{% macro cell_execution_count(i, execution_count) %}
+<output form="cell-{{i}}" name="execution_count" id="cell-{{i}}-execution_count">#{{execution_count}}</output>
+{% endmacro %}
+
+
+{% macro cell_source(i, source, cell_type, execution_count) %}
+{% set label -%}
+<span id="cell-{{i}}-source-label">
+    <span>In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span aria-hidden="true">]</span>
+</span>
+{%- endset %}
+<details open aria-labelledby="cell-{{i}}-source-label">
+    <summary inert>{{label}}</summary>
+    <textarea form="cell-{{i}}" id="cell-{{i}}-source" name="source" rows="{{source.splitlines().__len__()}}"
+        aria-labelledby="cell-{{i}}-source-label nb-source-label" readonly>{{source}}</textarea>
+    {{highlight(source, cell_type)}}
+</details>
+{% endmacro %}
+
+{% macro cell_metadata(i, metadata) %}
+<button name="metadata" form="cell-{{i}}" aria-describedby="nb-metadata-desc" aria-controls="cell-{{i}}-metadata"
+    onclick="openDialog()">metadata</button>
+<dialog id="cell-{{i}}-metadata">
+    <form>
+        <button formmethod="dialog">Close</button>
+        <pre><code>
+        {{metadata}}
+        </code></pre>
+    </form>
+</dialog>
+{% endmacro %}
+
+{%- macro cell_output(i, cell, source, outputs, cell_type, execution_count) -%}
+{% set CODE = cell_type == "code" %}
+{% set label %}{% if CODE and outputs %}Out<span aria-hidden="true">[</span>{{execution_count}}<span
+    aria-hidden="true">]</span>{% else %}Cell {{i}}{% endif %}{% endset %}
+<span hidden id="cell-{{i}}-outputs-len">{{outputs.__len__()}} outputs</span>
+{% if CODE and outputs %}
+{% if outputs %}
+<details open aria-labelledby="cell-{{i}}-outputs-label">
+    <summary inert id="cell-{{i}}-outputs-label" aria-describedby="nb-outputs-desc">{{label}}</summary>
+    {# the output description should mention the number of outputs
+    saying zero outputs should be an option. a cell without an output is probably a violation. #}
+    {{cell_display_priority(i, outputs, cell)}}
+</details>
+{% endif %}
+{% elif cell_type=="markdown" %}
+<details open aria-labelledby="cell-{{i}}-outputs-label">
+    <summary hidden inert id="cell-{{i}}-outputs-label">{{label}}</summary>
+    {{ markdown(source) | strip_files_prefix }}
+</details>
+{% endif %}
+{%- endmacro -%}
+
+{% macro loc(cell) %}{{cell.source.splitlines().__len__()}}{% endmacro%}
+
+{% macro time(t) %}
+{% if t %}{% if t.endswith("Z") %}{% set t = t[:-1] + "+00:00" %}{% endif %}<time
+    datetime={{'"'}}{{datetime.fromisoformat(t).isoformat(timespec="milliseconds" )}}">{{t}}</time>{% endif %}
+{% endmacro %}
+
+{#
+
+[h25]: https://www.w3.org/WAI/WCAG21/Techniques/html/H25
+[2.4.2A]: https://www.w3.org/WAI/WCAG21/Understanding/page-titled
+
+#}

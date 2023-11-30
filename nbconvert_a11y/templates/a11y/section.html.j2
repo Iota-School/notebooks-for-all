@@ -1,0 +1,24 @@
+{%- extends 'a11y/base.html.j2' -%}
+{% from "a11y/components/core.html.j2" import hide, time, loc, cell_anchor, cell_execution_count, cell_cell_type,
+cell_form, cell_source, cell_metadata, cell_output with context%}
+{% set COLUMNS = ["index", "execution_count", "cell_type", "toolbar", "started_at", "completed_at", "source", "loc",
+"metadata", "outputs"] %}
+
+{% block any_cell scoped %}
+{{cell_section(cell, loop)}}
+{% endblock any_cell %}
+
+
+{% macro cell_section(cell, loop, tag="section") %}
+<{{tag}} class="cell {{cell.cell_type}}" aria-labelledby="cell-{{loop.index}}-cell_type {{loop.index}}"
+    data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %}
+    data-outputs="{{cell.outputs.__len__()}}" {% endif %}>
+    {{cell_anchor(loop.index, cell.cell_type)}}
+    {{cell_form(i)}}
+    {{cell_execution_count(loop.index, cell.execution_count)}}
+    {{cell_cell_type(loop.index, cell.cell_type)}}
+    {{cell_source(loop.index, cell.source, cell.cell_type, cell.execution_count)}}
+    {{cell_output(loop.index, cell, cell.source, cell.outputs, cell.cell_type, cell.execution_count)}}
+    {{cell_metadata(loop.index, cell.metadata)}}
+</{{tag}}>
+{% endmacro%}
