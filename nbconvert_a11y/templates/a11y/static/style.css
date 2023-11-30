@@ -17,6 +17,7 @@ body {
     margin-left: var(--nb-margin);
     margin-right: var(--nb-margin);
     line-height: var(--nb-line-height);
+    width: calc(100% - 2*var(--nb-margin));
 }
 
 /* align checkboxes with buttons */
@@ -83,7 +84,7 @@ details.log:not([open])+table,
     width: 1px;
 }
 
-#nb-settings>form>* {
+dialog form>* {
     display: block;
 }
 

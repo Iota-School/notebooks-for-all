@@ -15,4 +15,4 @@ jobs:
         with:
           message: |
             A preview fo the exported examples will be rendered at 
-            https://${{ github.repository_owner }}.io/nbconvert-a11y/branch/${{ github.event.pull_request.head.ref }}/exports/html
+            https://${{ github.repository_owner }}.github.io/nbconvert-a11y/branch/${{ github.event.pull_request.head.ref }}/exports/html/lorenz-executed-a11y.html

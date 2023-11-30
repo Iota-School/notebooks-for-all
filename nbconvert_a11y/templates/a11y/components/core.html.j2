@@ -53,9 +53,31 @@
 <button formmethod="dialog">Close</button>
 {% endmacro %}
 
+{% macro dialog_close_form() %}
+<form>{{dialog_close()}}</form>
+{% endmacro %}
+
+
 {% macro h(level, title)%}
 {% set name="-".join(map(str.lower, title.split()))%}
 <h{{level}} id="nb-{{name}}-label">{{title}}</h{{level}}>
 {% endmacro%}
 
 {% macro hide(object) %}{% if object %} hidden{% endif %}{% endmacro %}
+
+{% macro multiselect(title, values={}, default=None) %}
+{% set name="-".join(map(str.lower, title.split()))%}
+{% if default == None %}
+{% set default = list(values) %}
+{% endif %}
+{% if isinstance(values, [].__class__) %}
+{% set values = dict(zip(values, values))%}
+{% endif %}
+<label>{{title}}
+    <select name="{{name}}" id="{{name}}-select" multiple>
+        {% for k, v in values.items() %}
+        <option value="{{v}}" {% if k in default %} selected{% endif %}>{{k}}</option>
+        {% endfor %}
+    </select>
+</label>
+{% endmacro %}

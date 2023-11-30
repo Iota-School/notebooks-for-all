@@ -1,7 +1,31 @@
-{% from "a11y/components/core.html.j2" import dialog_close %}
+{# # in page auditing
+
+this template creates an in-page accessibility auditing dialog.
+the eventual state of a notebook is an interactive editing state.
+having the auditing system brings accessibility standards and knowledge
+nearer to the developer.
+it can be useful when authoring is enabled and when reporting issues
+or feedback.
+
+the axe tests are configurable in the dialog.
+when running axe tests, the dialog running the tests must be suppressed and
+reactivated after the tests complete.
+if the dialog remains open then axe will only test the dialog.
+
+#}
+
+{% from "a11y/components/core.html.j2" import dialog_close, multiselect %}
+{% set RULES = "wcag2a wcag2aa wcag2aaa wcag21a wcag21aa wcag22aa best-practice ACT section508 TTv5 EN-301-549
+experimental".split() %}
 <dialog id="nb-audit">
     <h1>AXE accessibility violations</h1>
-    {{dialog_close()}}
+    <form method="dialog">
+        {{dialog_close()}}
+    </form>
+    <form name="axe" method="post">
+        {{multiselect("axe-rules", RULES)}}
+        <button type="submit">audit</button>
+    </form>
     <table id="nb-audit-violations">
         <caption aria-live="polite"><span role="status" id="nb-audit-desc"></span></caption>
         <tbody>
@@ -28,20 +52,26 @@
 <script>
     const VIOLATION_TABLE = document.getElementById("nb-audit-violations"),
         VIOLATION_NODES_TABLE = document.getElementById("nb-audit-nodes"),
-        VIOLATION_COLS = ["id", "impact", "description", "help"];
-    async function auditNotebook() {
+        VIOLATION_COLS = ["id", "impact", "description", "help"],
+        AXE_DIALOG = document.getElementById("nb-audit");
+    function getRules() {
+        return Array.from(document.forms.axe.elements["axe-rules"].selectedOptions).map(x => x.value)
+    }
+    async function auditNotebook(show = false) {
         axe.reset()
         await axe.run({
             runOnly: {
                 type: 'tag',
-                values: ['wcag2a', 'wcag2aa', "wcag2aaa", "best-practice", "ACT"]
+                values: getRules()
             }
         }, (err, results) => {
+            show ? AXE_DIALOG.showModal() : null;
             updateAuditTables(results)
         })
     }
     function updateAuditTables(results) {
         var total = 0, violations = { "serious": 0, "critical": 0, "moderate": 0, "minor": 0 };
+        AXE_DIALOG.querySelectorAll("table tbody").forEach(x => x.replaceChildren());
         if (results.violations) {
             for (const x in results.violations) {
                 violations[results.violations[x].impact] = violations[results.violations[x].impact] + 1;
@@ -94,4 +124,9 @@
             return getCell(node.parentElement);
         }
     }
+    document.forms.axe.addEventListener("submit", (e) => {
+        e.preventDefault();
+        AXE_DIALOG.close()
+        auditNotebook(true);
+    })
 </script>
