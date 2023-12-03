@@ -60,16 +60,21 @@ config_notebooks_aaa = mark.parametrize(
 
 axe_config_aaa = {
     "runOnly": [
-        "act",
+        "ACT",
         "best-practice",
         "experimental",
+        "wcag2a",
+        "wcag2aa",
+        "wcag2aaa",
         "wcag21a",
         "wcag21aa",
         "wcag22aa",
-        "wcag2aaa",
+        "TTv5"
     ],
     "allowedOrigins": ["<same_origin>"],
 }
+
+
 
 
 @config_notebooks_aa
