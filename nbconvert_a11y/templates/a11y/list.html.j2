@@ -1,0 +1,22 @@
+{# # notebooks as an ordered list
+
+there are ordered and unordered applications of cells in computational notebooks.
+observable notebooks use a topological ordered while jupyter notebooks use an ordered 
+execution model. the ordered and unordered lists are appropriate form capturing these semantics.
+
+the list elements can become trees with collapsible user interactions.
+
+#}
+{%- extends 'a11y/base.html.j2' -%}
+{% from "a11y/components/cell.html.j2" import cell_section with context%}
+
+{% block body_loop %}
+{# the most consistent implementation would connect the input visibility to a form #}
+<ol id="cells">
+    {{super()}}
+</ol>
+{% endblock body_loop %}
+
+{% block any_cell scoped %}
+{{cell_section(cell, loop, "li")}}
+{% endblock any_cell %}

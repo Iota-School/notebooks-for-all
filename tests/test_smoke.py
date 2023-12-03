@@ -49,6 +49,8 @@ configs = mark.parametrize(
     "config",
     [
         param((CONFIGURATIONS / (id := "a11y")).with_suffix(".py"), id=id),
+        param((CONFIGURATIONS / (id := "section")).with_suffix(".py"), id=id),
+        param((CONFIGURATIONS / (id := "list")).with_suffix(".py"), id=id),
         param(
             (CONFIGURATIONS / (id := "default")).with_suffix(".py"),
             id=id,

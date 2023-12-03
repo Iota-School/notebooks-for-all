@@ -110,9 +110,9 @@ dialog form>* {
     font-size: max(44px, var(--nb-font-size));
 }
 
-.wcag-a #cells details>summary[inert]~textarea[name=source],
-.wcag-aa #cells details>summary[inert]~textarea[name=source],
-.wcag-aaa #cells details>summary[inert]~textarea[name=source]~*,
-#cells details>summary:not([inert])~textarea[name=source]~* {
+.wcag-a details>summary[inert]~textarea[name=source],
+.wcag-aa details>summary[inert]~textarea[name=source],
+.wcag-aaa details>summary[inert]~textarea[name=source]~*,
+details>summary:not([inert])~textarea[name=source]~* {
     display: none;
 }

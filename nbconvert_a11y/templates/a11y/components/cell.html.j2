@@ -1,0 +1,100 @@
+{% from "a11y/components/core.html.j2" import loc, hide %}
+{% from "a11y/components/displays.html.j2" import cell_display_priority with context %}
+
+{% macro cell_anchor(i, cell_type, hidden=False)%}
+<a href="#{{i}}" id="{{i}}" aria-labelledby="nb-cell-label {{i}}" {% if resources.accesskey_navigation and (i < 10)
+    %}accesskey="{{i}}" {% endif %} aria-describedby="nb-{{cell_type}}-label nb-cell-label cell-{{i}}-loc nb-loc-label"
+    {{hide(hidden)}}>{{i}}</a>
+{% endmacro %}
+
+{% macro cell_form(i, cell_type, hidden=True) %}
+{# the cell form acts a formal reference for each cell. as a form, each cell can handle a submission process
+that would include talking to the kernel. #}
+<form class="nb-toolbar" id="cell-{{i}}" name="cell-{{i}}" aria-labelledby="cell-{{i}}-source-label" {{hide(hidden)}}>
+    <fieldset>
+        <legend>actions</legend>
+        <button type="submit">Run Cell</button>
+    </fieldset>
+</form>
+{% endmacro %}
+
+{% macro cell_cell_type(i, cell_type, hidden=False) %}
+{% set selected = ' selected id="cell-{}-cell_type"'.format(i) %}
+<label id="nb-cell-{{i}}-select" {{hide(hidden)}}>cell type
+    <select name="cell_type" form="cell-{{i}}">
+        <option value="markdown" {%- if cell_type=="markdown" %}{{selected}}{% endif%}>markdown</option>
+        <option value="code" {%- if cell_type=="code" %}{{selected}}{% endif%}>code</option>
+        <option value="raw" {%- if cell_type=="raw" %}{{selected}}{% endif%}>raw</option>
+    </select>
+</label>
+{% endmacro %}
+
+{% macro cell_execution_count(i, execution_count, hidden=False) %}
+<output form="cell-{{i}}" name="execution_count" id="cell-{{i}}-execution_count"
+    {{hide(hidden)}}>#{{execution_count}}</output>
+{% endmacro %}
+
+
+{% macro cell_source(i, source, cell_type, execution_count, hidden=False) %}
+{% set label -%}
+<span id="cell-{{i}}-source-label">
+    <span>In</span><span aria-hidden="true">[</span><span>{{execution_count}}</span><span aria-hidden="true">]</span>
+</span>
+{%- endset %}
+<details open aria-labelledby="cell-{{i}}-source-label" {{hide(hidden)}}>
+    <summary inert>{{label}}</summary>
+    <textarea form="cell-{{i}}" id="cell-{{i}}-source" name="source" rows="{{source.splitlines().__len__()}}"
+        aria-labelledby="cell-{{i}}-source-label nb-source-label" readonly>{{source}}</textarea>
+    {{highlight(source, cell_type)}}
+</details>
+{% endmacro %}
+
+{% macro cell_metadata(i, metadata, hidden=False) %}
+<button name="metadata" form="cell-{{i}}" aria-describedby="nb-metadata-desc" aria-controls="cell-{{i}}-metadata"
+    onclick="openDialog()" {{hide(hidden)}}>metadata</button>
+<dialog id="cell-{{i}}-metadata">
+    <form>
+        <button formmethod="dialog">Close</button>
+        <pre><code>
+        {{metadata}}
+        </code></pre>
+    </form>
+</dialog>
+{% endmacro %}
+
+{%- macro cell_output(i, cell, source, outputs, cell_type, execution_count, hidden=False) -%}
+{% set CODE = cell_type == "code" %}
+{% set label %}{% if CODE and outputs %}Out<span aria-hidden="true">[</span>{{execution_count}}<span
+    aria-hidden="true">]</span>{% else %}Cell {{i}}{% endif %}{% endset %}
+<span hidden id="cell-{{i}}-outputs-len">{{outputs.__len__()}} outputs</span>
+{% if CODE and outputs %}
+{% if outputs %}
+<details open aria-labelledby="cell-{{i}}-outputs-label" {{hide(hidden)}}>
+    <summary inert id="cell-{{i}}-outputs-label" aria-describedby="nb-outputs-desc">{{label}}</summary>
+    {# the output description should mention the number of outputs
+    saying zero outputs should be an option. a cell without an output is probably a violation. #}
+    {{cell_display_priority(i, outputs, cell)}}
+</details>
+{% endif %}
+{% elif cell_type=="markdown" %}
+<details open aria-labelledby="cell-{{i}}-outputs-label" {{hide(hidden)}}>
+    <summary hidden inert id="cell-{{i}}-outputs-label">{{label}}</summary>
+    {{ markdown(source) | strip_files_prefix }}
+</details>
+{% endif %}
+{%- endmacro -%}
+
+
+{% macro cell_section(cell, loop, tag="section") %}
+<{{tag}} class="cell {{cell.cell_type}}" aria-labelledby="cell-{{loop.index}}-cell_type {{loop.index}}"
+    data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %}
+    data-outputs="{{cell.outputs.__len__()}}" {% endif %}>
+    {{cell_anchor(loop.index, cell.cell_type)}}
+    {{cell_form(i, hidden=True)}}
+    {{cell_execution_count(loopindex, cell.execution_count, hidden=True)}}
+    {{cell_cell_type(loop.index, cell.cell_type, hidden=True)}}
+    {{cell_source(loop.index, cell.source, cell.cell_type, cell.execution_count, hidden=cell.cell_type != "code")}}
+    {{cell_output(loop.index, cell, cell.source, cell.outputs, cell.cell_type, cell.execution_count)}}
+    {{cell_metadata(loop.index, cell.metadata, hidden=True)}}
+</{{tag}}>
+{% endmacro%}
