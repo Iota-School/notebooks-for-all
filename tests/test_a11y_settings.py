@@ -3,26 +3,17 @@
 
 from pytest import fixture, mark, param
 
-from nbconvert_a11y.pytest_axe import inject_axe, run_axe_test
+from nbconvert_a11y.pytest_axe import Axe
 from tests.test_smoke import CONFIGURATIONS, NOTEBOOKS, get_target_html
 
 NEEDS_WORK = "state needs work"
 
+LORENZ_EXECUTED = get_target_html(CONFIGURATIONS / "a11y.py", NOTEBOOKS / "lorenz-executed.ipynb")
 
-@fixture(
-    params=[
-        param(
-            get_target_html(CONFIGURATIONS / "a11y.py", NOTEBOOKS / "lorenz-executed.ipynb"),
-            id="executed-a11y",
-        )
-    ],
-)
-def test_page(request, page):
-    # https://github.com/microsoft/playwright-pytest/issues/73
-    page.goto(request.param.absolute().as_uri())
-    inject_axe(page)
-    yield page
-    page.close()
+@fixture
+def lorenz(page):
+    axe = Axe(page=page, url=LORENZ_EXECUTED.as_uri())
+    yield axe.configure()
 
 
 @mark.parametrize(
@@ -38,12 +29,12 @@ def test_page(request, page):
         # failing selectors timeout and slow down tests.
     ],
 )
-def test_dialogs(test_page, dialog):
+def test_dialogs(lorenz, dialog):
     """Test the controls in dialogs."""
     # dialogs are not tested in the baseline axe test. they need to be active to test.
     # these tests activate the dialogs to assess their accessibility with the active dialogs.
-    test_page.click(dialog)
-    run_axe_test(test_page).raises()
+    lorenz.page.click(dialog)
+    lorenz.run().raises()
 
 
 SNIPPET_FONT_SIZE = (
@@ -51,9 +42,9 @@ SNIPPET_FONT_SIZE = (
 )
 
 
-def test_settings_font_size(test_page):
+def test_settings_font_size(lorenz):
     """Test that the settings make their expected changes."""
-    assert test_page.evaluate(SNIPPET_FONT_SIZE) == "16px", "the default font size is unexpected"
-    test_page.click("[aria-controls=nb-settings]")
-    test_page.locator("[name=font-size]").select_option("xx-large")
-    assert test_page.evaluate(SNIPPET_FONT_SIZE) == "32px", "font size not changed"
+    assert lorenz.page.evaluate(SNIPPET_FONT_SIZE) == "16px", "the default font size is unexpected"
+    lorenz.page.click("[aria-controls=nb-settings]")
+    lorenz.page.locator("[name=font-size]").select_option("xx-large")
+    assert lorenz.page.evaluate(SNIPPET_FONT_SIZE) == "32px", "font size not changed"
