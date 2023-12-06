@@ -4,7 +4,6 @@ settings provides multiple screen reader navigation techniques when the dialog i
 #}
 
 {% from "a11y/components/core.html.j2" import h, radiogroup, select, activity_log, input_number, checkbox, dialog_close %}
-<button onclick="openDialog()" aria-controls="nb-settings" accesskey=",">Settings</button>
 <dialog id="nb-settings">
     <form name="settings">
         {{h(1, "accessibility settings")}}

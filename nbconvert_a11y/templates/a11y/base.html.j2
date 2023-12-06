@@ -51,19 +51,43 @@ the notebook experiennce from browse to edit/focus mode.
     add features like run time computation. #}
     {# skip to top is needed for long notebooks.
     it is difficult to access for keyboard users. #}
-    <footer>
+    <section id="nb-dialogs">
+        <details>
+            <summary onclick="openDialogs()">settings, help, & diagnostics</summary>
+        </details>
         {% if resources.include_settings %}{% include "a11y/components/settings.html.j2" %}{% endif %}
+        {% include "a11y/components/visibility.html.j2"%}
+        {% if resources.include_help %}{% include "a11y/components/help.html.j2" %}{% endif %}
+        {% if resources.include_axe %}{% include "a11y/components/audit.html.j2" %}{% endif %}
+        {# make the individual settings discoverable before all the settings
+        when using shift+tab #}
+        {% if resources.include_settings %}
+        <button onclick="openDialog()" aria-controls="nb-settings" accesskey=",">settings</button>
+        {% endif %}
+        <button aria-controls="nb-visibility-dialog" onclick="openDialog()" accesskey="-">show/hide</button>
         {% if resources.include_axe %}<button aria-controls="nb-audit" aria-describedby="nb-audit-desc"
             onclick="openDialog()">audit</button>{% endif %}
         {% if resources.include_help %}<button onclick="openDialog()" aria-controls="nb-help"
             accesskey="?">help</button>{% endif %}
+    </section>
+    <footer>
         {{activity_log()}}
         <a href="#TOP" accesskey="0">skip to top</a>
     </footer>
-    {% if resources.include_help %}{% include "a11y/components/help.html.j2" %}{% endif %}
-    {% if resources.include_axe %}{% include "a11y/components/audit.html.j2" %}{% endif %}
-    {% include "a11y/components/visibility.html.j2"%}
 </body>
+<script>
+    function openDialogs() {
+        let trigger = document.querySelector("#nb-dialogs > details");
+        Array.from(
+            document.querySelectorAll("#nb-dialogs dialog:not(.log)")
+        ).reverse().forEach(
+            x => {
+                trigger.getAttribute("open") === null ? x.show() : x.close();
+            }
+        );
+        event.target.focus();
+    }
+</script>
 {% endblock body_footer %}
 
 {% block footer_js %}

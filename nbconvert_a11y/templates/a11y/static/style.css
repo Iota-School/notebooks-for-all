@@ -72,6 +72,12 @@ textarea[name=source] {
     box-shadow: 0 0 0 calc(2 * max(var(--nb-focus-width), 1px));
 }
 
+#nb-dialogs details[open]~dialog {
+    position: relative;
+}
+
+
+#nb-dialogs details:not([open])~dialog:not([open]):not(:focus-within):not(:active),
 legend:not(:focus-within):not(:active),
 details.log:not([open])+table,
 .visually-hidden:not(:focus-within):not(:active) {
