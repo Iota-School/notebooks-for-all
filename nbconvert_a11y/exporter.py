@@ -67,7 +67,7 @@ class A11yExporter(PostProcess, HTMLExporter):
         config=True
     )
     axe_url = CUnicode(AXE, help="the remote source for the axe resources.").tag(config=True)
-    include_sa11y = Bool(False, help="include sa11y accessibility authoring tool")
+    include_sa11y = Bool(False, help="include sa11y accessibility authoring tool").tag(config=True)
     include_settings = Bool(False, help="include configurable accessibility settings dialog.").tag(
         config=True
     )
