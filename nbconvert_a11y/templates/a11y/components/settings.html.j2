@@ -18,7 +18,7 @@ settings provides multiple screen reader navigation techniques when the dialog i
                     <li>{{select("cell navigation", values="list table landmark presentation".split(), disabled="grid
                         treegrid
                         tree".split())}}</li>
-                    <li>{{select("accessibility priority", "AAA AA A".split(), "{{resources.wcag_priority}}")}}</li>
+                    <li>{{select("accessibility priority", "AAA AA A".split(), resources.wcag_priority)}}</li>
                     <li>{{checkbox("accesskey navigation", True)}}</li>
                 </ul>
             </li>

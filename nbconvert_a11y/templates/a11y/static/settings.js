@@ -35,8 +35,8 @@ const BODY = document.querySelector("body"), SELECTORS = {
 function toggleColorScheme() {
     let value = document.forms.settings.elements["color-scheme"].value;
     let opposite = value == "dark" ? "light" : "dark";
-    document.getElementById(`nb-${value}-theme`).removeAttribute("disabled");
-    document.getElementById(`nb-${opposite}-theme`).setAttribute("disabled", null);
+    document.getElementById(`nb-${value}-theme`).removeAttribute("media", "screen");
+    document.getElementById(`nb-${opposite}-theme`).setAttribute("media", "not screen");
     document.querySelector(`head > meta[name="color-scheme"]`).setAttribute("content", value);
     activityLog(`${value} mode activated`)
 }
@@ -177,7 +177,22 @@ function toggleActive() {
         activityLog("entering reading mode");
     }
 }
+
+
 document.forms.notebook.elements.edit.addEventListener("change", () => toggleActive())
+
+function openDialogs() {
+    let trigger = document.querySelector("#nb-dialogs > details");
+    Array.from(
+        document.querySelectorAll("#nb-dialogs dialog:not(.log)")
+    ).reverse().forEach(
+        x => {
+            trigger.getAttribute("open") === null ? x.show() : x.close();
+        }
+    );
+    event.target.focus();
+}
+
 setStyle("initialize saved settings.")
 // async function runSource(target) {
 //     {

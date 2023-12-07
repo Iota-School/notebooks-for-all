@@ -18,13 +18,17 @@ the notebook experiennce from browse to edit/focus mode.
 {%- endblock html_head_js -%}
 
 {% block notebook_css %}
-{{ resources.include_css("a11y/static/style.css") }}
+<style type="text/css">
+    {% include "a11y/static/style.css" %}
+</style>
+{% for theme in ["light", "dark"] %}
+<style type="text/css" id="nb-{{theme}}-theme" media="{% if loop.index - 1%}not  {% endif %}screen">
+    {% include "a11y/static/theme/{}.css".format(resources.code_theme.format(theme)) %}
+</style>
+{% endfor %}
 {% endblock notebook_css %}
 
-{% block extra_css %}
-<link id="nb-light-theme" rel="stylesheet" href="light-code.css">
-<link id="nb-dark-theme" disabled rel="stylesheet" href="dark-code.css">
-{% endblock extra_css %}
+{% block extra_css %}{% endblock %}
 
 {% block body_header %}
 
@@ -75,24 +79,13 @@ the notebook experiennce from browse to edit/focus mode.
         <a href="#TOP" accesskey="0">skip to top</a>
     </footer>
 </body>
-<script>
-    function openDialogs() {
-        let trigger = document.querySelector("#nb-dialogs > details");
-        Array.from(
-            document.querySelectorAll("#nb-dialogs dialog:not(.log)")
-        ).reverse().forEach(
-            x => {
-                trigger.getAttribute("open") === null ? x.show() : x.close();
-            }
-        );
-        event.target.focus();
-    }
-</script>
 {% endblock body_footer %}
 
 {% block footer_js %}
 {% if resources.include_settings %}
-<script src="settings.js"></script>{% endif %}
+<script>
+    {% include "a11y/static/settings.js" %}
+</script>{% endif %}
 {%- if resources.include_axe -%}
 <script src="{{resources.axe_url}}" onload="auditNotebook()"></script>
 {%- endif -%}

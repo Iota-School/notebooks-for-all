@@ -16,6 +16,7 @@ import pygments
 from bs4 import BeautifulSoup
 from nbconvert.exporters.html import HTMLExporter
 from traitlets import Bool, CUnicode, Enum, Unicode
+from traitlets.config import Config
 
 singleton = lru_cache(1)
 
@@ -80,6 +81,17 @@ def get_soup(x):
     return bs4.BeautifulSoup(x, features="html5lib")
 
 
+THEMES = {
+    "a11y": "a11y-{}",
+    "a11y-high-contrast": "a11y-high-contrast-{}",
+    "gh": "github-{}",
+    "gh-colorblind": "github-{}-colorblind",
+    "gh-high": "github-{}-high-contrast",
+    "gotthard": "gotthard-{}",
+    "blinds": "blinds-{}",
+}
+
+
 class FormExporter(HTMLExporter):
     """an embellished HTMLExporter that allows modifications of exporting and the exported.
 
@@ -104,6 +116,7 @@ class FormExporter(HTMLExporter):
     accesskey_navigation = Bool(True).tag(config=True)
     include_cell_index = Bool(True).tag(config=True)
     exclude_anchor_links = Bool(True).tag(config=True)
+    code_theme = Enum(list(THEMES), "gh-high").tag(config=True)
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -129,14 +142,15 @@ class FormExporter(HTMLExporter):
 
     def from_notebook_node(self, nb, resources=None, **kw):
         resources = resources or {}
-        resources.setdefault("include_axe", self.include_axe)
-        resources.setdefault("include_settings", self.include_settings)
-        resources.setdefault("include_help", self.include_help)
-        resources.setdefault("include_toc", self.include_toc)
-        resources.setdefault("wcag_priority", self.wcag_priority)
-        resources.setdefault("accesskey_navigation", self.accesskey_navigation)
+        resources["include_axe"] = self.include_axe
+        resources["include_settings"] = self.include_settings
+        resources["include_help"] = self.include_help
+        resources["include_toc"] = self.include_toc
+        resources["wcag_priority"] = self.wcag_priority
+        resources["accesskey_navigation"] = self.accesskey_navigation
+        resources["code_theme"] = THEMES[self.code_theme]
+        resources["axe_url"] = self.axe_url
 
-        resources.setdefault("axe_url", self.axe_url)
         html, resources = super().from_notebook_node(nb, resources, **kw)
         html = self.post_process_html(html)
         return html, resources
@@ -152,6 +166,16 @@ class FormExporter(HTMLExporter):
                 x.name = "ol"
             details.select_one("ol").attrs["aria-labelledby"] = "nb-toc"
         return soup.prettify(formatter="html5")
+
+    @property
+    def default_config(self):
+        c = super().default_config
+        c.merge(
+            {
+                "CSSHTMLHeaderPreprocessor": {"enabled": False},
+            }
+        )
+        return c
 
 
 class A11yExporter(FormExporter):
