@@ -27,7 +27,7 @@ Science Notebook Inaccessibility]
 
 ## Steams
 
-* [@smythp] [@tonyfast] review the `nbconvert-a11y` template.[^video]
+* [@smythp](https://github.com/smythp) & [@tonyfast](https://github.com/tonyfast) review the `nbconvert-a11y` template.[^video]
   * <time>10/4/2023</time> - https://www.youtube.com/watch?v=sv5l5bVNE20
   * <time>10/18/2023</time> - https://www.youtube.com/watch?v=GkINFX3aJw0
   * <time>10/25/2023</time> - https://www.youtube.com/watch?v=Ku-leCdn6hk
@@ -42,7 +42,5 @@ Science Notebook Inaccessibility]
 [Data Driven Understanding of Data
 Science Notebook Inaccessibility]: https://arxiv.org/pdf/2308.03241.pdf
 [Accessibility best practices for authoring Jupyter notebooks]: https://www.youtube.com/watch?v=onjRLjveGxk
-[@tonyfast]: https://github.com/tonyfast
-[@smythp]: https://github.com/smythp
 
 [^video]: these videos proved to be a more effective way to understand the assistive experience users are having. we learned that videos should be considered when reviewing open source issues with a screen reader. it helps to watch these videos sped up, so expert screen reader users can help developers by slowing down their reader for better cognition.
