@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap');
+
+:root {
+    --md-text-font: "Atkinson Hyperlegible";
+    --md-code-font: "Roboto Mono";
+
+}
+[data-md-color-scheme="slate"] {
+    --md-default-bg-color: #17181F;
+    --md-accent-fg-color: #FF60BF;
+    --md-typeset-a-color: #CB037B !important;
+    --md-hue: 300; 
+}
+
+[data-md-color-scheme="default"] {
+    --md-accent-fg-color: #A10462;
+    --md-typeset-a-color: #CB037B !important;
+} 
+a:hover {
+    text-decoration: underline;
+}
+
+/* @media (prefers-color-scheme: light) {
+    a:link {
+        color: #CB037B;
+    }
+
+    a:visited {
+        color: #A10462;
+    }
+    a:hover, a:focus {
+        color: orange;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    a {
+        color: #FF60BF;
+    }
+
+    a:visited {
+        color: #CB037B;
+    }
+
+    /* a:hover, a:focus {
+        color: #FF60BF;
+    } */
+    
+} */

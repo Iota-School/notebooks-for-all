@@ -1,0 +1,2529 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>
+   lorenz
+  </title>
+  <meta content="light" name="color-scheme">
+  <link href="style.css" rel="stylesheet">
+  <link href="light-code.css" id="nb-light-theme" rel="stylesheet">
+  <link disabled href="dark-code.css" id="nb-dark-theme" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js">
+  </script>
+  <!-- Load mathjax -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe">
+  </script>
+  <!-- MathJax configuration -->
+  <script type="text/x-mathjax-config">
+   init_mathjax = function() {
+        if (window.MathJax) {
+        // MathJax loaded
+            MathJax.Hub.Config({
+                TeX: {
+                    equationNumbers: {
+                    autoNumber: "AMS",
+                    useLabelIds: true
+                    }
+                },
+                tex2jax: {
+                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true,
+                    processEnvironments: true
+                },
+                displayAlign: 'center',
+                CommonHTML: {
+                    linebreaks: {
+                    automatic: true
+                    }
+                }
+            });
+
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+        }
+    }
+    init_mathjax();
+  </script>
+  <!-- End of mathjax configuration -->
+ </head>
+ <body class="wcag-a wcag-aa wcag-aaa">
+  <header aria-label="site header">
+   <section id="skip-link">
+    <a accesskey="1" href="#cells" tabindex="0">
+     skip to main content
+    </a>
+   </section>
+   <button accesskey="," aria-controls="nb-settings" onclick="openDialog()">
+    Settings
+   </button>
+   <dialog id="nb-settings">
+    <form name="settings">
+     <h1 role="presentation">
+      Settings
+     </h1>
+     <button formmethod="dialog">
+      Close
+     </button>
+     <fieldset id="nb-color-scheme-radio">
+      <legend>
+       color scheme
+      </legend>
+      <span aria-hidden="true">
+       color scheme
+      </span>
+      <label>
+       light mode
+       <input checked name="color-scheme" type="radio" value="light">
+      </label>
+      <label>
+       dark mode
+       <input name="color-scheme" type="radio" value="dark">
+      </label>
+     </fieldset>
+     <label>
+      margin
+      <input max="40" min="0" name="margin" step="5" type="number" value="5">
+      %
+     </label>
+     <fieldset id="nb-table-role-radio">
+      <legend>
+       cell navigation
+      </legend>
+      <b aria-hidden="true">
+       cell navigation
+      </b>
+      <i>
+       modify the screen reader's cell navigation preference,
+                there is no visual effect.
+      </i>
+      <label>
+       list
+       <input checked name="table-role" type="radio" value="list">
+      </label>
+      <label>
+       table
+       <input name="table-role" type="radio" value="table">
+      </label>
+      <label>
+       landmark
+       <input name="table-role" type="radio" value="landmark">
+      </label>
+      <label>
+       presentation
+       <input name="table-role" type="radio" value="presentation">
+      </label>
+      <label>
+       grid
+       <input disabled name="table-role" type="radio" value="grid">
+      </label>
+      <label>
+       treegrid
+       <input disabled name="table-role" type="radio" value="treegrid">
+      </label>
+      <label>
+       tree
+       <input disabled name="table-role" type="radio" value="tree">
+      </label>
+     </fieldset>
+     <fieldset id="nb-table-font-group">
+      <legend>
+       font settings
+      </legend>
+      <label aria-hidden="true" id="nb-table-font-size-group-label">
+       font size
+      </label>
+      <select aria-labelledby="nb-table-font-size-group-label" id="nb-table-font-size-group" name="font-size">
+       <option value="xx-small">
+        xx-small
+       </option>
+       <option value="x-small">
+        x-small
+       </option>
+       <option value="small">
+        small
+       </option>
+       <option selected value="medium">
+        medium
+       </option>
+       <option value="large">
+        large
+       </option>
+       <option value="x-large">
+        x-large
+       </option>
+       <option value="xx-large">
+        xx-large
+       </option>
+      </select>
+      <fieldset id="nb-font-serif-radio">
+       <legend>
+        serif
+       </legend>
+       <label>
+        serif
+        <input checked name="font-family" type="radio" value="serif">
+       </label>
+       <label>
+        sans-serif
+        <input name="font-family" type="radio" value="sans-serif">
+       </label>
+      </fieldset>
+      <label>
+       line height
+       <input max="3" min=".5" name="line-height" step=".1" type="number" value="1.2">
+      </label>
+     </fieldset>
+     <fieldset id="nb-sound-group">
+      <legend>
+       sound settings
+      </legend>
+      <label>
+       <input name="speech" type="checkbox">
+       Synthetic speech
+      </label>
+     </fieldset>
+     <details class="log">
+      <summary>
+       <span>
+        activity log
+       </span>
+      </summary>
+     </details>
+     <table aria-labelledby="nb-activity-log-label" aria-live="polite">
+      <tbody>
+       <tr>
+        <th>
+         time
+        </th>
+        <td>
+         message
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </form>
+   </dialog>
+   <dialog id="nb-audit">
+    <h1>
+     <a href="#axe-accessibility-violations">
+      AXE accessibility violations
+     </a>
+    </h1>
+    <table id="nb-audit-violations">
+     <caption aria-live="polite">
+      <span id="nb-audit-desc" role="status">
+      </span>
+     </caption>
+     <tbody>
+      <tr>
+       <th>
+        id
+       </th>
+       <th>
+        impact
+       </th>
+       <th>
+        description
+       </th>
+       <th>
+        help
+       </th>
+      </tr>
+     </tbody>
+    </table>
+    <table id="nb-audit-nodes">
+     <caption>
+     </caption>
+     <tbody>
+      <tr>
+       <th>
+        id
+       </th>
+       <th>
+        impact
+       </th>
+       <th>
+        cell
+       </th>
+       <th>
+        summary
+       </th>
+      </tr>
+     </tbody>
+    </table>
+   </dialog>
+   <script>
+    const VIOLATION_TABLE = document.getElementById("nb-audit-violations"),
+        VIOLATION_NODES_TABLE = document.getElementById("nb-audit-nodes"),
+        VIOLATION_COLS = ["id", "impact", "description", "help"];
+    async function auditNotebook() {
+        axe.reset()
+        await axe.run({
+            runOnly: {
+                type: 'tag',
+                values: ['wcag2a', 'wcag2aa', "wcag2aaa", "best-practice", "ACT"]
+            }
+        }, (err, results) => {
+            updateAuditTables(results)
+        })
+    }
+    function updateAuditTables(results) {
+        var total = 0, violations = { "serious": 0, "critical": 0, "moderate": 0, "minor": 0 };
+        if (results.violations) {
+            for (const x in results.violations) {
+                violations[results.violations[x].impact] = violations[results.violations[x].impact] + 1;
+                total++;
+            }
+            results.violations.forEach(updateViolation);
+            var caption = VIOLATION_TABLE.querySelector("caption>span");
+
+            caption.textContent = `${total} accessibility violations automatically detected. ${violations["serious"] + violations["critical"]} are serious or critical.`
+        }
+    }
+    function updateViolation(violation) {
+        var row = document.createElement("tr"),
+            id = document.createElement("td"),
+            impact = document.createElement("td"),
+            description = document.createElement("td"),
+            help = document.createElement("td"),
+            help_link = document.createElement("a");
+        id.textContent = violation.id;
+        impact.textContent = violation.impact;
+        description.textContent = violation.description;
+        help.appendChild(help_link);
+        help_link.textContent = violation.help;
+        help_link.setAttribute("href", violation.helpUrl);
+        VIOLATION_TABLE.querySelector("tbody").appendChild(row);
+        violation.nodes.forEach(node => updateViolationNode(violation, node));
+        row.appendChild(id), row.appendChild(impact), row.appendChild(description), row.appendChild(help);
+    }
+    function updateViolationNode(violation, node) {
+        var row = document.createElement("tr"),
+            id = document.createElement("td"),
+            impact = document.createElement("td"),
+            cell = document.createElement("td"),
+            failure_summary = document.createElement("td");
+        element = document.createElement("td");
+        id.textContent = violation.id;
+        impact.textContent = node.impact;
+        failure_summary.textContent = node.failureSummary;
+        element.textContent = node.target[0];
+        cell.textContent = getCell(document.querySelector(node.target[0])).getAttribute("data-index")
+        row.appendChild(id), row.appendChild(impact), row.appendChild(cell), row.appendChild(failure_summary);
+        VIOLATION_NODES_TABLE.querySelector("tbody").appendChild(row);
+    }
+    function getCell(node) {
+        if (node.tagName == "TR") {
+            return node
+        } else if (node.tagName == "BODY") {
+            return node;
+        } else {
+            return getCell(node.parentElement);
+        }
+    }
+   </script>
+  </header>
+  <main aria-labelledby="nb-notebook-label">
+   <form aria-labelledby="nb-notebook-label" id="notebook" name="notebook">
+    <label>
+     <input id="nb-edit-mode" name="edit" type="checkbox">
+     edit mode
+    </label>
+    <button aria-controls="nb-metadata" onclick="openDialog()">
+     metadata
+    </button>
+    <button aria-controls="nb-audit" aria-describedby="nb-audit-desc" onclick="openDialog()">
+     audit
+    </button>
+    <button accesskey="+" aria-controls="nb-expanded-dialog" onclick="openDialog()">
+     expand and collapse
+                cells
+    </button>
+    <button accesskey="-" aria-controls="nb-visibility-dialog" onclick="openDialog()">
+     show and hide cell
+                parts
+    </button>
+    <button accesskey="?" aria-controls="nb-help" onclick="openDialog()">
+     help
+    </button>
+    <button type="submit">
+     Run
+    </button>
+   </form>
+   <table id="cells" role="presentation">
+    <tbody role="list">
+     <tr>
+      <th scope="col">
+       index
+      </th>
+      <th scope="col">
+       execution_count
+      </th>
+      <th scope="col">
+       cell_type
+      </th>
+      <th scope="col">
+       toolbar
+      </th>
+      <th scope="col">
+       started_at
+      </th>
+      <th scope="col">
+       completed_at
+      </th>
+      <th scope="col">
+       source
+      </th>
+      <th scope="col">
+       loc
+      </th>
+      <th scope="col">
+       metadata
+      </th>
+      <th scope="col">
+       outputs
+      </th>
+     </tr>
+     <tr aria-labelledby="nb-cell-label 1 cell-1-cell_type" class="cell markdown" data-index="1" data-loc="1" role="listitem">
+      <td class="nb-anchor" role="none">
+       <a aria-describedby="nb-markdown-label nb-cell-label cell-1-loc nb-loc-label" aria-labelledby="nb-cell-label 1" href="#1" id="1">
+        1
+       </a>
+      </td>
+      <td class="nb-execution_count" role="none">
+       <output form="cell-1" id="cell-1-execution_count" name="execution_count">
+        #
+       </output>
+      </td>
+      <td class="nb-cell_type" role="none">
+       <select aria-describedby="nb-cell_type-desc" form="cell-1" name="cell_type">
+        <option selected value="markdown">
+         markdown
+        </option>
+        <option value="code">
+         code
+        </option>
+        <option value="raw">
+         raw
+        </option>
+       </select>
+       <span id="cell-1-cell_type">
+        markdown
+       </span>
+      </td>
+      <td class="nb-toolbar" role="none">
+       <form aria-labelledby="cell-1-source-label" class="nb-toolbar" hidden id="cell-1" name="cell-1">
+        <fieldset>
+         <legend>
+          actions
+         </legend>
+         <button type="submit">
+          Run Cell
+         </button>
+        </fieldset>
+       </form>
+      </td>
+      <td class="nb-start" id="cell-1-start" role="none">
+      </td>
+      <td class="nb-end" id="cell-1-end" role="none">
+      </td>
+      <td class="nb-source" role="none">
+       <details aria-labelledby="cell-1-source-label" open>
+        <summary id="cell-1-source-label" inert>
+         In
+         <span aria-hidden="true">
+          [
+         </span>
+         <span>
+         </span>
+         <span aria-hidden="true">
+          ]
+         </span>
+        </summary>
+        <textarea aria-describedby="nb-source-desc" aria-labelledby="cell-1-source-label nb-source-label" form="cell-1" id="cell-1-source" name="source" readonly rows="1"># The Lorenz Differential Equations</textarea>
+        <div class="highlight">
+         <pre><span></span><code><span class="c1" title="Comment.Single"># The Lorenz Differential Equations</span>
+</code></pre>
+        </div>
+       </details>
+      </td>
+      <td class="nb-metadata" role="none">
+       <button aria-controls="cell-1-metadata" aria-describedby="nb-metadata-desc" form="cell-1" name="metadata" onclick="openDialog()">
+        metadata
+       </button>
+       <dialog id="cell-1-metadata">
+        <form>
+         <button formmethod="dialog">
+          Close
+         </button>
+         <pre><code>
+        {}
+        </code></pre>
+        </form>
+       </dialog>
+      </td>
+      <td class="nb-loc" id="cell-1-loc" role="none">
+       1
+      </td>
+      <td class="nb-outputs" role="none">
+       <span hidden id="cell-1-outputs-len">
+        0 outputs
+       </span>
+       <details aria-labelledby="cell-1-outputs-label" open>
+        <summary hidden id="cell-1-outputs-label" inert>
+         Cell 1
+        </summary>
+        <h1 id="the-lorenz-differential-equations">
+         <a href="#the-lorenz-differential-equations">
+          The Lorenz Differential Equations
+         </a>
+        </h1>
+       </details>
+      </td>
+     </tr>
+     <tr aria-labelledby="nb-cell-label 2 cell-2-cell_type" class="cell markdown" data-index="2" data-loc="1" role="listitem">
+      <td class="nb-anchor" role="none">
+       <a aria-describedby="nb-markdown-label nb-cell-label cell-2-loc nb-loc-label" aria-labelledby="nb-cell-label 2" href="#2" id="2">
+        2
+       </a>
+      </td>
+      <td class="nb-execution_count" role="none">
+       <output form="cell-2" id="cell-2-execution_count" name="execution_count">
+        #
+       </output>
+      </td>
+      <td class="nb-cell_type" role="none">
+       <select aria-describedby="nb-cell_type-desc" form="cell-2" name="cell_type">
+        <option selected value="markdown">
+         markdown
+        </option>
+        <option value="code">
+         code
+        </option>
+        <option value="raw">
+         raw
+        </option>
+       </select>
+       <span id="cell-2-cell_type">
+        markdown
+       </span>
+      </td>
+      <td class="nb-toolbar" role="none">
+       <form aria-labelledby="cell-2-source-label" class="nb-toolbar" hidden id="cell-2" name="cell-2">
+        <fieldset>
+         <legend>
+          actions
+         </legend>
+         <button type="submit">
+          Run Cell
+         </button>
+        </fieldset>
+       </form>
+      </td>
+      <td class="nb-start" id="cell-2-start" role="none">
+      </td>
+      <td class="nb-end" id="cell-2-end" role="none">
+      </td>
+      <td class="nb-source" role="none">
+       <details aria-labelledby="cell-2-source-label" open>
+        <summary id="cell-2-source-label" inert>
+         In
+         <span aria-hidden="true">
+          [
+         </span>
+         <span>
+         </span>
+         <span aria-hidden="true">
+          ]
+         </span>
+        </summary>
+        <textarea aria-describedby="nb-source-desc" aria-labelledby="cell-2-source-label nb-source-label" form="cell-2" id="cell-2-source" name="source" readonly rows="1">Before we start, we import some preliminary libraries. We will also import (below) the accompanying `lorenz.py` file, which contains the actual solver and plotting routine.</textarea>
+        <div class="highlight">
+         <pre><span></span><code><span class="n" title="Name">Before</span> <span class="n" title="Name">we</span> <span class="n" title="Name">start</span><span class="p" title="Punctuation">,</span> <span class="n" title="Name">we</span> <span class="kn" title="Keyword.Namespace">import</span> <span class="nn" title="Name.Namespace">some</span> <span class="n" title="Name">preliminary</span> <span class="n" title="Name">libraries</span><span class="o" title="Operator">.</span> <span class="n" title="Name">We</span> <span class="n" title="Name">will</span> <span class="n" title="Name">also</span> <span class="kn" title="Keyword.Namespace">import</span> <span class="p" title="Punctuation">(</span><span class="n" title="Name">below</span><span class="p" title="Punctuation">)</span> <span class="n" title="Name">the</span> <span class="n" title="Name">accompanying</span> <span class="err" title="Error">`</span><span class="n" title="Name">lorenz</span><span class="o" title="Operator">.</span><span class="n" title="Name">py</span><span class="err" title="Error">`</span> <span class="n" title="Name">file</span><span class="p" title="Punctuation">,</span> <span class="n" title="Name">which</span> <span class="n" title="Name">contains</span> <span class="n" title="Name">the</span> <span class="n" title="Name">actual</span> <span class="n" title="Name">solver</span> <span class="ow" title="Operator.Word">and</span> <span class="n" title="Name">plotting</span> <span class="n" title="Name">routine</span><span class="o" title="Operator">.</span>
+</code></pre>
+        </div>
+       </details>
+      </td>
+      <td class="nb-metadata" role="none">
+       <button aria-controls="cell-2-metadata" aria-describedby="nb-metadata-desc" form="cell-2" name="metadata" onclick="openDialog()">
+        metadata
+       </button>
+       <dialog id="cell-2-metadata">
+        <form>
+         <button formmethod="dialog">
+          Close
+         </button>
+         <pre><code>
+        {}
+        </code></pre>
+        </form>
+       </dialog>
+      </td>
+      <td class="nb-loc" id="cell-2-loc" role="none">
+       1
+      </td>
+      <td class="nb-outputs" role="none">
+       <span hidden id="cell-2-outputs-len">
+        0 outputs
+       </span>
+       <details aria-labelledby="cell-2-outputs-label" open>
+        <summary hidden id="cell-2-outputs-label" inert>
+         Cell 2
+        </summary>
+        <p>
+         Before we start, we import some preliminary libraries. We will also import (below) the accompanying
+         <code>
+          lorenz.py
+         </code>
+         file, which contains the actual solver and plotting routine.
+        </p>
+       </details>
+      </td>
+     </tr>
+     <tr aria-labelledby="nb-cell-label 3 cell-3-cell_type" class="cell code" data-index="3" data-loc="2" role="listitem">
+      <td class="nb-anchor" role="none">
+       <a aria-describedby="nb-code-label nb-cell-label cell-3-loc nb-loc-label" aria-labelledby="nb-cell-label 3" href="#3" id="3">
+        3
+       </a>
+      </td>
+      <td class="nb-execution_count" role="none">
+       <output form="cell-3" id="cell-3-execution_count" name="execution_count">
+        #None
+       </output>
+      </td>
+      <td class="nb-cell_type" role="none">
+       <select aria-describedby="nb-cell_type-desc" form="cell-3" name="cell_type">
+        <option value="markdown">
+         markdown
+        </option>
+        <option selected value="code">
+         code
+        </option>
+        <option value="raw">
+         raw
+        </option>
+       </select>
+       <span id="cell-3-cell_type">
+        code
+       </span>
+      </td>
+      <td class="nb-toolbar" role="none">
+       <form aria-labelledby="cell-3-source-label" class="nb-toolbar" hidden id="cell-3" name="cell-3">
+        <fieldset>
+         <legend>
+          actions
+         </legend>
+         <button type="submit">
+          Run Cell
+         </button>
+        </fieldset>
+       </form>
+      </td>
+      <td class="nb-start" id="cell-3-start" role="none">
+      </td>
+      <td class="nb-end" id="cell-3-end" role="none">
+      </td>
+      <td class="nb-source" role="none">
+       <details aria-labelledby="cell-3-source-label" open>
+        <summary id="cell-3-source-label" inert>
+         In
+         <span aria-hidden="true">
+          [
+         </span>
+         <span>
+          None
+         </span>
+         <span aria-hidden="true">
+          ]
+         </span>
+        </summary>
+        <textarea aria-describedby="nb-source-desc" aria-labelledby="cell-3-source-label nb-source-label" form="cell-3" id="cell-3-source" name="source" readonly rows="2">%matplotlib inline
+from ipywidgets import interactive, fixed</textarea>
+        <div class="highlight">
+         <pre><span></span><code><span class="o" title="Operator">%</span><span class="n" title="Name">matplotlib</span> <span class="n" title="Name">inline</span>
+<span class="kn" title="Keyword.Namespace">from</span> <span class="nn" title="Name.Namespace">ipywidgets</span> <span class="kn" title="Keyword.Namespace">import</span> <span class="n" title="Name">interactive</span><span class="p" title="Punctuation">,</span> <span class="n" title="Name">fixed</span>
+</code></pre>
+        </div>
+       </details>
+      </td>
+      <td class="nb-metadata" role="none">
+       <button aria-controls="cell-3-metadata" aria-describedby="nb-metadata-desc" form="cell-3" name="metadata" onclick="openDialog()">
+        metadata
+       </button>
+       <dialog id="cell-3-metadata">
+        <form>
+         <button formmethod="dialog">
+          Close
+         </button>
+         <pre><code>
+        {}
+        </code></pre>
+        </form>
+       </dialog>
+      </td>
+      <td class="nb-loc" id="cell-3-loc" role="none">
+       2
+      </td>
+      <td class="nb-outputs" role="none">
+       <span hidden id="cell-3-outputs-len">
+        0 outputs
+       </span>
+      </td>
+     </tr>
+     <tr aria-labelledby="nb-cell-label 4 cell-4-cell_type" class="cell markdown" data-index="4" data-loc="11" role="listitem">
+      <td class="nb-anchor" role="none">
+       <a aria-describedby="nb-markdown-label nb-cell-label cell-4-loc nb-loc-label" aria-labelledby="nb-cell-label 4" href="#4" id="4">
+        4
+       </a>
+      </td>
+      <td class="nb-execution_count" role="none">
+       <output form="cell-4" id="cell-4-execution_count" name="execution_count">
+        #
+       </output>
+      </td>
+      <td class="nb-cell_type" role="none">
+       <select aria-describedby="nb-cell_type-desc" form="cell-4" name="cell_type">
+        <option selected value="markdown">
+         markdown
+        </option>
+        <option value="code">
+         code
+        </option>
+        <option value="raw">
+         raw
+        </option>
+       </select>
+       <span id="cell-4-cell_type">
+        markdown
+       </span>
+      </td>
+      <td class="nb-toolbar" role="none">
+       <form aria-labelledby="cell-4-source-label" class="nb-toolbar" hidden id="cell-4" name="cell-4">
+        <fieldset>
+         <legend>
+          actions
+         </legend>
+         <button type="submit">
+          Run Cell
+         </button>
+        </fieldset>
+       </form>
+      </td>
+      <td class="nb-start" id="cell-4-start" role="none">
+      </td>
+      <td class="nb-end" id="cell-4-end" role="none">
+      </td>
+      <td class="nb-source" role="none">
+       <details aria-labelledby="cell-4-source-label" open>
+        <summary id="cell-4-source-label" inert>
+         In
+         <span aria-hidden="true">
+          [
+         </span>
+         <span>
+         </span>
+         <span aria-hidden="true">
+          ]
+         </span>
+        </summary>
+        <textarea aria-describedby="nb-source-desc" aria-labelledby="cell-4-source-label nb-source-label" form="cell-4" id="cell-4-source" name="source" readonly rows="11">We explore the Lorenz system of differential equations:
+
+$$
+\begin{aligned}
+\dot{x} &amp; = \sigma(y-x) \\
+\dot{y} &amp; = \rho x - y - xz \\
+\dot{z} &amp; = -\beta z + xy
+\end{aligned}
+$$
+
+Let's change (\\(\sigma\\), \\(\beta\\), \\(\rho\\)) with ipywidgets and examine the trajectories.</textarea>
+        <div class="highlight">
+         <pre><span></span><code><span class="n" title="Name">We</span> <span class="n" title="Name">explore</span> <span class="n" title="Name">the</span> <span class="n" title="Name">Lorenz</span> <span class="n" title="Name">system</span> <span class="n" title="Name">of</span> <span class="n" title="Name">differential</span> <span class="n" title="Name">equations</span><span class="p" title="Punctuation">:</span>
+
+<span class="err" title="Error">$$</span>
+\<span class="n" title="Name">begin</span><span class="p" title="Punctuation">{</span><span class="n" title="Name">aligned</span><span class="p" title="Punctuation">}</span>
+\<span class="n" title="Name">dot</span><span class="p" title="Punctuation">{</span><span class="n" title="Name">x</span><span class="p" title="Punctuation">}</span> <span class="o" title="Operator">&amp;</span> <span class="o" title="Operator">=</span> \<span class="n" title="Name">sigma</span><span class="p" title="Punctuation">(</span><span class="n" title="Name">y</span><span class="o" title="Operator">-</span><span class="n" title="Name">x</span><span class="p" title="Punctuation">)</span> \\
+\<span class="n" title="Name">dot</span><span class="p" title="Punctuation">{</span><span class="n" title="Name">y</span><span class="p" title="Punctuation">}</span> <span class="o" title="Operator">&amp;</span> <span class="o" title="Operator">=</span> \<span class="n" title="Name">rho</span> <span class="n" title="Name">x</span> <span class="o" title="Operator">-</span> <span class="n" title="Name">y</span> <span class="o" title="Operator">-</span> <span class="n" title="Name">xz</span> \\
+\<span class="n" title="Name">dot</span><span class="p" title="Punctuation">{</span><span class="n" title="Name">z</span><span class="p" title="Punctuation">}</span> <span class="o" title="Operator">&amp;</span> <span class="o" title="Operator">=</span> <span class="o" title="Operator">-</span>\<span class="n" title="Name">beta</span> <span class="n" title="Name">z</span> <span class="o" title="Operator">+</span> <span class="n" title="Name">xy</span>
+\<span class="n" title="Name">end</span><span class="p" title="Punctuation">{</span><span class="n" title="Name">aligned</span><span class="p" title="Punctuation">}</span>
+<span class="err" title="Error">$$</span>
+
+<span class="n" title="Name">Let</span><span class="s1" title="Literal.String.Single">'s change (</span><span class="se" title="Literal.String.Escape">\\</span><span class="s1" title="Literal.String.Single">(\sigma</span><span class="se" title="Literal.String.Escape">\\</span><span class="s1" title="Literal.String.Single">), </span><span class="se" title="Literal.String.Escape">\\</span><span class="s1" title="Literal.String.Single">(</span><span class="se" title="Literal.String.Escape">\b</span><span class="s1" title="Literal.String.Single">eta</span><span class="se" title="Literal.String.Escape">\\</span><span class="s1" title="Literal.String.Single">), </span><span class="se" title="Literal.String.Escape">\\</span><span class="s1" title="Literal.String.Single">(</span><span class="se" title="Literal.String.Escape">\r</span><span class="s1" title="Literal.String.Single">ho</span><span class="se" title="Literal.String.Escape">\\</span><span class="s1" title="Literal.String.Single">)) with ipywidgets and examine the trajectories.</span>
+</code></pre>
+        </div>
+       </details>
+      </td>
+      <td class="nb-metadata" role="none">
+       <button aria-controls="cell-4-metadata" aria-describedby="nb-metadata-desc" form="cell-4" name="metadata" onclick="openDialog()">
+        metadata
+       </button>
+       <dialog id="cell-4-metadata">
+        <form>
+         <button formmethod="dialog">
+          Close
+         </button>
+         <pre><code>
+        {}
+        </code></pre>
+        </form>
+       </dialog>
+      </td>
+      <td class="nb-loc" id="cell-4-loc" role="none">
+       11
+      </td>
+      <td class="nb-outputs" role="none">
+       <span hidden id="cell-4-outputs-len">
+        0 outputs
+       </span>
+       <details aria-labelledby="cell-4-outputs-label" open>
+        <summary hidden id="cell-4-outputs-label" inert>
+         Cell 4
+        </summary>
+        <p>
+         We explore the Lorenz system of differential equations:
+        </p>
+        <p>
+         $$
+\begin{aligned}
+\dot{x} &amp; = \sigma(y-x) \
+\dot{y} &amp; = \rho x - y - xz \
+\dot{z} &amp; = -\beta z + xy
+\end{aligned}
+$$
+        </p>
+        <p>
+         Let's change (\(\sigma\), \(\beta\), \(\rho\)) with ipywidgets and examine the trajectories.
+        </p>
+       </details>
+      </td>
+     </tr>
+     <tr aria-labelledby="nb-cell-label 5 cell-5-cell_type" class="cell code" data-index="5" data-loc="3" role="listitem">
+      <td class="nb-anchor" role="none">
+       <a aria-describedby="nb-code-label nb-cell-label cell-5-loc nb-loc-label" aria-labelledby="nb-cell-label 5" href="#5" id="5">
+        5
+       </a>
+      </td>
+      <td class="nb-execution_count" role="none">
+       <output form="cell-5" id="cell-5-execution_count" name="execution_count">
+        #None
+       </output>
+      </td>
+      <td class="nb-cell_type" role="none">
+       <select aria-describedby="nb-cell_type-desc" form="cell-5" name="cell_type">
+        <option value="markdown">
+         markdown
+        </option>
+        <option selected value="code">
+         code
+        </option>
+        <option value="raw">
+         raw
+        </option>
+       </select>
+       <span id="cell-5-cell_type">
+        code
+       </span>
+      </td>
+      <td class="nb-toolbar" role="none">
+       <form aria-labelledby="cell-5-source-label" class="nb-toolbar" hidden id="cell-5" name="cell-5">
+        <fieldset>
+         <legend>
+          actions
+         </legend>
+         <button type="submit">
+          Run Cell
+         </button>
+        </fieldset>
+       </form>
+      </td>
+      <td class="nb-start" id="cell-5-start" role="none">
+      </td>
+      <td class="nb-end" id="cell-5-end" role="none">
+      </td>
+      <td class="nb-source" role="none">
+       <details aria-labelledby="cell-5-source-label" open>
+        <summary id="cell-5-source-label" inert>
+         In
+         <span aria-hidden="true">
+          [
+         </span>
+         <span>
+          None
+         </span>
+         <span aria-hidden="true">
+          ]
+         </span>
+        </summary>
+        <textarea aria-describedby="nb-source-desc" aria-labelledby="cell-5-source-label nb-source-label" form="cell-5" id="cell-5-source" name="source" readonly rows="3">from lorenz import solve_lorenz
+w=interactive(solve_lorenz,sigma=(0.0,50.0),rho=(0.0,50.0))
+w</textarea>
+        <div class="highlight">
+         <pre><span></span><code><span class="kn" title="Keyword.Namespace">from</span> <span class="nn" title="Name.Namespace">lorenz</span> <span class="kn" title="Keyword.Namespace">import</span> <span class="n" title="Name">solve_lorenz</span>
+<span class="n" title="Name">w</span><span class="o" title="Operator">=</span><span class="n" title="Name">interactive</span><span class="p" title="Punctuation">(</span><span class="n" title="Name">solve_lorenz</span><span class="p" title="Punctuation">,</span><span class="n" title="Name">sigma</span><span class="o" title="Operator">=</span><span class="p" title="Punctuation">(</span><span class="mf" title="Literal.Number.Float">0.0</span><span class="p" title="Punctuation">,</span><span class="mf" title="Literal.Number.Float">50.0</span><span class="p" title="Punctuation">),</span><span class="n" title="Name">rho</span><span class="o" title="Operator">=</span><span class="p" title="Punctuation">(</span><span class="mf" title="Literal.Number.Float">0.0</span><span class="p" title="Punctuation">,</span><span class="mf" title="Literal.Number.Float">50.0</span><span class="p" title="Punctuation">))</span>
+<span class="n" title="Name">w</span>
+</code></pre>
+        </div>
+       </details>
+      </td>
+      <td class="nb-metadata" role="none">
+       <button aria-controls="cell-5-metadata" aria-describedby="nb-metadata-desc" form="cell-5" name="metadata" onclick="openDialog()">
+        metadata
+       </button>
+       <dialog id="cell-5-metadata">
+        <form>
+         <button formmethod="dialog">
+          Close
+         </button>
+         <pre><code>
+        {}
+        </code></pre>
+        </form>
+       </dialog>
+      </td>
+      <td class="nb-loc" id="cell-5-loc" role="none">
+       3
+      </td>
+      <td class="nb-outputs" role="none">
+       <span hidden id="cell-5-outputs-len">
+        0 outputs
+       </span>
+      </td>
+     </tr>
+     <tr aria-labelledby="nb-cell-label 6 cell-6-cell_type" class="cell markdown" data-index="6" data-loc="1" role="listitem">
+      <td class="nb-anchor" role="none">
+       <a aria-describedby="nb-markdown-label nb-cell-label cell-6-loc nb-loc-label" aria-labelledby="nb-cell-label 6" href="#6" id="6">
+        6
+       </a>
+      </td>
+      <td class="nb-execution_count" role="none">
+       <output form="cell-6" id="cell-6-execution_count" name="execution_count">
+        #
+       </output>
+      </td>
+      <td class="nb-cell_type" role="none">
+       <select aria-describedby="nb-cell_type-desc" form="cell-6" name="cell_type">
+        <option selected value="markdown">
+         markdown
+        </option>
+        <option value="code">
+         code
+        </option>
+        <option value="raw">
+         raw
+        </option>
+       </select>
+       <span id="cell-6-cell_type">
+        markdown
+       </span>
+      </td>
+      <td class="nb-toolbar" role="none">
+       <form aria-labelledby="cell-6-source-label" class="nb-toolbar" hidden id="cell-6" name="cell-6">
+        <fieldset>
+         <legend>
+          actions
+         </legend>
+         <button type="submit">
+          Run Cell
+         </button>
+        </fieldset>
+       </form>
+      </td>
+      <td class="nb-start" id="cell-6-start" role="none">
+      </td>
+      <td class="nb-end" id="cell-6-end" role="none">
+      </td>
+      <td class="nb-source" role="none">
+       <details aria-labelledby="cell-6-source-label" open>
+        <summary id="cell-6-source-label" inert>
+         In
+         <span aria-hidden="true">
+          [
+         </span>
+         <span>
+         </span>
+         <span aria-hidden="true">
+          ]
+         </span>
+        </summary>
+        <textarea aria-describedby="nb-source-desc" aria-labelledby="cell-6-source-label nb-source-label" form="cell-6" id="cell-6-source" name="source" readonly rows="1">For the default set of parameters, we see the trajectories swirling around two points, called attractors. </textarea>
+        <div class="highlight">
+         <pre><span></span><code><span class="n" title="Name">For</span> <span class="n" title="Name">the</span> <span class="n" title="Name">default</span> <span class="nb" title="Name.Builtin">set</span> <span class="n" title="Name">of</span> <span class="n" title="Name">parameters</span><span class="p" title="Punctuation">,</span> <span class="n" title="Name">we</span> <span class="n" title="Name">see</span> <span class="n" title="Name">the</span> <span class="n" title="Name">trajectories</span> <span class="n" title="Name">swirling</span> <span class="n" title="Name">around</span> <span class="n" title="Name">two</span> <span class="n" title="Name">points</span><span class="p" title="Punctuation">,</span> <span class="n" title="Name">called</span> <span class="n" title="Name">attractors</span><span class="o" title="Operator">.</span> 
+</code></pre>
+        </div>
+       </details>
+      </td>
+      <td class="nb-metadata" role="none">
+       <button aria-controls="cell-6-metadata" aria-describedby="nb-metadata-desc" form="cell-6" name="metadata" onclick="openDialog()">
+        metadata
+       </button>
+       <dialog id="cell-6-metadata">
+        <form>
+         <button formmethod="dialog">
+          Close
+         </button>
+         <pre><code>
+        {}
+        </code></pre>
+        </form>
+       </dialog>
+      </td>
+      <td class="nb-loc" id="cell-6-loc" role="none">
+       1
+      </td>
+      <td class="nb-outputs" role="none">
+       <span hidden id="cell-6-outputs-len">
+        0 outputs
+       </span>
+       <details aria-labelledby="cell-6-outputs-label" open>
+        <summary hidden id="cell-6-outputs-label" inert>
+         Cell 6
+        </summary>
+        <p>
+         For the default set of parameters, we see the trajectories swirling around two points, called attractors.
+        </p>
+       </details>
+      </td>
+     </tr>
+     <tr aria-labelledby="nb-cell-label 7 cell-7-cell_type" class="cell markdown" data-index="7" data-loc="1" role="listitem">
+      <td class="nb-anchor" role="none">
+       <a aria-describedby="nb-markdown-label nb-cell-label cell-7-loc nb-loc-label" aria-labelledby="nb-cell-label 7" href="#7" id="7">
+        7
+       </a>
+      </td>
+      <td class="nb-execution_count" role="none">
+       <output form="cell-7" id="cell-7-execution_count" name="execution_count">
+        #
+       </output>
+      </td>
+      <td class="nb-cell_type" role="none">
+       <select aria-describedby="nb-cell_type-desc" form="cell-7" name="cell_type">
+        <option selected value="markdown">
+         markdown
+        </option>
+        <option value="code">
+         code
+        </option>
+        <option value="raw">
+         raw
+        </option>
+       </select>
+       <span id="cell-7-cell_type">
+        markdown
+       </span>
+      </td>
+      <td class="nb-toolbar" role="none">
+       <form aria-labelledby="cell-7-source-label" class="nb-toolbar" hidden id="cell-7" name="cell-7">
+        <fieldset>
+         <legend>
+          actions
+         </legend>
+         <button type="submit">
+          Run Cell
+         </button>
+        </fieldset>
+       </form>
+      </td>
+      <td class="nb-start" id="cell-7-start" role="none">
+      </td>
+      <td class="nb-end" id="cell-7-end" role="none">
+      </td>
+      <td class="nb-source" role="none">
+       <details aria-labelledby="cell-7-source-label" open>
+        <summary id="cell-7-source-label" inert>
+         In
+         <span aria-hidden="true">
+          [
+         </span>
+         <span>
+         </span>
+         <span aria-hidden="true">
+          ]
+         </span>
+        </summary>
+        <textarea aria-describedby="nb-source-desc" aria-labelledby="cell-7-source-label nb-source-label" form="cell-7" id="cell-7-source" name="source" readonly rows="1">The object returned by `interactive` is a `Widget` object and it has attributes that contain the current result and arguments:</textarea>
+        <div class="highlight">
+         <pre><span></span><code><span class="n" title="Name">The</span> <span class="nb" title="Name.Builtin">object</span> <span class="n" title="Name">returned</span> <span class="n" title="Name">by</span> <span class="err" title="Error">`</span><span class="n" title="Name">interactive</span><span class="err" title="Error">`</span> <span class="ow" title="Operator.Word">is</span> <span class="n" title="Name">a</span> <span class="err" title="Error">`</span><span class="n" title="Name">Widget</span><span class="err" title="Error">`</span> <span class="nb" title="Name.Builtin">object</span> <span class="ow" title="Operator.Word">and</span> <span class="n" title="Name">it</span> <span class="n" title="Name">has</span> <span class="n" title="Name">attributes</span> <span class="n" title="Name">that</span> <span class="n" title="Name">contain</span> <span class="n" title="Name">the</span> <span class="n" title="Name">current</span> <span class="n" title="Name">result</span> <span class="ow" title="Operator.Word">and</span> <span class="n" title="Name">arguments</span><span class="p" title="Punctuation">:</span>
+</code></pre>
+        </div>
+       </details>
+      </td>
+      <td class="nb-metadata" role="none">
+       <button aria-controls="cell-7-metadata" aria-describedby="nb-metadata-desc" form="cell-7" name="metadata" onclick="openDialog()">
+        metadata
+       </button>
+       <dialog id="cell-7-metadata">
+        <form>
+         <button formmethod="dialog">
+          Close
+         </button>
+         <pre><code>
+        {}
+        </code></pre>
+        </form>
+       </dialog>
+      </td>
+      <td class="nb-loc" id="cell-7-loc" role="none">
+       1
+      </td>
+      <td class="nb-outputs" role="none">
+       <span hidden id="cell-7-outputs-len">
+        0 outputs
+       </span>
+       <details aria-labelledby="cell-7-outputs-label" open>
+        <summary hidden id="cell-7-outputs-label" inert>
+         Cell 7
+        </summary>
+        <p>
+         The object returned by
+         <code>
+          interactive
+         </code>
+         is a
+         <code>
+          Widget
+         </code>
+         object and it has attributes that contain the current result and arguments:
+        </p>
+       </details>
+      </td>
+     </tr>
+     <tr aria-labelledby="nb-cell-label 8 cell-8-cell_type" class="cell code" data-index="8" data-loc="1" role="listitem">
+      <td class="nb-anchor" role="none">
+       <a aria-describedby="nb-code-label nb-cell-label cell-8-loc nb-loc-label" aria-labelledby="nb-cell-label 8" href="#8" id="8">
+        8
+       </a>
+      </td>
+      <td class="nb-execution_count" role="none">
+       <output form="cell-8" id="cell-8-execution_count" name="execution_count">
+        #None
+       </output>
+      </td>
+      <td class="nb-cell_type" role="none">
+       <select aria-describedby="nb-cell_type-desc" form="cell-8" name="cell_type">
+        <option value="markdown">
+         markdown
+        </option>
+        <option selected value="code">
+         code
+        </option>
+        <option value="raw">
+         raw
+        </option>
+       </select>
+       <span id="cell-8-cell_type">
+        code
+       </span>
+      </td>
+      <td class="nb-toolbar" role="none">
+       <form aria-labelledby="cell-8-source-label" class="nb-toolbar" hidden id="cell-8" name="cell-8">
+        <fieldset>
+         <legend>
+          actions
+         </legend>
+         <button type="submit">
+          Run Cell
+         </button>
+        </fieldset>
+       </form>
+      </td>
+      <td class="nb-start" id="cell-8-start" role="none">
+      </td>
+      <td class="nb-end" id="cell-8-end" role="none">
+      </td>
+      <td class="nb-source" role="none">
+       <details aria-labelledby="cell-8-source-label" open>
+        <summary id="cell-8-source-label" inert>
+         In
+         <span aria-hidden="true">
+          [
+         </span>
+         <span>
+          None
+         </span>
+         <span aria-hidden="true">
+          ]
+         </span>
+        </summary>
+        <textarea aria-describedby="nb-source-desc" aria-labelledby="cell-8-source-label nb-source-label" form="cell-8" id="cell-8-source" name="source" readonly rows="1">t, x_t = w.result</textarea>
+        <div class="highlight">
+         <pre><span></span><code><span class="n" title="Name">t</span><span class="p" title="Punctuation">,</span> <span class="n" title="Name">x_t</span> <span class="o" title="Operator">=</span> <span class="n" title="Name">w</span><span class="o" title="Operator">.</span><span class="n" title="Name">result</span>
+</code></pre>
+        </div>
+       </details>
+      </td>
+      <td class="nb-metadata" role="none">
+       <button aria-controls="cell-8-metadata" aria-describedby="nb-metadata-desc" form="cell-8" name="metadata" onclick="openDialog()">
+        metadata
+       </button>
+       <dialog id="cell-8-metadata">
+        <form>
+         <button formmethod="dialog">
+          Close
+         </button>
+         <pre><code>
+        {}
+        </code></pre>
+        </form>
+       </dialog>
+      </td>
+      <td class="nb-loc" id="cell-8-loc" role="none">
+       1
+      </td>
+      <td class="nb-outputs" role="none">
+       <span hidden id="cell-8-outputs-len">
+        0 outputs
+       </span>
+      </td>
+     </tr>
+     <tr aria-labelledby="nb-cell-label 9 cell-9-cell_type" class="cell code" data-index="9" data-loc="1" role="listitem">
+      <td class="nb-anchor" role="none">
+       <a aria-describedby="nb-code-label nb-cell-label cell-9-loc nb-loc-label" aria-labelledby="nb-cell-label 9" href="#9" id="9">
+        9
+       </a>
+      </td>
+      <td class="nb-execution_count" role="none">
+       <output form="cell-9" id="cell-9-execution_count" name="execution_count">
+        #None
+       </output>
+      </td>
+      <td class="nb-cell_type" role="none">
+       <select aria-describedby="nb-cell_type-desc" form="cell-9" name="cell_type">
+        <option value="markdown">
+         markdown
+        </option>
+        <option selected value="code">
+         code
+        </option>
+        <option value="raw">
+         raw
+        </option>
+       </select>
+       <span id="cell-9-cell_type">
+        code
+       </span>
+      </td>
+      <td class="nb-toolbar" role="none">
+       <form aria-labelledby="cell-9-source-label" class="nb-toolbar" hidden id="cell-9" name="cell-9">
+        <fieldset>
+         <legend>
+          actions
+         </legend>
+         <button type="submit">
+          Run Cell
+         </button>
+        </fieldset>
+       </form>
+      </td>
+      <td class="nb-start" id="cell-9-start" role="none">
+      </td>
+      <td class="nb-end" id="cell-9-end" role="none">
+      </td>
+      <td class="nb-source" role="none">
+       <details aria-labelledby="cell-9-source-label" open>
+        <summary id="cell-9-source-label" inert>
+         In
+         <span aria-hidden="true">
+          [
+         </span>
+         <span>
+          None
+         </span>
+         <span aria-hidden="true">
+          ]
+         </span>
+        </summary>
+        <textarea aria-describedby="nb-source-desc" aria-labelledby="cell-9-source-label nb-source-label" form="cell-9" id="cell-9-source" name="source" readonly rows="1">w.kwargs</textarea>
+        <div class="highlight">
+         <pre><span></span><code><span class="n" title="Name">w</span><span class="o" title="Operator">.</span><span class="n" title="Name">kwargs</span>
+</code></pre>
+        </div>
+       </details>
+      </td>
+      <td class="nb-metadata" role="none">
+       <button aria-controls="cell-9-metadata" aria-describedby="nb-metadata-desc" form="cell-9" name="metadata" onclick="openDialog()">
+        metadata
+       </button>
+       <dialog id="cell-9-metadata">
+        <form>
+         <button formmethod="dialog">
+          Close
+         </button>
+         <pre><code>
+        {}
+        </code></pre>
+        </form>
+       </dialog>
+      </td>
+      <td class="nb-loc" id="cell-9-loc" role="none">
+       1
+      </td>
+      <td class="nb-outputs" role="none">
+       <span hidden id="cell-9-outputs-len">
+        0 outputs
+       </span>
+      </td>
+     </tr>
+     <tr aria-labelledby="nb-cell-label 10 cell-10-cell_type" class="cell markdown" data-index="10" data-loc="1" role="listitem">
+      <td class="nb-anchor" role="none">
+       <a aria-describedby="nb-markdown-label nb-cell-label cell-10-loc nb-loc-label" aria-labelledby="nb-cell-label 10" href="#10" id="10">
+        10
+       </a>
+      </td>
+      <td class="nb-execution_count" role="none">
+       <output form="cell-10" id="cell-10-execution_count" name="execution_count">
+        #
+       </output>
+      </td>
+      <td class="nb-cell_type" role="none">
+       <select aria-describedby="nb-cell_type-desc" form="cell-10" name="cell_type">
+        <option selected value="markdown">
+         markdown
+        </option>
+        <option value="code">
+         code
+        </option>
+        <option value="raw">
+         raw
+        </option>
+       </select>
+       <span id="cell-10-cell_type">
+        markdown
+       </span>
+      </td>
+      <td class="nb-toolbar" role="none">
+       <form aria-labelledby="cell-10-source-label" class="nb-toolbar" hidden id="cell-10" name="cell-10">
+        <fieldset>
+         <legend>
+          actions
+         </legend>
+         <button type="submit">
+          Run Cell
+         </button>
+        </fieldset>
+       </form>
+      </td>
+      <td class="nb-start" id="cell-10-start" role="none">
+      </td>
+      <td class="nb-end" id="cell-10-end" role="none">
+      </td>
+      <td class="nb-source" role="none">
+       <details aria-labelledby="cell-10-source-label" open>
+        <summary id="cell-10-source-label" inert>
+         In
+         <span aria-hidden="true">
+          [
+         </span>
+         <span>
+         </span>
+         <span aria-hidden="true">
+          ]
+         </span>
+        </summary>
+        <textarea aria-describedby="nb-source-desc" aria-labelledby="cell-10-source-label nb-source-label" form="cell-10" id="cell-10-source" name="source" readonly rows="1">After interacting with the system, we can take the result and perform further computations. In this case, we compute the average positions in \\(x\\), \\(y\\) and \\(z\\).</textarea>
+        <div class="highlight">
+         <pre><span></span><code><span class="n" title="Name">After</span> <span class="n" title="Name">interacting</span> <span class="k" title="Keyword">with</span> <span class="n" title="Name">the</span> <span class="n" title="Name">system</span><span class="p" title="Punctuation">,</span> <span class="n" title="Name">we</span> <span class="n" title="Name">can</span> <span class="n" title="Name">take</span> <span class="n" title="Name">the</span> <span class="n" title="Name">result</span> <span class="ow" title="Operator.Word">and</span> <span class="n" title="Name">perform</span> <span class="n" title="Name">further</span> <span class="n" title="Name">computations</span><span class="o" title="Operator">.</span> <span class="n" title="Name">In</span> <span class="n" title="Name">this</span> <span class="n" title="Name">case</span><span class="p" title="Punctuation">,</span> <span class="n" title="Name">we</span> <span class="n" title="Name">compute</span> <span class="n" title="Name">the</span> <span class="n" title="Name">average</span> <span class="n" title="Name">positions</span> <span class="ow" title="Operator.Word">in</span> \\<span class="p" title="Punctuation">(</span><span class="n" title="Name">x</span>\\<span class="p" title="Punctuation">),</span> \\<span class="p" title="Punctuation">(</span><span class="n" title="Name">y</span>\\<span class="p" title="Punctuation">)</span> <span class="ow" title="Operator.Word">and</span> \\<span class="p" title="Punctuation">(</span><span class="n" title="Name">z</span>\\<span class="p" title="Punctuation">)</span><span class="o" title="Operator">.</span>
+</code></pre>
+        </div>
+       </details>
+      </td>
+      <td class="nb-metadata" role="none">
+       <button aria-controls="cell-10-metadata" aria-describedby="nb-metadata-desc" form="cell-10" name="metadata" onclick="openDialog()">
+        metadata
+       </button>
+       <dialog id="cell-10-metadata">
+        <form>
+         <button formmethod="dialog">
+          Close
+         </button>
+         <pre><code>
+        {}
+        </code></pre>
+        </form>
+       </dialog>
+      </td>
+      <td class="nb-loc" id="cell-10-loc" role="none">
+       1
+      </td>
+      <td class="nb-outputs" role="none">
+       <span hidden id="cell-10-outputs-len">
+        0 outputs
+       </span>
+       <details aria-labelledby="cell-10-outputs-label" open>
+        <summary hidden id="cell-10-outputs-label" inert>
+         Cell 10
+        </summary>
+        <p>
+         After interacting with the system, we can take the result and perform further computations. In this case, we compute the average positions in \(x\), \(y\) and \(z\).
+        </p>
+       </details>
+      </td>
+     </tr>
+     <tr aria-labelledby="nb-cell-label 11 cell-11-cell_type" class="cell code" data-index="11" data-loc="1" role="listitem">
+      <td class="nb-anchor" role="none">
+       <a aria-describedby="nb-code-label nb-cell-label cell-11-loc nb-loc-label" aria-labelledby="nb-cell-label 11" href="#11" id="11">
+        11
+       </a>
+      </td>
+      <td class="nb-execution_count" role="none">
+       <output form="cell-11" id="cell-11-execution_count" name="execution_count">
+        #None
+       </output>
+      </td>
+      <td class="nb-cell_type" role="none">
+       <select aria-describedby="nb-cell_type-desc" form="cell-11" name="cell_type">
+        <option value="markdown">
+         markdown
+        </option>
+        <option selected value="code">
+         code
+        </option>
+        <option value="raw">
+         raw
+        </option>
+       </select>
+       <span id="cell-11-cell_type">
+        code
+       </span>
+      </td>
+      <td class="nb-toolbar" role="none">
+       <form aria-labelledby="cell-11-source-label" class="nb-toolbar" hidden id="cell-11" name="cell-11">
+        <fieldset>
+         <legend>
+          actions
+         </legend>
+         <button type="submit">
+          Run Cell
+         </button>
+        </fieldset>
+       </form>
+      </td>
+      <td class="nb-start" id="cell-11-start" role="none">
+      </td>
+      <td class="nb-end" id="cell-11-end" role="none">
+      </td>
+      <td class="nb-source" role="none">
+       <details aria-labelledby="cell-11-source-label" open>
+        <summary id="cell-11-source-label" inert>
+         In
+         <span aria-hidden="true">
+          [
+         </span>
+         <span>
+          None
+         </span>
+         <span aria-hidden="true">
+          ]
+         </span>
+        </summary>
+        <textarea aria-describedby="nb-source-desc" aria-labelledby="cell-11-source-label nb-source-label" form="cell-11" id="cell-11-source" name="source" readonly rows="1">xyz_avg = x_t.mean(axis=1)</textarea>
+        <div class="highlight">
+         <pre><span></span><code><span class="n" title="Name">xyz_avg</span> <span class="o" title="Operator">=</span> <span class="n" title="Name">x_t</span><span class="o" title="Operator">.</span><span class="n" title="Name">mean</span><span class="p" title="Punctuation">(</span><span class="n" title="Name">axis</span><span class="o" title="Operator">=</span><span class="mi" title="Literal.Number.Integer">1</span><span class="p" title="Punctuation">)</span>
+</code></pre>
+        </div>
+       </details>
+      </td>
+      <td class="nb-metadata" role="none">
+       <button aria-controls="cell-11-metadata" aria-describedby="nb-metadata-desc" form="cell-11" name="metadata" onclick="openDialog()">
+        metadata
+       </button>
+       <dialog id="cell-11-metadata">
+        <form>
+         <button formmethod="dialog">
+          Close
+         </button>
+         <pre><code>
+        {}
+        </code></pre>
+        </form>
+       </dialog>
+      </td>
+      <td class="nb-loc" id="cell-11-loc" role="none">
+       1
+      </td>
+      <td class="nb-outputs" role="none">
+       <span hidden id="cell-11-outputs-len">
+        0 outputs
+       </span>
+      </td>
+     </tr>
+     <tr aria-labelledby="nb-cell-label 12 cell-12-cell_type" class="cell code" data-index="12" data-loc="1" role="listitem">
+      <td class="nb-anchor" role="none">
+       <a aria-describedby="nb-code-label nb-cell-label cell-12-loc nb-loc-label" aria-labelledby="nb-cell-label 12" href="#12" id="12">
+        12
+       </a>
+      </td>
+      <td class="nb-execution_count" role="none">
+       <output form="cell-12" id="cell-12-execution_count" name="execution_count">
+        #None
+       </output>
+      </td>
+      <td class="nb-cell_type" role="none">
+       <select aria-describedby="nb-cell_type-desc" form="cell-12" name="cell_type">
+        <option value="markdown">
+         markdown
+        </option>
+        <option selected value="code">
+         code
+        </option>
+        <option value="raw">
+         raw
+        </option>
+       </select>
+       <span id="cell-12-cell_type">
+        code
+       </span>
+      </td>
+      <td class="nb-toolbar" role="none">
+       <form aria-labelledby="cell-12-source-label" class="nb-toolbar" hidden id="cell-12" name="cell-12">
+        <fieldset>
+         <legend>
+          actions
+         </legend>
+         <button type="submit">
+          Run Cell
+         </button>
+        </fieldset>
+       </form>
+      </td>
+      <td class="nb-start" id="cell-12-start" role="none">
+      </td>
+      <td class="nb-end" id="cell-12-end" role="none">
+      </td>
+      <td class="nb-source" role="none">
+       <details aria-labelledby="cell-12-source-label" open>
+        <summary id="cell-12-source-label" inert>
+         In
+         <span aria-hidden="true">
+          [
+         </span>
+         <span>
+          None
+         </span>
+         <span aria-hidden="true">
+          ]
+         </span>
+        </summary>
+        <textarea aria-describedby="nb-source-desc" aria-labelledby="cell-12-source-label nb-source-label" form="cell-12" id="cell-12-source" name="source" readonly rows="1">xyz_avg.shape</textarea>
+        <div class="highlight">
+         <pre><span></span><code><span class="n" title="Name">xyz_avg</span><span class="o" title="Operator">.</span><span class="n" title="Name">shape</span>
+</code></pre>
+        </div>
+       </details>
+      </td>
+      <td class="nb-metadata" role="none">
+       <button aria-controls="cell-12-metadata" aria-describedby="nb-metadata-desc" form="cell-12" name="metadata" onclick="openDialog()">
+        metadata
+       </button>
+       <dialog id="cell-12-metadata">
+        <form>
+         <button formmethod="dialog">
+          Close
+         </button>
+         <pre><code>
+        {}
+        </code></pre>
+        </form>
+       </dialog>
+      </td>
+      <td class="nb-loc" id="cell-12-loc" role="none">
+       1
+      </td>
+      <td class="nb-outputs" role="none">
+       <span hidden id="cell-12-outputs-len">
+        0 outputs
+       </span>
+      </td>
+     </tr>
+     <tr aria-labelledby="nb-cell-label 13 cell-13-cell_type" class="cell markdown" data-index="13" data-loc="1" role="listitem">
+      <td class="nb-anchor" role="none">
+       <a aria-describedby="nb-markdown-label nb-cell-label cell-13-loc nb-loc-label" aria-labelledby="nb-cell-label 13" href="#13" id="13">
+        13
+       </a>
+      </td>
+      <td class="nb-execution_count" role="none">
+       <output form="cell-13" id="cell-13-execution_count" name="execution_count">
+        #
+       </output>
+      </td>
+      <td class="nb-cell_type" role="none">
+       <select aria-describedby="nb-cell_type-desc" form="cell-13" name="cell_type">
+        <option selected value="markdown">
+         markdown
+        </option>
+        <option value="code">
+         code
+        </option>
+        <option value="raw">
+         raw
+        </option>
+       </select>
+       <span id="cell-13-cell_type">
+        markdown
+       </span>
+      </td>
+      <td class="nb-toolbar" role="none">
+       <form aria-labelledby="cell-13-source-label" class="nb-toolbar" hidden id="cell-13" name="cell-13">
+        <fieldset>
+         <legend>
+          actions
+         </legend>
+         <button type="submit">
+          Run Cell
+         </button>
+        </fieldset>
+       </form>
+      </td>
+      <td class="nb-start" id="cell-13-start" role="none">
+      </td>
+      <td class="nb-end" id="cell-13-end" role="none">
+      </td>
+      <td class="nb-source" role="none">
+       <details aria-labelledby="cell-13-source-label" open>
+        <summary id="cell-13-source-label" inert>
+         In
+         <span aria-hidden="true">
+          [
+         </span>
+         <span>
+         </span>
+         <span aria-hidden="true">
+          ]
+         </span>
+        </summary>
+        <textarea aria-describedby="nb-source-desc" aria-labelledby="cell-13-source-label nb-source-label" form="cell-13" id="cell-13-source" name="source" readonly rows="1">Creating histograms of the average positions (across different trajectories) show that, on average, the trajectories swirl about the attractors.</textarea>
+        <div class="highlight">
+         <pre><span></span><code><span class="n" title="Name">Creating</span> <span class="n" title="Name">histograms</span> <span class="n" title="Name">of</span> <span class="n" title="Name">the</span> <span class="n" title="Name">average</span> <span class="n" title="Name">positions</span> <span class="p" title="Punctuation">(</span><span class="n" title="Name">across</span> <span class="n" title="Name">different</span> <span class="n" title="Name">trajectories</span><span class="p" title="Punctuation">)</span> <span class="n" title="Name">show</span> <span class="n" title="Name">that</span><span class="p" title="Punctuation">,</span> <span class="n" title="Name">on</span> <span class="n" title="Name">average</span><span class="p" title="Punctuation">,</span> <span class="n" title="Name">the</span> <span class="n" title="Name">trajectories</span> <span class="n" title="Name">swirl</span> <span class="n" title="Name">about</span> <span class="n" title="Name">the</span> <span class="n" title="Name">attractors</span><span class="o" title="Operator">.</span>
+</code></pre>
+        </div>
+       </details>
+      </td>
+      <td class="nb-metadata" role="none">
+       <button aria-controls="cell-13-metadata" aria-describedby="nb-metadata-desc" form="cell-13" name="metadata" onclick="openDialog()">
+        metadata
+       </button>
+       <dialog id="cell-13-metadata">
+        <form>
+         <button formmethod="dialog">
+          Close
+         </button>
+         <pre><code>
+        {}
+        </code></pre>
+        </form>
+       </dialog>
+      </td>
+      <td class="nb-loc" id="cell-13-loc" role="none">
+       1
+      </td>
+      <td class="nb-outputs" role="none">
+       <span hidden id="cell-13-outputs-len">
+        0 outputs
+       </span>
+       <details aria-labelledby="cell-13-outputs-label" open>
+        <summary hidden id="cell-13-outputs-label" inert>
+         Cell 13
+        </summary>
+        <p>
+         Creating histograms of the average positions (across different trajectories) show that, on average, the trajectories swirl about the attractors.
+        </p>
+       </details>
+      </td>
+     </tr>
+     <tr aria-labelledby="nb-cell-label 14 cell-14-cell_type" class="cell code" data-index="14" data-loc="1" role="listitem">
+      <td class="nb-anchor" role="none">
+       <a aria-describedby="nb-code-label nb-cell-label cell-14-loc nb-loc-label" aria-labelledby="nb-cell-label 14" href="#14" id="14">
+        14
+       </a>
+      </td>
+      <td class="nb-execution_count" role="none">
+       <output form="cell-14" id="cell-14-execution_count" name="execution_count">
+        #None
+       </output>
+      </td>
+      <td class="nb-cell_type" role="none">
+       <select aria-describedby="nb-cell_type-desc" form="cell-14" name="cell_type">
+        <option value="markdown">
+         markdown
+        </option>
+        <option selected value="code">
+         code
+        </option>
+        <option value="raw">
+         raw
+        </option>
+       </select>
+       <span id="cell-14-cell_type">
+        code
+       </span>
+      </td>
+      <td class="nb-toolbar" role="none">
+       <form aria-labelledby="cell-14-source-label" class="nb-toolbar" hidden id="cell-14" name="cell-14">
+        <fieldset>
+         <legend>
+          actions
+         </legend>
+         <button type="submit">
+          Run Cell
+         </button>
+        </fieldset>
+       </form>
+      </td>
+      <td class="nb-start" id="cell-14-start" role="none">
+      </td>
+      <td class="nb-end" id="cell-14-end" role="none">
+      </td>
+      <td class="nb-source" role="none">
+       <details aria-labelledby="cell-14-source-label" open>
+        <summary id="cell-14-source-label" inert>
+         In
+         <span aria-hidden="true">
+          [
+         </span>
+         <span>
+          None
+         </span>
+         <span aria-hidden="true">
+          ]
+         </span>
+        </summary>
+        <textarea aria-describedby="nb-source-desc" aria-labelledby="cell-14-source-label nb-source-label" form="cell-14" id="cell-14-source" name="source" readonly rows="1">from matplotlib import pyplot as plt</textarea>
+        <div class="highlight">
+         <pre><span></span><code><span class="kn" title="Keyword.Namespace">from</span> <span class="nn" title="Name.Namespace">matplotlib</span> <span class="kn" title="Keyword.Namespace">import</span> <span class="n" title="Name">pyplot</span> <span class="k" title="Keyword">as</span> <span class="n" title="Name">plt</span>
+</code></pre>
+        </div>
+       </details>
+      </td>
+      <td class="nb-metadata" role="none">
+       <button aria-controls="cell-14-metadata" aria-describedby="nb-metadata-desc" form="cell-14" name="metadata" onclick="openDialog()">
+        metadata
+       </button>
+       <dialog id="cell-14-metadata">
+        <form>
+         <button formmethod="dialog">
+          Close
+         </button>
+         <pre><code>
+        {}
+        </code></pre>
+        </form>
+       </dialog>
+      </td>
+      <td class="nb-loc" id="cell-14-loc" role="none">
+       1
+      </td>
+      <td class="nb-outputs" role="none">
+       <span hidden id="cell-14-outputs-len">
+        0 outputs
+       </span>
+      </td>
+     </tr>
+     <tr aria-labelledby="nb-cell-label 15 cell-15-cell_type" class="cell code" data-index="15" data-loc="2" role="listitem">
+      <td class="nb-anchor" role="none">
+       <a aria-describedby="nb-code-label nb-cell-label cell-15-loc nb-loc-label" aria-labelledby="nb-cell-label 15" href="#15" id="15">
+        15
+       </a>
+      </td>
+      <td class="nb-execution_count" role="none">
+       <output form="cell-15" id="cell-15-execution_count" name="execution_count">
+        #None
+       </output>
+      </td>
+      <td class="nb-cell_type" role="none">
+       <select aria-describedby="nb-cell_type-desc" form="cell-15" name="cell_type">
+        <option value="markdown">
+         markdown
+        </option>
+        <option selected value="code">
+         code
+        </option>
+        <option value="raw">
+         raw
+        </option>
+       </select>
+       <span id="cell-15-cell_type">
+        code
+       </span>
+      </td>
+      <td class="nb-toolbar" role="none">
+       <form aria-labelledby="cell-15-source-label" class="nb-toolbar" hidden id="cell-15" name="cell-15">
+        <fieldset>
+         <legend>
+          actions
+         </legend>
+         <button type="submit">
+          Run Cell
+         </button>
+        </fieldset>
+       </form>
+      </td>
+      <td class="nb-start" id="cell-15-start" role="none">
+      </td>
+      <td class="nb-end" id="cell-15-end" role="none">
+      </td>
+      <td class="nb-source" role="none">
+       <details aria-labelledby="cell-15-source-label" open>
+        <summary id="cell-15-source-label" inert>
+         In
+         <span aria-hidden="true">
+          [
+         </span>
+         <span>
+          None
+         </span>
+         <span aria-hidden="true">
+          ]
+         </span>
+        </summary>
+        <textarea aria-describedby="nb-source-desc" aria-labelledby="cell-15-source-label nb-source-label" form="cell-15" id="cell-15-source" name="source" readonly rows="2">plt.hist(xyz_avg[:,0])
+plt.title('Average $x(t)$');</textarea>
+        <div class="highlight">
+         <pre><span></span><code><span class="n" title="Name">plt</span><span class="o" title="Operator">.</span><span class="n" title="Name">hist</span><span class="p" title="Punctuation">(</span><span class="n" title="Name">xyz_avg</span><span class="p" title="Punctuation">[:,</span><span class="mi" title="Literal.Number.Integer">0</span><span class="p" title="Punctuation">])</span>
+<span class="n" title="Name">plt</span><span class="o" title="Operator">.</span><span class="n" title="Name">title</span><span class="p" title="Punctuation">(</span><span class="s1" title="Literal.String.Single">'Average $x(t)$'</span><span class="p" title="Punctuation">);</span>
+</code></pre>
+        </div>
+       </details>
+      </td>
+      <td class="nb-metadata" role="none">
+       <button aria-controls="cell-15-metadata" aria-describedby="nb-metadata-desc" form="cell-15" name="metadata" onclick="openDialog()">
+        metadata
+       </button>
+       <dialog id="cell-15-metadata">
+        <form>
+         <button formmethod="dialog">
+          Close
+         </button>
+         <pre><code>
+        {}
+        </code></pre>
+        </form>
+       </dialog>
+      </td>
+      <td class="nb-loc" id="cell-15-loc" role="none">
+       2
+      </td>
+      <td class="nb-outputs" role="none">
+       <span hidden id="cell-15-outputs-len">
+        0 outputs
+       </span>
+      </td>
+     </tr>
+     <tr aria-labelledby="nb-cell-label 16 cell-16-cell_type" class="cell code" data-index="16" data-loc="2" role="listitem">
+      <td class="nb-anchor" role="none">
+       <a aria-describedby="nb-code-label nb-cell-label cell-16-loc nb-loc-label" aria-labelledby="nb-cell-label 16" href="#16" id="16">
+        16
+       </a>
+      </td>
+      <td class="nb-execution_count" role="none">
+       <output form="cell-16" id="cell-16-execution_count" name="execution_count">
+        #None
+       </output>
+      </td>
+      <td class="nb-cell_type" role="none">
+       <select aria-describedby="nb-cell_type-desc" form="cell-16" name="cell_type">
+        <option value="markdown">
+         markdown
+        </option>
+        <option selected value="code">
+         code
+        </option>
+        <option value="raw">
+         raw
+        </option>
+       </select>
+       <span id="cell-16-cell_type">
+        code
+       </span>
+      </td>
+      <td class="nb-toolbar" role="none">
+       <form aria-labelledby="cell-16-source-label" class="nb-toolbar" hidden id="cell-16" name="cell-16">
+        <fieldset>
+         <legend>
+          actions
+         </legend>
+         <button type="submit">
+          Run Cell
+         </button>
+        </fieldset>
+       </form>
+      </td>
+      <td class="nb-start" id="cell-16-start" role="none">
+      </td>
+      <td class="nb-end" id="cell-16-end" role="none">
+      </td>
+      <td class="nb-source" role="none">
+       <details aria-labelledby="cell-16-source-label" open>
+        <summary id="cell-16-source-label" inert>
+         In
+         <span aria-hidden="true">
+          [
+         </span>
+         <span>
+          None
+         </span>
+         <span aria-hidden="true">
+          ]
+         </span>
+        </summary>
+        <textarea aria-describedby="nb-source-desc" aria-labelledby="cell-16-source-label nb-source-label" form="cell-16" id="cell-16-source" name="source" readonly rows="2">plt.hist(xyz_avg[:,1])
+plt.title('Average $y(t)$');</textarea>
+        <div class="highlight">
+         <pre><span></span><code><span class="n" title="Name">plt</span><span class="o" title="Operator">.</span><span class="n" title="Name">hist</span><span class="p" title="Punctuation">(</span><span class="n" title="Name">xyz_avg</span><span class="p" title="Punctuation">[:,</span><span class="mi" title="Literal.Number.Integer">1</span><span class="p" title="Punctuation">])</span>
+<span class="n" title="Name">plt</span><span class="o" title="Operator">.</span><span class="n" title="Name">title</span><span class="p" title="Punctuation">(</span><span class="s1" title="Literal.String.Single">'Average $y(t)$'</span><span class="p" title="Punctuation">);</span>
+</code></pre>
+        </div>
+       </details>
+      </td>
+      <td class="nb-metadata" role="none">
+       <button aria-controls="cell-16-metadata" aria-describedby="nb-metadata-desc" form="cell-16" name="metadata" onclick="openDialog()">
+        metadata
+       </button>
+       <dialog id="cell-16-metadata">
+        <form>
+         <button formmethod="dialog">
+          Close
+         </button>
+         <pre><code>
+        {}
+        </code></pre>
+        </form>
+       </dialog>
+      </td>
+      <td class="nb-loc" id="cell-16-loc" role="none">
+       2
+      </td>
+      <td class="nb-outputs" role="none">
+       <span hidden id="cell-16-outputs-len">
+        0 outputs
+       </span>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <table class="nb-cells-footer" hidden>
+    <tbody>
+     <tr class="total">
+      <th scope="row">
+       all cells
+      </th>
+      <th scope="row">
+       count
+      </th>
+      <td class="nb-ordered">
+       executed out of order
+      </td>
+      <td class="nb-cell_type">
+       16
+      </td>
+      <td class="nb-source">
+      </td>
+      <td class="nb-outputs">
+       0
+      </td>
+      <td class="nb-toolbar">
+      </td>
+      <td class="nb-metadata">
+      </td>
+      <td class="nb-loc">
+       31
+      </td>
+     </tr>
+     <tr class="code">
+      <th scope="row">
+       code cells
+      </th>
+      <th scope="row">
+       count
+      </th>
+      <td class="nb-ordered">
+       executed out of order
+      </td>
+      <td class="nb-cell_type">
+       16
+      </td>
+      <td class="nb-source">
+      </td>
+      <td class="nb-outputs">
+       0
+      </td>
+      <td class="nb-toolbar">
+      </td>
+      <td class="nb-metadata">
+      </td>
+      <td class="nb-loc">
+       31
+      </td>
+     </tr>
+     <tr class="markdown">
+      <th scope="row">
+       markdown cells
+      </th>
+      <th scope="row">
+       count
+      </th>
+      <td class="nb-ordered">
+      </td>
+      <td class="nb-cell_type">
+       16
+      </td>
+      <td class="nb-source">
+      </td>
+      <td class="nb-outputs">
+      </td>
+      <td class="nb-toolbar">
+      </td>
+      <td class="nb-metadata">
+      </td>
+      <td class="nb-loc">
+       31
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <dialog id="nb-expanded-dialog">
+    <form name="expanded">
+     <button formmethod="dialog">
+      Close
+     </button>
+     <table role="grid">
+      <tbody>
+       <tr>
+        <th>
+        </th>
+        <th>
+         cell
+        </th>
+        <th>
+         source
+        </th>
+        <th>
+         outputs
+        </th>
+       </tr>
+       <tr class="code">
+        <td>
+         code
+        </td>
+        <td>
+         <input aria-labelledby="nb-code-label nb-cell-label" checked name="cell" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-code-label nb-source-label" checked name="source" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-code-label nb-outputs-label" checked name="outputs" type="checkbox">
+        </td>
+       </tr>
+       <tr class="markdown">
+        <td>
+         markdown
+        </td>
+        <td>
+         <input aria-labelledby="nb-markdown-label nb-cell-label" checked name="cell" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-markdown-label nb-source-label" checked name="source" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-markdown-label nb-outputs-label" checked name="outputs" type="checkbox">
+        </td>
+       </tr>
+       <tr class="raw">
+        <td>
+         raw
+        </td>
+        <td>
+         <input aria-labelledby="nb-raw-label nb-cell-label" checked name="cell" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-raw-label nb-source-label" checked name="source" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-raw-label nb-outputs-label" checked name="outputs" type="checkbox">
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </form>
+    <details class="log">
+     <summary>
+      <span>
+       activity log
+      </span>
+     </summary>
+    </details>
+    <table aria-labelledby="nb-activity-log-label" aria-live="polite">
+     <tbody>
+      <tr>
+       <th>
+        time
+       </th>
+       <td>
+        message
+       </td>
+      </tr>
+     </tbody>
+    </table>
+   </dialog>
+   <dialog id="nb-visibility-dialog">
+    <form name="visibility">
+     <button formmethod="dialog">
+      Close
+     </button>
+     <table aria-label="notebook cell visibility" role="grid">
+      <tbody>
+       <tr>
+        <th>
+        </th>
+        <th>
+         index
+        </th>
+        <th>
+         execution_count
+        </th>
+        <th>
+         cell_type
+        </th>
+        <th>
+         source
+        </th>
+        <th>
+         outputs
+        </th>
+        <th>
+         metadata
+        </th>
+        <th>
+         toolbar
+        </th>
+        <th>
+         loc
+        </th>
+       </tr>
+       <tr class="code">
+        <td>
+         code
+        </td>
+        <td>
+         <input aria-labelledby="nb-code-label nb-index-label" checked name="index" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-code-label nb-execution_count-label" checked name="execution_count" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-code-label nb-cell_type-label" name="cell_type" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-code-label nb-source-label" checked name="source" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-code-label nb-outputs-label" checked name="outputs" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-code-label nb-metadata-label" name="metadata" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-code-label nb-toolbar-label" name="toolbar" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-code-label nb-loc-label" name="loc" type="checkbox">
+        </td>
+       </tr>
+       <tr class="markdown">
+        <td>
+         markdown
+        </td>
+        <td>
+         <input aria-labelledby="nb-markdown-label nb-index-label" checked name="index" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-markdown-label nb-execution_count-label" checked name="execution_count" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-markdown-label nb-cell_type-label" name="cell_type" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-markdown-label nb-source-label" checked name="source" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-markdown-label nb-outputs-label" checked name="outputs" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-markdown-label nb-metadata-label" name="metadata" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-markdown-label nb-toolbar-label" name="toolbar" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-markdown-label nb-loc-label" name="loc" type="checkbox">
+        </td>
+       </tr>
+       <tr class="raw">
+        <td>
+         raw
+        </td>
+        <td>
+         <input aria-labelledby="nb-raw-label nb-index-label" checked name="index" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-raw-label nb-execution_count-label" checked name="execution_count" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-raw-label nb-cell_type-label" name="cell_type" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-raw-label nb-source-label" checked name="source" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-raw-label nb-outputs-label" checked name="outputs" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-raw-label nb-metadata-label" name="metadata" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-raw-label nb-toolbar-label" name="toolbar" type="checkbox">
+        </td>
+        <td>
+         <input aria-labelledby="nb-raw-label nb-loc-label" name="loc" type="checkbox">
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </form>
+    <details class="log">
+     <summary>
+      <span>
+       activity log
+      </span>
+     </summary>
+    </details>
+    <table aria-labelledby="nb-activity-log-label" aria-live="polite">
+     <tbody>
+      <tr>
+       <th>
+        time
+       </th>
+       <td>
+        message
+       </td>
+      </tr>
+     </tbody>
+    </table>
+   </dialog>
+   <dialog id="nb-metadata">
+    <form method="dialog">
+     <button formmethod="dialog">
+      Close
+     </button>
+     {"kernelspec": {"display_name": "Python [conda env:root] *", "language": "python", "name": "conda-root-py"}, "language_info": {"codemirror_mode": {"name": "ipython", "version": 3}, "file_extension": ".py", "mimetype": "text/x-python", "name": "python", "nbconvert_exporter": "python", "pygments_lexer": "ipython3", "version": "3.9.10"}}
+    </form>
+   </dialog>
+   <dialog id="nb-help">
+    <h1>
+     <a href="#notebook-help">
+      notebook help
+     </a>
+    </h1>
+    <form>
+     <button formmethod="dialog">
+      close
+     </button>
+     <h2 id="nb-defs-label">
+      <a href="#nb-defs-label">
+       definitions
+      </a>
+     </h2>
+     <dl aria-labelledby="nb-defs-label">
+      <dt id="nb-notebook-label">
+       notebook
+      </dt>
+      <dd>
+       a collections of
+       <a href="#nb-cells-label">
+        cells
+       </a>
+      </dd>
+      <dd>
+       <dl aria-labelledby="nb-notebook-label nb-defs-label">
+        <dt id="nb-root-metadata-label">
+         metadata
+        </dt>
+        <dd id="nb-root-metadata-desc">
+         Notebook root-level metadata.
+        </dd>
+        <dd>
+         <dl>
+          <dt id="nb-kernelspec-label">
+           kernelspec
+          </dt>
+          <dd>
+           Kernel information.
+          </dd>
+          <dd>
+           <dl aria-labelledby="nb-kernelspec-label">
+            <dt>
+             kernel name
+            </dt>
+            <dd>
+             Name of the kernel specification.
+            </dd>
+            <dt>
+             display name
+            </dt>
+            <dd>
+             Name to display in UI.
+            </dd>
+           </dl>
+          </dd>
+          <dt id="nb-language_info-label">
+           language info
+          </dt>
+          <dd>
+           Kernel information.
+          </dd>
+          <dd>
+           <dl aria-labelledby="nb-language_info-label">
+            <dt>
+             programming language
+            </dt>
+            <dd>
+             The programming language which this kernel runs.
+            </dd>
+            <dt>
+             <a>
+              codemirror mode
+             </a>
+            </dt>
+            <dd>
+             The codemirror mode to use for code in this language.
+            </dd>
+            <dt>
+             file extension
+            </dt>
+            <dd>
+             The file extension for files in this language.
+            </dd>
+            <dt>
+             mimetype
+            </dt>
+            <dd>
+             The mimetype corresponding to files in this language.
+            </dd>
+            <dt>
+             pygments lexer
+            </dt>
+            <dd>
+             The pygments lexer to use for code in this language.
+            </dd>
+           </dl>
+          </dd>
+          <dt>
+           title
+          </dt>
+          <dd>
+           The title of the notebook document
+          </dd>
+          <dt>
+           authors
+          </dt>
+          <dd>
+           The author(s) of the notebook document
+          </dd>
+         </dl>
+        </dd>
+        <dt id="nb-cells-label">
+         cells
+        </dt>
+        <dd id="nb-cells-desc">
+         Array of cells of the current notebook.
+        </dd>
+       </dl>
+      </dd>
+      <dt id="nb-cell-label">
+       cell
+      </dt>
+      <dd>
+       <dl aria-labelledby="nb-cell-label nb-defs-label">
+        <dt id="nb-index-label">
+         index
+        </dt>
+        <dd id="nb-index-desc">
+         the ordinal location of the cell in the notebook, counting begins from 1.
+        </dd>
+        <dt id="nb-source-label">
+         source
+        </dt>
+        <dd id="nb-source-desc">
+         Contents of the cell, represented as an array of lines.
+        </dd>
+        <dt id="nb-metadata-label">
+         metadata
+        </dt>
+        <dd id="nb-metadata-desc">
+         Cell-level metadata.
+        </dd>
+        <dd>
+         <dl aria-labelledby="nb-metadata-label">
+          <dt>
+           name
+          </dt>
+          <dd>
+          </dd>
+          <dt>
+           tags
+          </dt>
+          <dd>
+          </dd>
+          <dt id="nb-jupyter-label">
+           jupyter
+          </dt>
+          <dd id="nb-jupyter-desc">
+           Official Jupyter Metadata for Raw Cells
+          </dd>
+          <dd>
+           <dl>
+            <dt>
+             source hidden
+            </dt>
+            <dd>
+             Whether the source is hidden.
+            </dd>
+            <dt>
+             outputs hidden
+            </dt>
+            <dd>
+             Whether the outputs are hidden.
+            </dd>
+            <dt id="nb-execution-label">
+             execution
+            </dt>
+            <dd id="nb-execution-desc">
+             Execution time for the code in the cell. This tracks time at which messages are received from iopub or shell channels
+            </dd>
+            <dd>
+             <dl aria-labelledby="nb-execution-label">
+              <dt>
+               execute input
+              </dt>
+              <dd>
+               {'description': "header.date (in ISO 8601 format) of iopub channel's execute_input message. It indicates the time at which the kernel broadcasts an execute_input message to connected frontends", 'type': 'string'}
+              </dd>
+              <dt>
+               execute reply
+              </dt>
+              <dd>
+              </dd>
+             </dl>
+            </dd>
+            <dt>
+             collapsed
+            </dt>
+            <dd>
+             Whether the cell's output is collapsed/expanded.
+            </dd>
+            <dt>
+             scrolled
+            </dt>
+            <dd>
+             Whether the cell's output is scrolled, unscrolled, or autoscrolled.
+            </dd>
+           </dl>
+          </dd>
+         </dl>
+        </dd>
+        <dt id="nb-cell_type-label">
+         cell type
+        </dt>
+        <dd>
+         the are three kinds of cells
+         <dl aria-labelledby="nb-cell_type-label">
+          <dt id="nb-code-label">
+           code
+          </dt>
+          <dd id="nb-code-desc">
+           Notebook code cell.
+          </dd>
+          <dt id="nb-markdown-label">
+           markdown
+          </dt>
+          <dd id="nb-markdown-desc">
+           Notebook markdown cell.
+          </dd>
+          <dt id="nb-raw-label">
+           raw
+          </dt>
+          <dd id="nb-raw-desc">
+           Notebook raw nbconvert cell.
+          </dd>
+         </dl>
+        </dd>
+        <dd id="nb-cell_type-desc">
+         String identifying the type of cell.
+        </dd>
+        <dt id="nb-execution_count-label">
+         execution count
+        </dt>
+        <dd id="nb-execution_count-desc">
+         The code cell's prompt number. Will be null if the cell has not been run.
+        </dd>
+        <dt id="nb-outputs-label">
+         outputs
+        </dt>
+        <dd id="nb-outputs-desc">
+         Execution, display, or stream outputs.
+        </dd>
+        <dt id="nb-attachments-label">
+         attachments
+        </dt>
+        <dd id="nb-attachments-desc">
+         Media attachments (e.g. inline images), stored as mimebundle keyed by filename.
+        </dd>
+        <dt id="nb-loc-label">
+         lines of code
+        </dt>
+        <dd>
+         lines of code in the cell, including whitespace.
+        </dd>
+       </dl>
+      </dd>
+      <dt id="nb-toolbar-label">
+       toolbar
+      </dt>
+      <dd>
+       composite widgets that allow for arrow key navigation
+      </dd>
+     </dl>
+    </form>
+   </dialog>
+  </main>
+  <footer>
+   <details class="log">
+    <summary>
+     <span id="nb-activity-log-label">
+      activity log
+     </span>
+    </summary>
+   </details>
+   <table aria-labelledby="nb-activity-log-label" aria-live="polite">
+    <tbody>
+     <tr>
+      <th>
+       time
+      </th>
+      <td>
+       message
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <a accesskey="0" href="#notebook">
+    skip to top
+   </a>
+  </footer>
+  <script src="settings.js">
+  </script>
+  <script onload="auditNotebook()" src="https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.8.2/axe.min.js">
+  </script>
+ </body>
+</html>
