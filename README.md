@@ -20,6 +20,8 @@ jupyter nbconvert --to a11y-list Untitled.ipynb      # cells are list items
 from nbconvert_a11y.exporter import A11y, Table, Section, List
 ```
 
+A an example of the canonical Lorenz differential differential equations can be viewed @ https://deathbeds.github.io/nbconvert-a11y/exports/html/lorenz-executed-a11y.html
+
 ## History
 
 the `nbconvert-a11y` project is forked from initial development in the [`notebook-for-all`]() repository. 
@@ -27,4 +29,4 @@ this collaboration between [Space Telescope Science Institute](https://www.stsci
 brought input from blind and visual impaired notebook users as to what their most assistive experiences could be.
 
 ## License
-Licensed e under a [3-Clause BSD license](LICENSE).
+Licensed under a [3-Clause BSD license](LICENSE).
