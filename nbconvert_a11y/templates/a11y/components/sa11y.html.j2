@@ -1,0 +1,32 @@
+{# i discovered sa11y a fork called [editoria11y](https://github.com/itmaybejj/editoria11y). 
+turns out both of these projects began as tota11y. #}
+
+
+<!-- Stylesheet -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ryersondmp/sa11y@3.0.5/dist/css/sa11y.min.css" />
+
+<!-- Script -->
+<script
+    src="https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@3.0.5/dist/js/lang/en.umd.js,gh/ryersondmp/sa11y@3.0.5/dist/js/sa11y.umd.min.js"></script>
+
+<!-- Instantiate-->
+<script>
+    (function () {
+        function runSa11y() {
+            Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+            const sa11y = new Sa11y.Sa11y({
+                checkRoot: "body",
+                // Add props here!
+            });
+        };
+        function addSa11y() {
+            var script = document.createElement('script');
+            script.onload = runSa11y;
+            script.src =
+                "https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@latest/dist/js/lang/en.umd.js,gh/ryersondmp/sa11y@latest/dist/js/sa11y.umd.min.js";
+            document.body.appendChild(script);
+        }
+
+        document.addEventListener('DOMContentLoaded', addSa11y);
+    }());
+</script>

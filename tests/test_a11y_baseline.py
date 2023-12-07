@@ -12,6 +12,8 @@ from nbconvert_a11y.pytest_axe import JUPYTER_WIDGETS, MATHJAX
 
 from tests.test_smoke import CONFIGURATIONS, NOTEBOOKS, SKIPCI, get_target_html
 
+SA11Y = "sa11y-control-panel"
+
 TPL_NOT_ACCESSIBLE = mark.xfail(reason="template is not accessible")
 HERE = Path(__file__).parent
 EXPORTS = HERE / "exports"
@@ -50,7 +52,7 @@ def test_axe(axe, config, notebook):
     audit = AUDIT / target.with_suffix(".json").name
 
     test = axe(Path.as_uri(target))
-    test.run({"exclude": [JUPYTER_WIDGETS, MATHJAX]})
+    test.run({"exclude": [JUPYTER_WIDGETS, MATHJAX, SA11Y]})
     # this is not a good place to export an audit except to
     # verify what tests apply and what tests don't
     # this could be a good time to export the accessibility tree.

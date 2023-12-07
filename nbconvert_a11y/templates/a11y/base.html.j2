@@ -14,6 +14,8 @@ the notebook experiennce from browse to edit/focus mode.
 
 {%- block html_head_js -%}
 <meta name="color-scheme" content="light">
+{# sa11y needs to be loaded before requirejs #}
+{% if resources.include_sa11y %}{% include "a11y/components/sa11y.html.j2"%}{% endif %}
 {{super()}}
 {%- endblock html_head_js -%}
 

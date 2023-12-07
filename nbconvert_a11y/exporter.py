@@ -67,6 +67,7 @@ class A11yExporter(PostProcess, HTMLExporter):
         config=True
     )
     axe_url = CUnicode(AXE, help="the remote source for the axe resources.").tag(config=True)
+    include_sa11y = Bool(False, help="include sa11y accessibility authoring tool")
     include_settings = Bool(False, help="include configurable accessibility settings dialog.").tag(
         config=True
     )
@@ -132,6 +133,7 @@ class A11yExporter(PostProcess, HTMLExporter):
         resources["accesskey_navigation"] = self.accesskey_navigation
         resources["code_theme"] = THEMES[self.code_theme]
         resources["axe_url"] = self.axe_url
+        resources["include_sa11y"] = self.include_sa11y
 
         return super().from_notebook_node(nb, resources, **kw)
 
