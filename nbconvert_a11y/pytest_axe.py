@@ -18,7 +18,6 @@ from subprocess import CalledProcessError, check_output
 from typing import Any
 
 import exceptiongroup
-from numpy import isin
 from pytest import fixture, mark, param
 
 # selectors for regions of the notebook
