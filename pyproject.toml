@@ -66,7 +66,10 @@ build = "mkdocs build -v"
 serve = "mkdocs serve -v"
 
 [project.entry-points."nbconvert.exporters"]
-a11y = "nbconvert_a11y.a11y_exporter:A11yExporter"
+a11y = "nbconvert_a11y.exporter:A11yExporter"
+a11y-table = "nbconvert_a11y.exporter:A11yExporter"
+a11y-landmark = "nbconvert_a11y.exporter:SectionExporter"
+a11y-list = "nbconvert_a11y.exporter:ListExporter"
 
 [project.entry-points.pytest11]
 axe = "nbconvert_a11y.pytest_axe"

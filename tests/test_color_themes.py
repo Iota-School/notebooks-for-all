@@ -1,17 +1,18 @@
 from nbconvert import get_exporter
 from pytest import fixture, mark, param, xfail
+from nbconvert_a11y.exporter import THEMES
 
 from nbconvert_a11y.pytest_axe import JUPYTER_WIDGETS, MATHJAX, PYGMENTS, AllOf, Axe, Violation
 from tests.test_smoke import CONFIGURATIONS, NOTEBOOKS, get_target_html
 
 LORENZ = NOTEBOOKS / "lorenz-executed.ipynb"
-THEMES = ["a11y", "a11y-high-contrast", "gh", "gh-colorblind", "gh-high", "gotthard", "blinds"]
 
 
-@fixture(params=THEMES)
+@fixture(params=list(THEMES))
 def exporter(request):
     e = get_exporter("a11y")()
     e.color_theme = request.param
+    e.include_settings = True
     e.wcag_priority = "AA"
     yield e
 
