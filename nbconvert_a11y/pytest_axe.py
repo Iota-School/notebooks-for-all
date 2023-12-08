@@ -26,7 +26,6 @@ JUPYTER_WIDGETS = ".jupyter-widgets"
 OUTPUTS = ".jp-OutputArea-output"
 NO_ALT = "img:not([alt])"
 PYGMENTS = ".highlight"
-SA11Y = "sa11y-control-panel"
 
 # axe test tags
 # https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#axe-core-tags
