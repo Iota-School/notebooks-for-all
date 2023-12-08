@@ -8,11 +8,9 @@ from json import dumps
 from pathlib import Path
 
 from pytest import mark, param
-from nbconvert_a11y.pytest_axe import JUPYTER_WIDGETS, MATHJAX
+from nbconvert_a11y.pytest_axe import JUPYTER_WIDGETS, MATHJAX, SA11Y
 
 from tests.test_smoke import CONFIGURATIONS, NOTEBOOKS, SKIPCI, get_target_html
-
-SA11Y = "sa11y-control-panel"
 
 TPL_NOT_ACCESSIBLE = mark.xfail(reason="template is not accessible")
 HERE = Path(__file__).parent
