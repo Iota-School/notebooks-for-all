@@ -59,7 +59,7 @@ jobs:
           playwright install --with-deps chromium
       - name: init node & files
         run: |
-          npm install vnu-jar axe-core
+          npm install axe-core
           doit copy
       - name: init dev module
         run: |
