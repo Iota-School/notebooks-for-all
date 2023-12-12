@@ -11,6 +11,7 @@ from unittest import TestCase
 from pytest import fixture, mark, skip
 
 from nbconvert import get_exporter
+import pytest
 from nbconvert_a11y.pytest_axe import (
     JUPYTER_WIDGETS,
     NO_ALT,
@@ -50,13 +51,14 @@ class DefaultTemplate(TestCase):
         strict=True,
     )
     def test_all(self):
-        raise self.axe.run().raises_allof(
-            Violation["critical-image-alt"],
-            Violation["serious-color-contrast-enhanced"],
-            Violation["serious-aria-input-field-name"],
-            Violation["serious-color-contrast"],
-            Violation["minor-focus-order-semantics"],
-        )
+        exceptions = self.axe.run().reuults.exception()
+        try: raise exceptions
+        except* Violation["critical-image-alt"]: ...
+        except* Violation["serious-color-contrast-enhanced"]: ...
+        except* Violation["serious-aria-input-field-name"]: ...
+        except* Violation["serious-color-contrast"]: ...
+        except* Violation["minor-focus-order-semantics"]: ...
+        pytest.xfail("there are 1 critical, 3 serious, and 1 minor accessibility violations")
 
     @xfail(
         reason="the default pygments theme has priority AA and AAA color contrast issues.",
