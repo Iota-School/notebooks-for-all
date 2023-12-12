@@ -87,6 +87,8 @@ class A11yExporter(PostProcess, HTMLExporter):
     include_cell_index = Bool(
         True, help="show the ordinal cell index, typically this is ignored from notebooks."
     ).tag(config=True)
+    include_visibility = Bool(False, help="include visibility toggle").tag(config=True)
+    include_upload = Bool(False, help="include template for uploading new content").tag(config=True)
     exclude_anchor_links = Bool(True).tag(config=True)
     code_theme = Enum(list(THEMES), "gh-high", help="an accessible pygments dark/light theme").tag(
         config=True
@@ -130,6 +132,8 @@ class A11yExporter(PostProcess, HTMLExporter):
         resources["include_settings"] = self.include_settings
         resources["include_help"] = self.include_help
         resources["include_toc"] = self.include_toc
+        resources["include_visibility"] = self.include_upload
+        resources["include_upload"] = self.include_upload
         resources["wcag_priority"] = self.wcag_priority
         resources["accesskey_navigation"] = self.accesskey_navigation
         resources["code_theme"] = THEMES[self.code_theme]

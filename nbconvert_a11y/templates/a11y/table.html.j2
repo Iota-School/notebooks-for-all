@@ -4,6 +4,37 @@
 cell_form, cell_source, cell_metadata, cell_output with context%}
 {% set COLUMNS = ["index", "execution_count", "cell_type", "toolbar", "started_at", "completed_at", "source", "loc",
 "metadata", "outputs"] %}
+
+{% macro cell_row(cell, loop) %}
+<tr role="listitem" class="cell {{cell.cell_type}}"
+    aria-labelledby="nb-cell-label {{loop.index}} cell-{{loop.index}}-cell_type"
+    data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %} {% endif %}
+    data-index="{{loop.index}}">
+    <td role="none" class="nb-anchor">{{cell_anchor(loop.index, cell.cell_type)}}</td>
+    <td role="none" class="nb-execution_count" hidden>{{cell_execution_count(loop.index, cell.execution_count)}}
+    </td>
+    <td role="none" class="nb-cell_type" hidden>{{cell_cell_type(loop.index, cell.cell_type)}}</td>
+    <td role="none" class="nb-toolbar" hidden>{{cell_form(loop.index)}}</td>
+    <td role="none" class="nb-start" id="cell-{{loop.index}}-start" hidden>
+        {% set t0 = cell.get("metadata", {}).get("execution", {}).get("iopub.execute_input", "") %}
+        {{time(t0)}}
+    </td>
+    <td role="none" class="nb-end" id="cell-{{loop.index}}-end" hidden>
+        {% set t1 = cell.get("metadata", {}).get("execution", {}).get("shell.execute_reply", "") %}
+        {{time(t1)}}
+    </td>
+    <td role="none" class="nb-source" {{hide(cell.cell_type=="markdown" )}}>{{cell_source(loop.index,
+        cell.source, cell.cell_type, cell.execution_count)}}</td>
+    <td role="none" class="nb-metadata" hidden>{{cell_metadata(loop.index, cell.get("metadata", {}))}}</td>
+    {# it was noted in a video that lines of code were helpful in assistive descriptions.
+    lines of code are part of the gestalt of code forms. #}
+    <td role="none" class="nb-loc" id="cell-{{loop.index}}-loc" hidden>{{loc(cell)}}</td>
+    <td role="none" class="nb-outputs">{{cell_output(loop.index, cell, cell.source, cell.outputs,
+        cell.cell_type,
+        cell.execution_count)}}</td>
+</tr>
+{% endmacro %}
+
 {% block body_loop %}
 {# the most consistent implementation would connect the input visibility to a form #}
 <table id="cells" role="presentation">
@@ -15,37 +46,13 @@ cell_form, cell_source, cell_metadata, cell_output with context%}
         </tr>
         {%- for cell in nb.cells -%}
         {% block any_cell scoped %}
-        <tr role="listitem" class="cell {{cell.cell_type}}"
-            aria-labelledby="nb-cell-label {{loop.index}} cell-{{loop.index}}-cell_type"
-            data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %} {% endif %}
-            data-index="{{loop.index}}">
-            <td role="none" class="nb-anchor">{{cell_anchor(loop.index, cell.cell_type)}}</td>
-            <td role="none" class="nb-execution_count" hidden>{{cell_execution_count(loop.index, cell.execution_count)}}
-            </td>
-            <td role="none" class="nb-cell_type" hidden>{{cell_cell_type(loop.index, cell.cell_type)}}</td>
-            <td role="none" class="nb-toolbar" hidden>{{cell_form(loop.index)}}</td>
-            <td role="none" class="nb-start" id="cell-{{loop.index}}-start" hidden>
-                {% set t0 = cell.metadata.get("execution", {}).get("iopub.execute_input", "") %}
-                {{time(t0)}}
-            </td>
-            <td role="none" class="nb-end" id="cell-{{loop.index}}-end" hidden>
-                {% set t1 = cell.metadata.get("execution", {}).get("shell.execute_reply", "") %}
-                {{time(t1)}}
-            </td>
-            <td role="none" class="nb-source" {{hide(cell.cell_type=="markdown" )}}>{{cell_source(loop.index,
-                cell.source, cell.cell_type, cell.execution_count)}}</td>
-            <td role="none" class="nb-metadata" hidden>{{cell_metadata(loop.index, cell.metadata)}}</td>
-            {# it was noted in a video that lines of code were helpful in assistive descriptions.
-            lines of code are part of the gestalt of code forms. #}
-            <td role="none" class="nb-loc" id="cell-{{loop.index}}-loc" hidden>{{loc(cell)}}</td>
-            <td role="none" class="nb-outputs">{{cell_output(loop.index, cell, cell.source, cell.outputs,
-                cell.cell_type,
-                cell.execution_count)}}</td>
-        </tr>
+        {{cell_row(cell, loop)}}
         {% endblock any_cell %}
         {%- endfor -%}
     </tbody>
 </table>
+
+
 <table class="nb-cells-footer" hidden>
     <tbody>
         {# needs a header row #}
@@ -86,3 +93,11 @@ cell_form, cell_source, cell_metadata, cell_output with context%}
     </tbody>
 </table>
 {% endblock body_loop %}
+
+{% block template_element %}
+<template>
+    <table>
+        {{cell_row(dict(source=""), dict(index=""))}}
+    </table>
+</template>
+{% endblock %}

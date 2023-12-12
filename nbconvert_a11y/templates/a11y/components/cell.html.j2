@@ -2,9 +2,9 @@
 {% from "a11y/components/displays.html.j2" import cell_display_priority with context %}
 
 {% macro cell_anchor(i, cell_type, hidden=False)%}
-<a href="#{{i}}" id="{{i}}" aria-labelledby="nb-cell-label {{i}}" {% if resources.accesskey_navigation and (i < 10)
-    %}accesskey="{{i}}" {% endif %} aria-describedby="nb-{{cell_type}}-label nb-cell-label cell-{{i}}-loc nb-loc-label"
-    {{hide(hidden)}}>{{i}}</a>
+<a href="#{{i}}" id="{{i}}" aria-labelledby="nb-cell-label {{i}}" {% if resources.accesskey_navigation and isinstance(i,
+    int) and (i < 10) %}accesskey="{{i}}" {% endif %}
+    aria-describedby="nb-{{cell_type}}-label nb-cell-label cell-{{i}}-loc nb-loc-label" {{hide(hidden)}}>{{i}}</a>
 {% endmacro %}
 
 {% macro cell_form(i, cell_type, hidden=True) %}
