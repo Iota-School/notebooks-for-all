@@ -4,13 +4,12 @@
 * test the accessibility of nbconvert-a11y dialogs
 """
 
-from json import dumps
 from pathlib import Path
 
 from pytest import mark, param
-from nbconvert_a11y.pytest_axe import JUPYTER_WIDGETS, MATHJAX
 
-from tests.test_smoke import CONFIGURATIONS, NOTEBOOKS, SKIPCI, get_target_html
+from nbconvert_a11y.pytest_axe import JUPYTER_WIDGETS, MATHJAX
+from tests.test_smoke import CONFIGURATIONS, NOTEBOOKS, get_target_html
 
 SA11Y = "sa11y-control-panel"
 
@@ -41,7 +40,7 @@ TREE = AUDIT / "tree"
     ],
 )
 def test_axe(axe, config, notebook):
-    """verify the baseline templates satisify all rules update AAA.
+    """Verify the baseline templates satisify all rules update AAA.
 
     any modifications to the template can only degrade accessibility.
     this baseline is critical for adding more features. all testing piles

@@ -4,18 +4,18 @@ this design assumes __notebooks are a feed of forms__.
 """
 
 import builtins
-from io import StringIO
 import json
 from contextlib import suppress
 from datetime import datetime
 from functools import lru_cache
+from io import StringIO
 from pathlib import Path
 
 import bs4
-from nbconvert import Exporter
 import nbformat.v4
 import pygments
 from bs4 import BeautifulSoup
+from nbconvert import Exporter
 from nbconvert.exporters.html import HTMLExporter
 from traitlets import Bool, CUnicode, Enum, Unicode
 
@@ -138,7 +138,7 @@ class A11yExporter(PostProcess, HTMLExporter):
         return super().from_notebook_node(nb, resources, **kw)
 
     def post_process_html(self, body):
-        """a final pass at the exported html to add table of contents, heading links, and other a11y affordances."""
+        """A final pass at the exported html to add table of contents, heading links, and other a11y affordances."""
         soup = soupify(body)
         describe_main(soup)
         heading_links(soup)
@@ -180,12 +180,12 @@ def get_markdown_renderer():
 
 
 def get_markdown(md, **kwargs):
-    """exporter markdown as html"""
+    """Exporter markdown as html"""
     return get_markdown_renderer().render("".join(md), **kwargs)
 
 
 def highlight(code, lang="python", attrs=None, experimental=True):
-    """highlight code blocks"""
+    """Highlight code blocks"""
     import html
 
     import pygments
@@ -216,7 +216,7 @@ def soupify(body: str) -> BeautifulSoup:
 
 
 def mdtoc(html):
-    """create a table of contents in markdown that will be converted to html"""
+    """Create a table of contents in markdown that will be converted to html"""
     import io
 
     toc = io.StringIO()
@@ -236,12 +236,12 @@ def mdtoc(html):
 
 
 def toc(html):
-    """create an html table of contents"""
+    """Create an html table of contents"""
     return get_markdown(mdtoc(html))
 
 
 def heading_links(html):
-    """convert headings into links"""
+    """Convert headings into links"""
     for header in html.select(":is(h1,h2,h3,h4,h5,h6):not([role])"):
         id = header.attrs.get("id")
         if not id:
@@ -271,22 +271,22 @@ def count_cell_loc(cell):
 
 
 def count_loc(nb):
-    """count total significant lines of code in the document"""
+    """Count total significant lines of code in the document"""
     return sum(map(count_cell_loc, nb.cells))
 
 
 def count_outputs(nb):
-    """count total number of cell outputs"""
+    """Count total number of cell outputs"""
     return sum(map(len, (x.get("outputs", "") for x in nb.cells)))
 
 
 def count_code_cells(nb):
-    """count total number of code cells"""
+    """Count total number of code cells"""
     return len([None for x in nb.cells if x["cell_type"] == "code"])
 
 
 def describe_main(soup):
-    """add REFIDs to aria-describedby"""
+    """Add REFIDs to aria-describedby"""
     x = soup.select_one("#toc > details > summary")
     if x:
         x.attrs["aria-describedby"] = soup.select_one("main").attrs[
@@ -295,7 +295,7 @@ def describe_main(soup):
 
 
 def ordered(nb) -> str:
-    """measure if the notebook is ordered"""
+    """Measure if the notebook is ordered"""
     start = 0
     for cell in nb.cells:
         if cell["cell_type"] == "code":

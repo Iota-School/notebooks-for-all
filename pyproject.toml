@@ -201,7 +201,7 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-isort.known-first-party = ["importnb"]
+isort.known-first-party = ["importnb", "nbconvert_a11y", "tests"]
 ignore = ["D203", "D213", "COM812", "ISC001"]
 select = [
   "A",

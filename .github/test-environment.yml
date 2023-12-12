@@ -2,31 +2,46 @@ name: test-nbconvert-a11y
 channels:
   - conda-forge
   - microsoft
+  - nodefaults
 dependencies:
-  - python=3.11
-  - openjdk
-  - pip
-  - pip:
-    - pytest-playwright
-    - pytest-html
-    - accessible-pygments
-    - requests-cache
-    - markdown-it-py[plugins,linkify]
-    - python-slugify
-    - html5lib
-    - build
-  - nodejs
-  - playwright
+  # run
+  - accessible-pygments
+  - exceptiongroup
+  - html5lib
   - nbconvert
-  - pytest
-  - pytest-xdist
-  - pytest-sugar
-  - matplotlib-base
-  - numpy
-  - ipywidgets
-  - beautifulsoup4
-  - scipy
+  - python-slugify
+  - mdit-py-plugins
+  - linkify-it-py >=1,<3
+  - markdown-it-py
+  # runtimes
+  - python =3.11
+  - openjdk
+  - nodejs =20
+  # build
   - doit
-  - mkdocs-material
-  - mkdocstrings[python]
+  - hatch
+  - hatch-vcs
+  - pip
+  - python-build
+  - yarn =3.6
+  # audit
   - vnu-validator
+  # lint
+  - ruff
+  # deps
+  - beautifulsoup4
+  - ipywidgets
+  - matplotlib-base
+  - mkdocs-material
+  - mkdocstrings
+  - numpy
+  - playwright
+  - pytest
+  - pytest-html
+  - pytest-playwright
+  - pytest-sugar
+  - pytest-xdist
+  - requests-cache
+  # report
+  - scipy
+  - pandas

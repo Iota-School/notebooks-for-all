@@ -9,8 +9,9 @@ from os import environ
 from pathlib import Path
 from unittest import TestCase
 
-from pytest import fixture, skip, mark
-from nbconvert_a11y.pytest_axe import JUPYTER_WIDGETS, MATHJAX, NO_ALT, PYGMENTS, AllOf, Violation
+from pytest import fixture, mark, skip
+
+from nbconvert_a11y.pytest_axe import JUPYTER_WIDGETS, NO_ALT, PYGMENTS, AllOf, Violation
 from tests.test_smoke import CONFIGURATIONS, NOTEBOOKS, get_target_html
 
 # only run these tests when the CI environment variables are defined.
@@ -35,7 +36,7 @@ class DefaultTemplate(TestCase):
 
     @xfail(reason="the default pygments theme has priority AA and AAA color contrast issues.")
     def test_highlight_pygments(self):
-        """the default template has two serious color contrast violations.
+        """The default template has two serious color contrast violations.
 
         an issue needs to be opened or referenced.
         """
@@ -47,7 +48,7 @@ class DefaultTemplate(TestCase):
 
     @xfail(reason="widgets have not recieved a concerted effort.")
     def test_widget_display(self):
-        """the simple lorenz widget generates one minor and one serious accessibility violation."""
+        """The simple lorenz widget generates one minor and one serious accessibility violation."""
         raise self.axe.run({"include": [JUPYTER_WIDGETS], "exclude": [NO_ALT]}).raises_allof(
             Violation["minor-focus-order-semantics"],
             Violation["serious-aria-input-field-name"],

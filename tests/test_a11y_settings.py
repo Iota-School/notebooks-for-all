@@ -10,10 +10,11 @@ NEEDS_WORK = "state needs work"
 
 LORENZ_EXECUTED = get_target_html(CONFIGURATIONS / "a11y.py", NOTEBOOKS / "lorenz-executed.ipynb")
 
-@fixture
+
+@fixture()
 def lorenz(page):
     axe = Axe(page=page, url=LORENZ_EXECUTED.as_uri())
-    yield axe.configure()
+    return axe.configure()
 
 
 @mark.parametrize(

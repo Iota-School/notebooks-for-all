@@ -12,11 +12,9 @@ from os import environ
 from pathlib import Path
 from shutil import copyfile
 
+import jupyter_core.paths
 import nbconvert.nbconvertapp
 from pytest import mark, param
-
-import nbconvert_a11y
-import jupyter_core.paths
 
 from nbconvert_a11y.exporter import soupify
 
@@ -100,7 +98,10 @@ def test_export_notebooks(config, notebook):
     TARGET.write_text(html)
     LOGGER.debug(f"writing html to {TARGET}")
 
-@mark.parametrize("target", [get_target_html(CONFIGURATIONS / "a11y.py", NOTEBOOKS / "lorenz-executed.ipynb")])
+
+@mark.parametrize(
+    "target", [get_target_html(CONFIGURATIONS / "a11y.py", NOTEBOOKS / "lorenz-executed.ipynb")]
+)
 def test_a11y_template_content(target):
     soup = soupify(target.read_text())
 

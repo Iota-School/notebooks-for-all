@@ -1,9 +1,9 @@
 from nbconvert import get_exporter
-from pytest import fixture, mark, param, xfail
-from nbconvert_a11y.exporter import THEMES
+from pytest import fixture
 
-from nbconvert_a11y.pytest_axe import JUPYTER_WIDGETS, MATHJAX, PYGMENTS, AllOf, Axe, Violation
-from tests.test_smoke import CONFIGURATIONS, NOTEBOOKS, get_target_html
+from nbconvert_a11y.exporter import THEMES
+from nbconvert_a11y.pytest_axe import Axe
+from tests.test_smoke import NOTEBOOKS
 
 LORENZ = NOTEBOOKS / "lorenz-executed.ipynb"
 
@@ -14,14 +14,14 @@ def exporter(request):
     e.color_theme = request.param
     e.include_settings = True
     e.wcag_priority = "AA"
-    yield e
+    return e
 
 
-@fixture
+@fixture()
 def lorenz(page, tmp_path, exporter):
     tmp = tmp_path / f"{exporter.color_theme}.html"
     tmp.write_text(exporter.from_filename(LORENZ)[0])
-    yield Axe(page=page, url=tmp.absolute().as_uri()).configure()
+    return Axe(page=page, url=tmp.absolute().as_uri()).configure()
 
 
 def test_dark_themes(lorenz):
