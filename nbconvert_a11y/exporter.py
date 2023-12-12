@@ -15,9 +15,10 @@ import bs4
 import nbformat.v4
 import pygments
 from bs4 import BeautifulSoup
+from traitlets import Bool, CUnicode, Enum, Unicode
+
 from nbconvert import Exporter
 from nbconvert.exporters.html import HTMLExporter
-from traitlets import Bool, CUnicode, Enum, Unicode
 
 singleton = lru_cache(1)
 

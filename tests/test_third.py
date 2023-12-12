@@ -6,17 +6,38 @@ upstream of our control.
 
 from functools import partial
 from os import environ
-from pathlib import Path
 from unittest import TestCase
 
 from pytest import fixture, mark, skip
 
-from nbconvert_a11y.pytest_axe import JUPYTER_WIDGETS, NO_ALT, PYGMENTS, AllOf, Violation
-from tests.test_smoke import CONFIGURATIONS, NOTEBOOKS, get_target_html
+from nbconvert import get_exporter
+from nbconvert_a11y.pytest_axe import (
+    JUPYTER_WIDGETS,
+    NO_ALT,
+    PYGMENTS,
+    SA11Y,
+    AllOf,
+    Violation,
+)
+from tests.test_color_themes import LORENZ
 
 # only run these tests when the CI environment variables are defined.
 environ.get("CI") or skip(allow_module_level=True)
 xfail = partial(mark.xfail, raises=AllOf, strict=True)
+
+
+@fixture()
+def exporter(request):
+    e = get_exporter("html")()
+    return e
+
+
+@fixture()
+def a11y_exporter(request):
+    e = get_exporter("a11y")()
+    e.wcag_priority = "AA"
+    e.include_sa11y = True
+    return e
 
 
 class DefaultTemplate(TestCase):
@@ -24,7 +45,10 @@ class DefaultTemplate(TestCase):
 
     # test all of the accessibility violations
     # then incrementally explain them in smaller tests.
-    @xfail(reason="there is a lot of complexity in ammending accessibility in many projects")
+    @xfail(
+        reason="there is a lot of complexity in ammending accessibility in many projects",
+        strict=True,
+    )
     def test_all(self):
         raise self.axe.run().raises_allof(
             Violation["critical-image-alt"],
@@ -34,7 +58,10 @@ class DefaultTemplate(TestCase):
             Violation["minor-focus-order-semantics"],
         )
 
-    @xfail(reason="the default pygments theme has priority AA and AAA color contrast issues.")
+    @xfail(
+        reason="the default pygments theme has priority AA and AAA color contrast issues.",
+        strict=True,
+    )
     def test_highlight_pygments(self):
         """The default template has two serious color contrast violations.
 
@@ -46,7 +73,7 @@ class DefaultTemplate(TestCase):
             Violation["serious-color-contrast"],
         )
 
-    @xfail(reason="widgets have not recieved a concerted effort.")
+    @xfail(reason="widgets have not recieved a concerted effort.", raises=AllOf, strict=True)
     def test_widget_display(self):
         """The simple lorenz widget generates one minor and one serious accessibility violation."""
         raise self.axe.run({"include": [JUPYTER_WIDGETS], "exclude": [NO_ALT]}).raises_allof(
@@ -59,10 +86,22 @@ class DefaultTemplate(TestCase):
     # test pandas
 
     @fixture(autouse=True)
-    def lorenz(
-        self,
-        axe,
-        config=(CONFIGURATIONS / (a := "default")).with_suffix(".py"),
-        notebook=(NOTEBOOKS / (b := "lorenz-executed")).with_suffix(".ipynb"),
-    ):
-        self.axe = axe(Path.as_uri(get_target_html(config, notebook))).configure()
+    def lorenz(self, axe, tmp_path, exporter):
+        tmp = (tmp_path / LORENZ.name).with_suffix(".html")
+        tmp.write_text(exporter.from_filename(LORENZ)[0])
+        self.axe = axe(tmp.as_uri().strip()).configure()
+
+
+class A11yTemplate(TestCase):
+    @xfail(raises=AllOf, strict=True)
+    def test_sa11y(self):
+        """The simple lorenz widget generates one minor and one serious accessibility violation."""
+        raise self.axe.run({"include": [SA11Y]}).raises_allof(
+            Violation["serious-label-content-name-mismatch"]
+        )
+
+    @fixture(autouse=True)
+    def lorenz(self, axe, tmp_path, a11y_exporter):
+        tmp = (tmp_path / LORENZ.name).with_suffix(".html")
+        tmp.write_text(a11y_exporter.from_filename(LORENZ)[0])
+        self.axe = axe(tmp.as_uri().strip()).configure()

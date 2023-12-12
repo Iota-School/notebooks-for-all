@@ -13,9 +13,9 @@ from pathlib import Path
 from shutil import copyfile
 
 import jupyter_core.paths
-import nbconvert.nbconvertapp
 from pytest import mark, param
 
+import nbconvert.nbconvertapp
 from nbconvert_a11y.exporter import soupify
 
 SKIP_BASELINE = "baseline tests skipped locally"

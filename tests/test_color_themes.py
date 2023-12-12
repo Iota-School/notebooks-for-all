@@ -1,6 +1,6 @@
-from nbconvert import get_exporter
 from pytest import fixture
 
+from nbconvert import get_exporter
 from nbconvert_a11y.exporter import THEMES
 from nbconvert_a11y.pytest_axe import Axe
 from tests.test_smoke import NOTEBOOKS
