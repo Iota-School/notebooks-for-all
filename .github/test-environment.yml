@@ -41,6 +41,7 @@ dependencies:
   - pytest-playwright
   - pytest-sugar
   - pytest-xdist
+  - pytest-flask
   - requests-cache
   # report
   - scipy

@@ -12,8 +12,8 @@ LORENZ_EXECUTED = get_target_html(CONFIGURATIONS / "a11y.py", NOTEBOOKS / "loren
 
 
 @fixture()
-def lorenz(page):
-    axe = Axe(page=page, url=LORENZ_EXECUTED.as_uri())
+def lorenz(page, notebook):
+    axe = Axe(page=page, url=notebook("a11y", "lorenz-executed.ipynb", config="a11y.py"))
     return axe.configure()
 
 

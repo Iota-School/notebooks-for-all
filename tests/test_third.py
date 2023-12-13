@@ -8,6 +8,7 @@ from functools import partial
 from os import environ
 from unittest import TestCase
 
+import pytest
 from pytest import fixture, mark, skip
 
 from nbconvert import get_exporter
@@ -45,63 +46,67 @@ class DefaultTemplate(TestCase):
 
     # test all of the accessibility violations
     # then incrementally explain them in smaller tests.
-    @xfail(
-        reason="there is a lot of complexity in ammending accessibility in many projects",
-        strict=True,
-    )
-    def test_all(self):
-        raise self.axe.run().raises_allof(
-            Violation["critical-image-alt"],
-            Violation["serious-color-contrast-enhanced"],
-            Violation["serious-aria-input-field-name"],
-            Violation["serious-color-contrast"],
-            Violation["minor-focus-order-semantics"],
-        )
+    def xfail_all(self):
+        exceptions = self.axe.run().results.exception()
+        try:
+            raise exceptions
+        except* Violation["critical-image-alt"]:
+            ...
+        except* Violation["serious-color-contrast-enhanced"]:
+            ...
+        except* Violation["serious-aria-input-field-name"]:
+            ...
+        except* Violation["serious-color-contrast"]:
+            ...
+        except* Violation["minor-focus-order-semantics"]:
+            ...
+        pytest.xfail("there are 1 critical, 3 serious, and 1 minor accessibility violations")
 
-    @xfail(
-        reason="the default pygments theme has priority AA and AAA color contrast issues.",
-        strict=True,
-    )
-    def test_highlight_pygments(self):
+    def xfail_pygments_highlight_default(self):
         """The default template has two serious color contrast violations.
 
         an issue needs to be opened or referenced.
         """
         # further verification would testing the nbviewer layer.
-        raise self.axe.run({"include": [PYGMENTS]}).raises_allof(
-            Violation["serious-color-contrast-enhanced"],
-            Violation["serious-color-contrast"],
-        )
+        exceptions = self.axe.run({"include": [PYGMENTS]}).results.exception()
+        try:
+            raise exceptions
+        except* Violation["serious-color-contrast-enhanced"]:
+            ...
+        except* Violation["serious-color-contrast"]:
+            ...
+        pytest.xfail("there are 2 serious color contrast violations.")
 
-    @xfail(reason="widgets have not recieved a concerted effort.", raises=AllOf, strict=True)
-    def test_widget_display(self):
+    def xfail_widget_display(self):
         """The simple lorenz widget generates one minor and one serious accessibility violation."""
-        raise self.axe.run({"include": [JUPYTER_WIDGETS], "exclude": [NO_ALT]}).raises_allof(
-            Violation["minor-focus-order-semantics"],
-            Violation["serious-aria-input-field-name"],
-        )
-
-    # todo test mermaid
-    # test widgets kitchen sink
-    # test pandas
+        exceptions = self.axe.run(
+            {"include": [JUPYTER_WIDGETS], "exclude": [NO_ALT]}
+        ).results.exception()
+        try:
+            raise exceptions
+        except* Violation["minor-focus-order-semantics"]:
+            ...
+        except* Violation["serious-aria-input-field-name"]:
+            ...
+        pytest.xfail("widgets have not recieved a concerted effort.")
 
     @fixture(autouse=True)
-    def lorenz(self, axe, tmp_path, exporter):
-        tmp = (tmp_path / LORENZ.name).with_suffix(".html")
-        tmp.write_text(exporter.from_filename(LORENZ)[0])
-        self.axe = axe(tmp.as_uri().strip()).configure()
-
+    def url(self, axe, notebook):
+        self.axe = axe(notebook("html", "lorenz-executed.ipynb")).configure()
 
 class A11yTemplate(TestCase):
-    @xfail(raises=AllOf, strict=True)
-    def test_sa11y(self):
+    def xfail_sa11y(self):
         """The simple lorenz widget generates one minor and one serious accessibility violation."""
-        raise self.axe.run({"include": [SA11Y]}).raises_allof(
-            Violation["serious-label-content-name-mismatch"]
-        )
+        exceptions = self.axe.run({"include": [SA11Y]}).results.exception()
+        try:
+            raise exceptions
+        except* Violation["serious-label-content-name-mismatch"]:
+            ...
+        pytest.xfail("an issue report needs to be filed with sa11y.")
 
     @fixture(autouse=True)
-    def lorenz(self, axe, tmp_path, a11y_exporter):
-        tmp = (tmp_path / LORENZ.name).with_suffix(".html")
-        tmp.write_text(a11y_exporter.from_filename(LORENZ)[0])
-        self.axe = axe(tmp.as_uri().strip()).configure()
+    def url(self, axe, notebook):
+        self.axe = axe(notebook("a11y", "lorenz-executed.ipynb", **{
+            "include_sa11y": True
+        })).configure()
+        print(self.axe.url)
