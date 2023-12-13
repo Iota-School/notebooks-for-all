@@ -54,6 +54,12 @@ def make_app():
         e = get_exporter(exporter)(**params)
         return e.from_filename(NOTEBOOKS / name)[0]
 
+    @app.route("/bad")
+    def bad():
+        if request.query_string:
+            assert False, "this causes a flask failure when the query string is non empty"
+        return ""
+
     return app
 
 
