@@ -73,6 +73,7 @@ a11y-list = "nbconvert_a11y.exporter:ListExporter"
 
 [project.entry-points.pytest11]
 axe = "nbconvert_a11y.pytest_axe"
+vnu = "nbconvert_a11y.pytest_w3c"
 
 [tool.hatch.build.targets.wheel.shared-data]
 "nbconvert_a11y/templates" = "share/jupyter/nbconvert/templates"
@@ -97,7 +98,6 @@ minversion = "6.0"
 addopts = "-vvv -pno:importnb"
 testpaths = ["tests", "test_playwright.py"]
 norecursedirs = ["tests/exports", "tests/notebooks", "*checkpoints"]
-
 
 [tool.hatch.envs.test]
 features = ["test", "audit"]

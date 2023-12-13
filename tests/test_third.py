@@ -6,9 +6,9 @@ upstream of our control.
 
 from os import environ
 from unittest import TestCase
-from flask import url_for
 
 import pytest
+from flask import url_for
 from pytest import fixture, skip
 
 from nbconvert_a11y.pytest_axe import (
@@ -79,6 +79,7 @@ class DefaultTemplate(TestCase):
     def url(self, axe, notebook):
         self.axe = axe(notebook("html", "lorenz-executed.ipynb")).configure()
 
+
 class A11yTemplate(TestCase):
     def xfail_sa11y(self):
         """The simple lorenz widget generates one minor and one serious accessibility violation."""
@@ -92,18 +93,19 @@ class A11yTemplate(TestCase):
 
     @fixture(autouse=True)
     def url(self, axe, notebook):
-        self.axe = axe(notebook("a11y", "lorenz-executed.ipynb", **{
-            "include_sa11y": True
-        })).configure()
+        self.axe = axe(notebook("a11y", "lorenz-executed.ipynb", include_sa11y=True)).configure()
+
 
 class FlaskDev(TestCase):
     """there are accessibility violations in the flask debug templates.
-    
+
     flask is taught commonly enough that having accessible debugging sessions
-    is critical for assistive technology users learning app development."""
-    def test_flask_dev(self):
+    is critical for assistive technology users learning app development.
+    """
+
+    def xfail_flask_dev(self):
         print(self.axe.url)
-        exception =  self.axe.run().results.exception()
+        exception = self.axe.run().results.exception()
         try:
             raise exception
         except* Violation["serious-color-contrast-enhanced"]:
@@ -119,7 +121,6 @@ class FlaskDev(TestCase):
         finally:
             pytest.xfail("there are 2 serious, 2 moderate, and 1 minor accessibility violations")
 
-    
     @fixture(autouse=True)
     def url(self, axe, live_server):
         # the query string causes the web server to raise an error so we can test flask dev tools

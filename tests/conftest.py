@@ -21,6 +21,10 @@ CI = environ.get("CI")
 TestLoader.testMethodPrefix = "test", "xfail"
 
 
+def pytest_configure(config):
+    config.addinivalue_line("python_functions", ("test_", "xfail_"))
+
+
 def format_qs_value(x):
     for x in map(bytes.decode, x):
         if x in {"True", False}:
