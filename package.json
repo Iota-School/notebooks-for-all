@@ -3,6 +3,17 @@
   "private": true,
   "version": "0.0.1",
   "dependencies": {
-    "axe-core": "^4.8.2"
+    "@guidepup/jest": "^0.2.0",
+    "@guidepup/virtual-screen-reader": "^0.15.0",
+    "axe-core": "^4.8.2",
+    "jest-environment-jsdom": "^29.7.0",
+    "jsdom": "^23.0.1"
+  },
+  "scripts": {
+    "virtual-screen-reader": "tests/virtual-screen-reader.js",
+    "vsr": "tests/virtual-screen-reader.js"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
