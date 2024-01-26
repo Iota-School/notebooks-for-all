@@ -1,4 +1,13 @@
-/* style variables */
+/* # accessible css configurations
+
+we define these high level variables to allow for configuration during use and testing.
+we are not sure what the preferred default values are for these any accessible notebooks features.
+the variables specify critical degrees of freedom in the notebook style.
+
+## notebook interface specific css variables
+
+*/
+
 :root {
     --nb-focus-width: 3px;
     --nb-accent-color: auto;
@@ -10,6 +19,8 @@
     --nb-line-height: 1.5;
 }
 
+/* map css variables to css properties on the `body` elements.
+this mapping turns out css variables into user interfaces. */
 
 body {
     font-size: var(--nb-font-size);
@@ -21,30 +32,132 @@ body {
     width: calc(100% - 2*var(--nb-margin));
 }
 
-/* align checkboxes with buttons */
-input[type="checkbox"] {
-    vertical-align: middle;
+/* ## notebook settings
+
+the notebook settings interface connects configurable css features to the user.
+we use dialog elements to represents an element that should be hidden by default.
+it turns out there are two ways to layout `dialog` elements. 
+they can be used as modals or block elements.
+we extract this dual purpose to provide both configurations to the user.
+
+*/
+
+dialog form>* {
+    display: block;
+}
+
+#nb-dialogs details[open]~dialog {
+    position: relative;
 }
 
 
-#cells .cell,
+/* ## wcag accessibility guidelines as a feature
+
+flexibility is the future of assistive interfaces.
+it is not in the purvey of privileged developers and inaccessible systems to decide what priority accessibility is.
+it is the fucking priority.
+
+in this implementation, we want to satisfy broad user needs by making a lot of features configurable.
+one configurable feature is the accessibility priority. 
+experienced developers may need less assistive features as they spend more time with an interface.
+
+### buttons sizes
+
+WCAG 2.1 defines a huge stinking AAA hit size for buttons. its beautiful.
+
+/* satisfy AAA 2.5.5 */
+
+.wcag-aaa button,
+.wcag-aaa input[type=checkbox] {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+.wcag-aaa a {
+    font-size: max(44px, var(--nb-font-size));
+}
+
+
+/* WCAG 2.2 clarified a AA button size that is used to style checkboxes and buttons. */
+/* satisfy AA 2.5.8 minimum target requirement */
+.wcag-aa button,
+.wcag-aa input[type=checkbox] {
+    min-height: 24px;
+    min-width: 24px;
+}
+
+.wcag-aa a {
+    font-size: max(24px, var(--nb-font-size));
+}
+
+/* ### native textareas for AAA priority.
+
+our AAA priority choices often ensure that third party libraries can not compromise the accessibility of notebook.
+the design decisions are focused native elements so that the assistive technology users have consistent expectations and outcomes.
+
+*/
+
+.wcag-a textarea[name=source],
+.wcag-aa textarea[name=source],
+.wcag-aaa textarea[name=source]~* {
+    display: none;
+}
+
+
+/* ## notebook components layout */
+
+td[role="none"]:not([hidden]) {
+    display: unset;
+}
+
+#cells tr.cell,
 #cells tbody {
     display: flex;
     flex-direction: column;
 }
 
-/* on firefox, the input and output become interactive when there is overflow.*/
+[reversed]#cells tbody {
+    flex-direction: column-reverse;
+}
+
+/* hide the visual output area when there are no outputs. 
+assistive technologies will recieve an audible notification that there are not outputs. */
+
+fieldset[data-outputs="0"] {
+    display: none;
+}
+
+/* ## modifications to html defaults 
+
+### focus 
+
+there nothing to be said about this topic that [sara soueidan](https://www.sarasoueidan.com/blog/focus-indicators/) hasn't said.
+we start with her [universal focus recommendation](https://www.sarasoueidan.com/blog/focus-indicators/#a-%E2%80%98universal%E2%80%99-focus-indicator).
+
+*/
+
+
+
+.cell:focus-within,
+:focus-visible {
+    outline: max(var(--nb-focus-width), 1px) solid;
+    box-shadow: 0 0 0 calc(2 * max(var(--nb-focus-width), 1px));
+}
+
+
+/* on firefox, the input and output become interactive when there is overflow. chrome fixed this recently find reference.*/
 textarea[name=source],
 .cell>td>details {
     overflow: auto;
     min-width: 0;
 }
 
-
 #nb-settings li::marker,
 summary[inert]::marker {
     content: "";
 }
+
+/* ### inheriting styles */
 
 input,
 select,
@@ -67,16 +180,13 @@ textarea[name=source] {
     resize: vertical;
 }
 
-.cell:focus-within,
-:focus-visible {
-    outline: max(var(--nb-focus-width), 1px) solid;
-    box-shadow: 0 0 0 calc(2 * max(var(--nb-focus-width), 1px));
+
+/* align checkboxes with buttons */
+input[type="checkbox"] {
+    vertical-align: middle;
 }
 
-#nb-dialogs details[open]~dialog {
-    position: relative;
-}
-
+/* ## custom class selectors */
 
 #nb-dialogs details:not([open])~dialog:not([open]):not(:focus-within):not(:active),
 /* legend:not(:focus-within):not(:active), */
@@ -89,41 +199,4 @@ details.log:not([open])+table,
     position: absolute;
     white-space: nowrap;
     width: 1px;
-}
-
-dialog form>* {
-    display: block;
-}
-
-/* satisfy AA 2.5.8 minimum target requirement */
-.wcag-aa button,
-.wcag-aa input[type=checkbox] {
-    min-height: 24px;
-    min-width: 24px;
-}
-
-.wcag-aa a {
-    font-size: max(24px, var(--nb-font-size));
-}
-
-/* satisfy AAA 2.5.5 */
-.wcag-aaa button,
-.wcag-aaa input[type=checkbox] {
-    min-height: 44px;
-    min-width: 44px;
-}
-
-.wcag-aaa a {
-    font-size: max(44px, var(--nb-font-size));
-}
-
-.wcag-a textarea[name=source],
-.wcag-aa textarea[name=source],
-.wcag-aaa textarea[name=source]~* {
-    display: none;
-}
-
-fieldset[data-outputs="0"],
-.markdown > .nb-execution_count {
-    display: none;
 }
