@@ -93,6 +93,11 @@ class A11yExporter(PostProcess, HTMLExporter):
     code_theme = Enum(list(THEMES), "gh-high", help="an accessible pygments dark/light theme").tag(
         config=True
     )
+    # TF: id love for these definitions to have their own parent class.
+    prompt_in = CUnicode("In").tag(config=True)
+    prompt_out = CUnicode("Out").tag(config=True)
+    prompt_left = CUnicode("[").tag(config=True)
+    prompt_right = CUnicode("]").tag(config=True)
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -127,6 +132,7 @@ class A11yExporter(PostProcess, HTMLExporter):
         return c
 
     def from_notebook_node(self, nb, resources=None, **kw):
+        # this is trash and needs serious fixing
         resources = resources or {}
         resources["include_axe"] = self.include_axe
         resources["include_settings"] = self.include_settings
@@ -139,6 +145,10 @@ class A11yExporter(PostProcess, HTMLExporter):
         resources["code_theme"] = THEMES[self.code_theme]
         resources["axe_url"] = self.axe_url
         resources["include_sa11y"] = self.include_sa11y
+        resources["prompt_in"] = self.prompt_in
+        resources["prompt_out"] = self.prompt_out
+        resources["prompt_left"] = self.prompt_left
+        resources["prompt_right"] = self.prompt_right
 
         return super().from_notebook_node(nb, resources, **kw)
 
@@ -229,8 +239,10 @@ def mdtoc(html):
         id = header.attrs.get("id")
         if not id:
             from slugify import slugify
-
-            id = slugify(header.string)
+            if header.string:
+                id = slugify(header.string)
+            else:
+                continue
 
         # there is missing logistics for managely role=heading
         # adding code group semantics will motivate this addition
@@ -251,8 +263,10 @@ def heading_links(html):
         id = header.attrs.get("id")
         if not id:
             from slugify import slugify
-
-            id = slugify(header.string)
+            if header.string:
+                id = slugify(header.string)
+            else:
+                continue
 
         link = soupify(f"""<a href="#{id}">{header.string}</a>""").body.a
         header.clear()

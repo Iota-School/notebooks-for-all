@@ -11,7 +11,8 @@ cell_form, cell_source, cell_metadata, cell_output with context%}
     data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %} {% endif %}
     data-index="{{loop.index}}">
     <td role="none" class="nb-anchor">{{cell_anchor(loop.index, cell.cell_type)}}</td>
-    <td role="none" class="nb-execution_count" hidden>{{cell_execution_count(loop.index, cell.execution_count)}}
+    <td role="none" class="nb-execution_count" {{hide(cell.cell_type=="markdown" or cell.execution_count==None)}}>
+        {{cell_execution_count(loop.index, cell.execution_count)}}
     </td>
     <td role="none" class="nb-cell_type" hidden>{{cell_cell_type(loop.index, cell.cell_type)}}</td>
     <td role="none" class="nb-toolbar" hidden>{{cell_form(loop.index)}}</td>
@@ -38,7 +39,7 @@ cell_form, cell_source, cell_metadata, cell_output with context%}
 {% block body_loop %}
 {# the most consistent implementation would connect the input visibility to a form #}
 <table id="cells" role="presentation">
-    <tbody role="list">
+    <tbody role="list" aria-labelledby="nb-notebook-label nb-cells-label">
         <tr hidden>
             {% for col in COLUMNS %}
             <th scope="col">{{col}}</th>
@@ -66,7 +67,6 @@ cell_form, cell_source, cell_metadata, cell_output with context%}
             <td class="nb-toolbar"></td>
             <td class="nb-metadata">{# list keys #}</td>
             <td class="nb-loc">{{count_loc(nb)}}</td>
-
         </tr>
         <tr class="code">
             <th scope="row">code cells</th>

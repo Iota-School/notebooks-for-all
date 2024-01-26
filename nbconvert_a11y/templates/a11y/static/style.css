@@ -10,6 +10,7 @@
     --nb-line-height: 1.5;
 }
 
+
 body {
     font-size: var(--nb-font-size);
     font-family: var(--nb-font-family);
@@ -78,7 +79,7 @@ textarea[name=source] {
 
 
 #nb-dialogs details:not([open])~dialog:not([open]):not(:focus-within):not(:active),
-legend:not(:focus-within):not(:active),
+/* legend:not(:focus-within):not(:active), */
 details.log:not([open])+table,
 .visually-hidden:not(:focus-within):not(:active) {
     clip: rect(0 0 0 0);
@@ -116,9 +117,13 @@ dialog form>* {
     font-size: max(44px, var(--nb-font-size));
 }
 
-.wcag-a details>summary[inert]~textarea[name=source],
-.wcag-aa details>summary[inert]~textarea[name=source],
-.wcag-aaa details>summary[inert]~textarea[name=source]~*,
-details>summary:not([inert])~textarea[name=source]~* {
+.wcag-a textarea[name=source],
+.wcag-aa textarea[name=source],
+.wcag-aaa textarea[name=source]~* {
+    display: none;
+}
+
+fieldset[data-outputs="0"],
+.markdown > .nb-execution_count {
     display: none;
 }
