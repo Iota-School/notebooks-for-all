@@ -77,7 +77,6 @@ WCAG 2.1 defines a huge stinking AAA hit size for buttons. its beautiful.
     font-size: max(44px, var(--nb-font-size));
 }
 
-
 /* WCAG 2.2 clarified a AA button size that is used to style checkboxes and buttons. */
 /* satisfy AA 2.5.8 minimum target requirement */
 .wcag-aa button,
@@ -97,12 +96,24 @@ the design decisions are focused native elements so that the assistive technolog
 
 */
 
+.markdown textarea[name=source]+[role=group],
 .wcag-a textarea[name=source],
 .wcag-aa textarea[name=source],
-.wcag-aaa textarea[name=source]~* {
+.wcag-aaa .markdown textarea[name=source],
+/* this group selector is very ambiguous */
+.wcag-aaa textarea[name=source]+[role=group] {
     display: none;
 }
 
+/* this is only needed for the lsit template variant */
+ol#cells {
+    margin: unset;
+    padding: unset;
+}
+
+li.cell {
+    list-style-type: none;
+}
 
 /* ## notebook components layout */
 
@@ -110,12 +121,18 @@ td[role="none"]:not([hidden]) {
     display: unset;
 }
 
-#cells tr.cell,
-#cells tbody {
+table {
+    border-spacing: unset;
+}
+
+main>.cell,
+#cells .cell,
+#cells > tbody {
     display: flex;
     flex-direction: column;
 }
 
+ol[reversed]#cells,
 [reversed]#cells tbody {
     flex-direction: column-reverse;
 }

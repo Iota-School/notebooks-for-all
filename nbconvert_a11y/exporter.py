@@ -72,8 +72,11 @@ class A11yExporter(PostProcess, HTMLExporter):
     include_settings = Bool(False, help="include configurable accessibility settings dialog.").tag(
         config=True
     )
+    # if help is not included the a bunch of aria label get fucked up and we fail
+    # accessibility. if help information isn't included then we'll at least to included
+    # a vocabulary to reference from the aria-labelledby aria-describedby
     include_help = Bool(
-        False, help="include help and supplementary descriptions about notebooks and cells"
+        True, help="include help and supplementary descriptions about notebooks and cells"
     ).tag(config=True)
     include_toc = Bool(
         True, help="collect a table of contents of the headings in the document"
@@ -131,8 +134,9 @@ class A11yExporter(PostProcess, HTMLExporter):
         )
         return c
 
-    def from_notebook_node(self, nb, resources=None, **kw):
-        # this is trash and needs serious fixing
+    def init_resources(self, resources=None):
+        if resources is None:
+            resources = {}
         resources = resources or {}
         resources["include_axe"] = self.include_axe
         resources["include_settings"] = self.include_settings
@@ -149,8 +153,12 @@ class A11yExporter(PostProcess, HTMLExporter):
         resources["prompt_out"] = self.prompt_out
         resources["prompt_left"] = self.prompt_left
         resources["prompt_right"] = self.prompt_right
+        return resources
 
-        return super().from_notebook_node(nb, resources, **kw)
+    def from_notebook_node(self, nb, resources=None, **kw):
+        # this is trash and needs serious fixing
+
+        return super().from_notebook_node(nb, self.init_resources(resources), **kw)
 
     def post_process_html(self, body):
         """A final pass at the exported html to add table of contents, heading links, and other a11y affordances."""
@@ -235,10 +243,11 @@ def mdtoc(html):
     import io
 
     toc = io.StringIO()
-    for header in html.select("#cells :is(h1,h2,h3,h4,h5,h6)"):
+    for header in html.select(".cell :is(h1,h2,h3,h4,h5,h6)"):
         id = header.attrs.get("id")
         if not id:
             from slugify import slugify
+
             if header.string:
                 id = slugify(header.string)
             else:
@@ -246,7 +255,6 @@ def mdtoc(html):
 
         # there is missing logistics for managely role=heading
         # adding code group semantics will motivate this addition
-
         level = int(header.name[-1])
         toc.write("  " * (level - 1) + f"* [{header.string}](#{id})\n")
     return toc.getvalue()
@@ -263,6 +271,7 @@ def heading_links(html):
         id = header.attrs.get("id")
         if not id:
             from slugify import slugify
+
             if header.string:
                 id = slugify(header.string)
             else:

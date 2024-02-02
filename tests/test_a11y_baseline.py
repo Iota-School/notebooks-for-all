@@ -15,6 +15,7 @@ from nbconvert_a11y.pytest_axe import JUPYTER_WIDGETS, MATHJAX, SA11Y
     [
         ("a11y.py", "a11y-table", "lorenz-executed.ipynb"),
         ("section.py", "a11y-landmark", "lorenz-executed.ipynb"),
+        ("list.py", "a11y-list", "lorenz-executed.ipynb"),
     ],
 )
 def test_axe(axe, notebook, config, exporter_name, name):

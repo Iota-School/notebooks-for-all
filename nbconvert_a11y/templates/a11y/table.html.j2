@@ -18,8 +18,7 @@ cell_form, cell_source, cell_metadata, cell_output with context%}
     <td role="none" class="nb-toolbar" hidden>{{cell_form(loop.index)}}</td>
     <td role="none" class="nb-start" id="cell-{{loop.index}}-start" hidden>
         {% set t0 = cell.get("metadata", {}).get("execution", {}).get("iopub.execute_input", "") %}
-        {{time(t0)}}
-    </td>
+        {{time(t0)}}</td>
     <td role="none" class="nb-end" id="cell-{{loop.index}}-end" hidden>
         {% set t1 = cell.get("metadata", {}).get("execution", {}).get("shell.execute_reply", "") %}
         {{time(t1)}}
@@ -94,6 +93,8 @@ cell_form, cell_source, cell_metadata, cell_output with context%}
 </table>
 {% endblock body_loop %}
 
+{# adding a template element is a forward thinking move because 
+the template provides the structure for new cells when they are added. #}
 {% block template_element %}
 <template>
     <table>

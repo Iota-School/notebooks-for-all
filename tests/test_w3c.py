@@ -34,6 +34,20 @@ htmls = pytest.mark.parametrize(
         ),
         pytest.param(
             get_target_html(
+                (CONFIGURATIONS / (a := "section")).with_suffix(".py"),
+                (NOTEBOOKS / (b := "lorenz-executed")).with_suffix(".ipynb"),
+            ),
+            id="-".join((b, a)),
+        ),
+        pytest.param(
+            get_target_html(
+                (CONFIGURATIONS / (a := "list")).with_suffix(".py"),
+                (NOTEBOOKS / (b := "lorenz-executed")).with_suffix(".ipynb"),
+            ),
+            id="-".join((b, a)),
+        ),
+        pytest.param(
+            get_target_html(
                 (CONFIGURATIONS / (a := "default")).with_suffix(".py"),
                 (NOTEBOOKS / (b := "lorenz-executed")).with_suffix(".ipynb"),
             ),
