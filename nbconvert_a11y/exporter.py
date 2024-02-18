@@ -92,6 +92,7 @@ class A11yExporter(PostProcess, HTMLExporter):
     ).tag(config=True)
     include_visibility = Bool(False, help="include visibility toggle").tag(config=True)
     include_upload = Bool(False, help="include template for uploading new content").tag(config=True)
+    hide_anchor_links = Bool(False).tag(config=True)
     exclude_anchor_links = Bool(True).tag(config=True)
     code_theme = Enum(list(THEMES), "gh-high", help="an accessible pygments dark/light theme").tag(
         config=True
@@ -153,6 +154,8 @@ class A11yExporter(PostProcess, HTMLExporter):
         resources["prompt_out"] = self.prompt_out
         resources["prompt_left"] = self.prompt_left
         resources["prompt_right"] = self.prompt_right
+        resources["exclude_anchor_links"] = self.exclude_anchor_links
+        resources["hide_anchor_links"] = self.hide_anchor_links
         return resources
 
     def from_notebook_node(self, nb, resources=None, **kw):

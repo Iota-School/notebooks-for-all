@@ -152,7 +152,7 @@ function setWCAG() {
     );
 }
 document.forms.settings.elements["accessibility-priority"].addEventListener("change", setWCAG);
-function toggleActive() {
+    function toggleActive() {
     if (document.forms.notebook.elements.edit.checked) {
         document.querySelectorAll("tr.cell>td>details>summary[inert]").forEach(
             x => x.removeAttribute("inert")
@@ -192,6 +192,11 @@ function openDialogs() {
     );
     event.target.focus();
 }
+document.forms.visibility['visually-hide'].addEventListener("change",
+    (x) => {
+        document.querySelector("main").classList.toggle("visually-hide");
+        activityLog(`${event.target.checked ? "hiding" : "showing"} main content`);
+    });
 
 setStyle("initialize saved settings.")
 // async function runSource(target) {

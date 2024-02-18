@@ -65,9 +65,10 @@ at some point effort should be put into separating context dependent and indepen
 </label>
 {% endmacro%}
 
-{% macro checkbox(title, value)%}
+{% macro checkbox(title, value, form=None)%}
 {% set name="-".join(map(str.lower, title.split()))%}
-<label><input type="checkbox" name="{{name}}" {%- if value %} checked{% endif %}>{{title}}</label>
+<label><input type="checkbox" name="{{name}}" {%- if value %} checked{% endif %}{% if form %} form="{{form}}" {% endif
+        %}>{{title}}</label>
 {% endmacro%}
 
 {% macro dialog_close() %}
@@ -97,7 +98,7 @@ at some point effort should be put into separating context dependent and indepen
 <label>{{title}}
     <select name="{{name}}" id="{{name}}-select" multiple>
         {% for k, v in values.items() %}
-        <option value="{{v}}" {% if k in default %} selected{% endif %}>{{k}}</option>
+        <option value="{{v}}" {% if k in default %} selected{% endif %} label="{{k}}">{{v}}</option>
         {% endfor %}
     </select>
 </label>

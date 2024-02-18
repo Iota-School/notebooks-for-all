@@ -1,4 +1,4 @@
-{% from "a11y/components/core.html.j2" import activity_log %}
+{% from "a11y/components/core.html.j2" import activity_log, checkbox %}
 
 {% macro header_row(names) %}
 <tr>
@@ -27,6 +27,8 @@
 <dialog id="nb-visibility-dialog">
     <form name="visibility">
         <button formmethod="dialog">Close</button>
+        {{checkbox("visually hide", False)}}
+
         <table aria-label="notebook cell visibility" role="grid">
             <tbody>
                 {# the table head is used to provide controls #}

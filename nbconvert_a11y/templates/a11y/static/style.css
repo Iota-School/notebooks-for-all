@@ -17,6 +17,7 @@ the variables specify critical degrees of freedom in the notebook style.
     --nb-font-size: 16px;
     --nb-font-family: serif;
     --nb-line-height: 1.5;
+    --nb-scrolled-height: 600px;
 }
 
 /* map css variables to css properties on the `body` elements.
@@ -126,8 +127,8 @@ table {
 }
 
 main>.cell,
-#cells .cell,
-#cells > tbody {
+#cells:not([role=table]) .cell,
+#cells:not([role=table])>tbody {
     display: flex;
     flex-direction: column;
 }
@@ -208,7 +209,8 @@ input[type="checkbox"] {
 #nb-dialogs details:not([open])~dialog:not([open]):not(:focus-within):not(:active),
 /* legend:not(:focus-within):not(:active), */
 details.log:not([open])+table,
-.visually-hidden:not(:focus-within):not(:active) {
+.visually-hidden:not(:focus-within):not(:active),
+.visually-hide {
     clip: rect(0 0 0 0);
     clip-path: inset(50%);
     height: 1px;
@@ -216,4 +218,13 @@ details.log:not([open])+table,
     position: absolute;
     white-space: nowrap;
     width: 1px;
+}
+
+.nb-outputs.nb-scrolled {
+    max-height: var(--nb-scrolled-height);
+    overflow: auto;
+}
+
+.nb-outputs.nb-collapsed {
+    display: none;
 }

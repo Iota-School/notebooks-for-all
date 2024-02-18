@@ -1,10 +1,14 @@
 {% from "a11y/components/core.html.j2" import loc, hide %}
 {% from "a11y/components/displays.html.j2" import cell_display_priority with context %}
 
-{% macro cell_anchor(i, cell_type, hidden=False)%}
-<a class="nb-anchor" href="#{{i}}" id="{{i}}" aria-labelledby="nb-cell-label {{i}}" {% if resources.accesskey_navigation
-    and isinstance(i, int) and (i < 10) %}accesskey="{{i}}" {% endif %}
-    aria-describedby="nb-{{cell_type}}-label nb-cell-label cell-{{i}}-loc nb-loc-label" {{hide(hidden)}}>{{i}}</a>
+{% macro cell_anchor(i, cell_type, execution_count=None, outputs=None, hidden=False)%}
+{% if not resources.exclude_anchors_links %}
+<a class="nb-anchor{% if resources.hide_anchor_links%} visually-hidden{% endif %}" href="#{{i}}" id="{{i}}"
+    aria-labelledby="nb-cell-label {{i}}" {% if resources.accesskey_navigation and isinstance(i, int) and (i < 10)
+    %}accesskey="{{i}}" {% endif %} aria-describedby="nb-{{cell_type}}-label nb-cell-label {% if cell_type  != "
+    markdown".strip() %}cell-{{i}}-loc nb-loc-label{% endif %}{% if cell_type==" code" .strip() and execution_count %}
+    cell-{{i}}-outputs-len{% endif %}" {{hide(hidden)}}>{{i}}</a>
+{% endif %}
 {% endmacro %}
 
 {% macro cell_form(i, cell_type, hidden=True) %}
@@ -18,7 +22,7 @@ that would include talking to the kernel. #}
 </form>
 {% endmacro %}
 
-{% macro cell_cell_type(i, cell_type, hidden=False) %}
+{# {% macro cell_cell_type(i, cell_type, hidden=False) %}
 {% set selected = ' selected id="cell-{}-cell_type"'.format(i) %}
 <label class="nb-cell_type" id="nb-cell-{{i}}-select" {{hide(hidden)}}>cell type
     <select name="cell_type" form="cell-{{i}}">
@@ -27,6 +31,10 @@ that would include talking to the kernel. #}
         <option value="raw" {%- if cell_type=="raw" %}{{selected}}{% endif%}>raw</option>
     </select>
 </label>
+{% endmacro %} #}
+
+{% macro cell_cell_type(i, cell_type, hidden=False) %}
+<label id="cell-{{i}}-cell_type" {{hide(hidden)}}>{{cell_type}}</label>
 {% endmacro %}
 
 {% macro cell_execution_count(i, execution_count, hidden=False) %}
@@ -43,7 +51,7 @@ that would include talking to the kernel. #}
 <textarea class="nb-source" form="cell-{{i}}" id="cell-{{i}}-source" name="source"
     rows="{{source.splitlines().__len__()}}" aria-labelledby="cell-{{i}}-source-label nb-source-label"
     readonly>{{source}}</textarea>
-<div role="group" aria-labelledby="nb-source-label">
+<div role="group" aria-labelledby="nb-source-label" aria-roledescription="highlighted">
     {{highlight(source, cell_type)}}
 </div>
 {% endmacro %}
@@ -64,28 +72,26 @@ that would include talking to the kernel. #}
 {%- macro cell_output(i, cell, source, outputs, cell_type, execution_count, hidden=False) -%}
 {% set CODE = cell_type == "code" %}
 {% if CODE %}
-{% if execution_count and not outputs %}
-<span class="nb-outputs visually-hidden" id="cell-{{i}}-outputs-len">In {{execution_count}} has
-    {{outputs.__len__()}}
-    outputs.</span>
-{% else %}
+{% if execution_count %}
+<span class="nb-outputs visually-hidden" id="cell-{{i}}-outputs-len">{{outputs.__len__()}} outputs.</span>
+{% endif %}
 {# the following span should get its own column in the table #}
-<fieldset class="nb-outputs" {{hide(hidden)}} data-outputs="{{outputs.__len__()}}">
-    <legend id="cell-{{i}}-outputs-label" aria-describedby="nb-outputs-desc">
+<fieldset
+    class="nb-outputs{% if cell.metadata.get('scrolled')%} nb-scrolled{% endif %}{% if cell.metadata.get('collapsed')%} nb-collapsed{% endif %}"
+    {{hide(hidden)}} data-outputs="{{outputs.__len__()}}">
+    <legend id="cell-{{i}}-outputs-label" aria-describedby="nb-outputs-desc" {{hide(not
+        resources.global_content_filter.include_output_prompt)}}>
         <span>{{resources.prompt_out}}</span>
         <span aria-hidden="true">{{resources.prompt_left}}</span>
         <span>{{execution_count}}</span>
         <span aria-hidden="true">{{resources.prompt_right}}</span>
     </legend>
-    <span class="visually-hidden" id="cell-{{i}}-outputs-len">has {{outputs.__len__()}} output{% if outputs.__len__()>1
-        %}s{% endif %}</span>
     {% if outputs %}
     {# the output description should mention the number of outputs
     saying zero outputs should be an option. a cell without an output is probably a violation. #}
     {{cell_display_priority(i, outputs, cell)}}
     {% endif %}
 </fieldset>
-{% endif %}
 {% else %}
 {{ markdown(source) | strip_files_prefix }}
 {% endif %}
