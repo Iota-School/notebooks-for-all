@@ -25,30 +25,30 @@ or cell.metadata.get("transient",{}).get("remove_source", false) -%}
 or not cell.metadata.get("jupyter", {}).get("outputs_hidden", False)-%}
 {%- endif -%}
 {%- set slide_type = cell.get("metadata", {}).get("slide_type") -%}
-<tr role="listitem" class="cell {{cell.cell_type}}" aria-labelledby="nb-cell-label {{index}} cell-{{index}}-cell_type"
+<tr role="{{resources.table_pattern.row}}" class="cell {{cell.cell_type}}" aria-labelledby="nb-cell-label {{index}} cell-{{index}}-cell_type"
     data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %} {% endif %} data-index="{{index}}"
     {% if slide_type %} data-slide_type="{{slide_type}}" {% endif %}>
-    <td role="none" class="nb-anchor">{{cell_anchor(index, cell.cell_type, cell.execution_count, cell.outputs)}}</td>
-    <td role="none" class="nb-execution_count" {{hide(cell.cell_type=="markdown" or cell.execution_count==None or not
+    <th role="{{resources.table_pattern.rowheader}}" class="nb-anchor" scope="row">{{cell_anchor(index, cell.cell_type, cell.execution_count, cell.outputs)}}</td>
+    <td role="{{resources.table_pattern.cell}}" class="nb-execution_count" {{hide(cell.cell_type=="markdown" or cell.execution_count==None or not
         resources.global_content_filter.include_input_prompt)}}>
         {{cell_execution_count(index, cell.execution_count)}}
     </td>
-    <td role="none" class="nb-cell_type" hidden>{{cell_cell_type(index, cell.cell_type)}}</td>
-    <td role="none" class="nb-toolbar" hidden>{{cell_form(index)}}</td>
-    <td role="none" class="nb-start" id="cell-{{index}}-start" hidden>
+    <td role="{{resources.table_pattern.cell}}" class="nb-cell_type" hidden>{{cell_cell_type(index, cell.cell_type)}}</td>
+    <td role="{{resources.table_pattern.cell}}" class="nb-toolbar" hidden>{{cell_form(index)}}</td>
+    <td role="{{resources.table_pattern.cell}}" class="nb-start" id="cell-{{index}}-start" hidden>
         {% set t0 = cell.get("metadata", {}).get("execution", {}).get("iopub.execute_input", "") %}
         {{time(t0)}}</td>
-    <td role="none" class="nb-end" id="cell-{{index}}-end" hidden>
+    <td role="{{resources.table_pattern.cell}}" class="nb-end" id="cell-{{index}}-end" hidden>
         {% set t1 = cell.get("metadata", {}).get("execution", {}).get("shell.execute_reply", "") %}
         {{time(t1)}}
     </td>
-    <td role="none" class="nb-source" {{hide(cell.cell_type=="markdown" or not include_input)}}>{{cell_source(index,
+    <td role="{{resources.table_pattern.cell}}" class="nb-source" {{hide(cell.cell_type=="markdown" or not include_input)}}>{{cell_source(index,
         cell.source, cell.cell_type, cell.execution_count)}}</td>
-    <td role="none" class="nb-metadata" hidden>{{cell_metadata(index, cell.get("metadata", {}))}}</td>
+    <td role="{{resources.table_pattern.cell}}" class="nb-metadata" hidden>{{cell_metadata(index, cell.get("metadata", {}))}}</td>
     {# it was noted in a video that lines of code were helpful in assistive descriptions.
     lines of code are part of the gestalt of code forms. #}
-    <td role="none" class="nb-loc" id="cell-{{index}}-loc" hidden>{{loc(cell)}}</td>
-    <td role="none" class="nb-outputs" {{hide(not include_outputs)}}>{{cell_output(index, cell, cell.source,
+    <td role="{{resources.table_pattern.cell}}" class="nb-loc" id="cell-{{index}}-loc" hidden>{{loc(cell)}}</td>
+    <td role="{{resources.table_pattern.cell}}" class="nb-outputs" {{hide(not include_outputs)}}>{{cell_output(index, cell, cell.source,
         cell.outputs,
         cell.cell_type,
         cell.execution_count)}}</td>
@@ -57,16 +57,16 @@ or not cell.metadata.get("jupyter", {}).get("outputs_hidden", False)-%}
 
 {% block body_loop %}
 {# the most consistent implementation would connect the input visibility to a form #}
-<table id="cells" role="presentation">
+<table id="cells" role="{{resources.table_pattern.table}}">
     <colgroup>
         {% for col in COLUMNS %}
         <col class="nb-{{col}}">
         {% endfor %}
     </colgroup>
-    <tbody role="list" aria-labelledby="nb-notebook-label nb-cells-label">
-        <tr hidden>
+    <tbody role="{{resources.table_pattern.rowgroup}}" aria-labelledby="nb-notebook-label nb-cells-label">
+        <tr role="{{resources.table_pattern.row}}" hidden>
             {% for col in COLUMNS %}
-            <th scope="col">{{col}}</th>
+            <th role="{{resources.table_pattern.columnheader}}" scope="col">{{col}}</th>
             {% endfor %}
         </tr>
         {%- for cell in nb.cells -%}

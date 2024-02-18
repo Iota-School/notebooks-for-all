@@ -118,8 +118,10 @@ li.cell {
 
 /* ## notebook components layout */
 
-td[role="none"]:not([hidden]) {
+td[role="none"]:not([hidden]),
+th[role="none"]:not([hidden]) {
     display: unset;
+    text-align: unset;
 }
 
 table {

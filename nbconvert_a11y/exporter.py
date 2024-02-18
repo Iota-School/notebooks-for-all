@@ -30,6 +30,38 @@ AXE = f"https://cdnjs.cloudflare.com/ajax/libs/axe-core/{AXE_VERSION}/axe.min.js
 SCHEMA = nbformat.validator._get_schema_json(nbformat.v4)
 
 
+class Roles:
+    """different aria settings for the notebook respresentation"""
+
+    options = "Presentation", "Group", "Region", "List", "Table"
+
+    class Presentation:
+        table = "none"
+        rowgroup = "none"
+        row = "none"
+        columnheader = "none"
+        rowheader = "none"
+        cell = "none"
+
+    class Group(Presentation):
+        row = "group"
+
+    class Region(Presentation):
+        row = "region"
+
+    class List(Presentation):
+        rowgroup = "list"
+        row = "listitem"
+
+    class Table:
+        table = "table"
+        rowgroup = "rowgroup"
+        row = "row"
+        columnheader = "columnheader"
+        rowheader = "rowheader"
+        cell = "cell"
+
+
 THEMES = {
     "a11y": "a11y-{}",
     "a11y-high-contrast": "a11y-high-contrast-{}",
@@ -53,8 +85,7 @@ class PostProcess(Exporter):
         html = self.post_process_html(html) or html
         return html, resources
 
-    def post_process_html(self, body):
-        ...
+    def post_process_html(self, body): ...
 
 
 class A11yExporter(PostProcess, HTMLExporter):
@@ -97,6 +128,11 @@ class A11yExporter(PostProcess, HTMLExporter):
     code_theme = Enum(list(THEMES), "gh-high", help="an accessible pygments dark/light theme").tag(
         config=True
     )
+    table_pattern = Enum(
+        list(Roles.options),
+        "List",
+        help="the presentation format of the cells to assistive technology",
+    ).tag(config=True)
     # TF: id love for these definitions to have their own parent class.
     prompt_in = CUnicode("In").tag(config=True)
     prompt_out = CUnicode("Out").tag(config=True)
@@ -156,6 +192,7 @@ class A11yExporter(PostProcess, HTMLExporter):
         resources["prompt_right"] = self.prompt_right
         resources["exclude_anchor_links"] = self.exclude_anchor_links
         resources["hide_anchor_links"] = self.hide_anchor_links
+        resources["table_pattern"] = getattr(Roles, self.table_pattern)
         return resources
 
     def from_notebook_node(self, nb, resources=None, **kw):
@@ -320,9 +357,9 @@ def describe_main(soup):
     """Add REFIDs to aria-describedby"""
     x = soup.select_one("#toc > details > summary")
     if x:
-        x.attrs["aria-describedby"] = soup.select_one("main").attrs[
-            "aria-describedby"
-        ] = "nb-cells-count-label nb-cells-label nb-code-cells nb-code-cells-label nb-ordered nb-loc nb-loc-label"
+        x.attrs["aria-describedby"] = soup.select_one("main").attrs["aria-describedby"] = (
+            "nb-cells-count-label nb-cells-label nb-code-cells nb-code-cells-label nb-ordered nb-loc nb-loc-label"
+        )
 
 
 def ordered(nb) -> str:
