@@ -1,0 +1,70 @@
+{#
+settings provides multiple screen reader navigation techniques when the dialog is active.
+
+#}
+
+{% from "a11y/components/core.html.j2" import h, radiogroup, select, activity_log, input_number, checkbox, dialog_close
+%}
+{% set font_sizes = {"xx-small": "xx-small",
+"x-small": "x-small",
+"small": "small",
+"medium": "medium",
+"large": "120%",
+"x-large": "150%",
+"xx-large": "200%",
+"xxx-large": "300%",
+"xxxx-large": "400%",
+"xxxxx-large": "500%"}
+%}
+<dialog id="nb-settings">
+    <form name="settings">
+        {{h(1, "accessibility settings")}}
+        {{dialog_close()}}
+        <ul aria-labelledby="nb-accessibility-settings-label">
+            <li>
+                {{h(2, "notebook layout")}}
+                <ul aria-labelledby="nb-notebook-layout-label">
+                {# the best implementation would make these configurable for folks who change them often. #}
+                    <li>{{select("color scheme", {"light mode": "light", "dark mode": "dark"})}}</li>
+                    <li>{{checkbox("horizontal scrolling", False)}}</li>
+                    <li>{{input_number("line height", 1.5, min=0.5, max=3, step=0.1)}}</li>
+                    {# screen overflow exists for digital magnifier users to follow long horizontal lines of text. #}
+                    <li>{{select("cell navigation", default=resources.table_pattern.__name__.lower(), values="list table
+                        region presentation".split(), disabled="grid
+                        treegrid
+                        tree".split())}}</li>
+                    {% set priority = {"Triple A": "AAA","Double A": "AA", "Single A": "A"}%}
+                    <li>{{select("accessibility priority", priority, resources.wcag_priority)}}</li>
+                    <li>{{input_number("margin", 5, min=0, max=40, step=5, extra_title="%")}}</li>
+                    <li>{{checkbox("sticky", True)}}</li>
+                    <li>{{checkbox("invert", False)}}</li>
+                    <li>{{checkbox("grayscale", False)}}</li>
+                    <li>{{checkbox("accesskey navigation", True)}}</li>
+                </ul>
+            </li>
+            <li>
+
+                {{h(2, "font settings")}}
+                <ul aria-labelledby="nb-font-settings-label">
+                    <li>{{select("font size", font_sizes,
+                        "medium")}}</li>
+                    <li>
+                        {{select("font family", "serif sans-serif".split())}}
+                    </li>
+                </ul>
+            </li>
+            <li>
+                {{h(2, "sound settings")}}
+                <ul aria-labelledby="nb-sound-settings-label">
+                    <li>
+                        {{checkbox("synthetic speech", False)}}
+                    </li>
+                    <li>
+                        {{checkbox("aria live", True)}}
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        {{activity_log(False)}}
+    </form>
+</dialog>

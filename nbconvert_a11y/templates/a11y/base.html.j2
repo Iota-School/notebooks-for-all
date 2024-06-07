@@ -1,0 +1,102 @@
+{# # a base template for accessible notebook representations.
+
+the base template defines notebook independent components.
+an accessible base template provides a substrate to progressively enchance
+the notebook experiennce from browse to edit/focus mode.
+#}
+{%- extends 'lab/index.html.j2' -%}
+{% from "a11y/components/core.html.j2" import activity_log %}
+{% from 'celltags.j2' import celltags %}
+{% from 'mathjax.html.j2' import mathjax %}
+{% from 'lab/mermaidjs.html.j2' import mermaid_js %}
+{% from 'jupyter_widgets.html.j2' import jupyter_widgets %}
+{% set title = nb.metadata.get('title', resources['metadata']['name']) | escape_html_keep_quotes %}
+
+{%- block html_head_js -%}
+{% if nb.metadata.description %}
+<meta name="description" content="{{nb.metadata.description}}">{% endif %}
+<meta name="color-scheme" content="light">
+{# sa11y needs to be loaded before requirejs #}
+{% if resources.include_sa11y %}{% include "a11y/components/sa11y.html.j2"%}{% endif %}
+{{super()}}
+{%- endblock html_head_js -%}
+
+{% block notebook_css %}
+<style type="text/css">
+    {% include "a11y/static/style.css" %}
+</style>
+{% for theme in ["light", "dark"] %}
+<style type="text/css" id="nb-{{theme}}-highlight" media="{% if loop.index - 1%}not  {% endif %}screen">
+    {% include "a11y/static/theme/{}.css" .format(resources.code_theme.format(theme)) %}
+</style>
+{% endfor %}
+{% endblock notebook_css %}
+
+{% block extra_css %}{% endblock %}
+
+{% block body_header %}
+{%- set title = nb.metadata.get("title") -%}
+{%- set description = nb.metadata.get("description") -%}
+{% set describedby = "nb-ct-total nb-cells-label nb-ct-code nb-lang nb-state nb-ct-loc nb-loc-label
+nb-ct-outputs nb-outputs-label"%}
+
+<body class="wcag-{{resources.wcag_priority.lower()}} sticky">
+    <header>
+        <a href="#1" id="TOP">skip to main content</a><br />
+        {% if resources.include_settings %}
+        <button onclick="openDialog()" aria-controls="nb-settings" accesskey=",">settings</button>
+        {% endif %}
+        <button onclick="fullScreen()" id="nb-fullscreen">fullscreen</button>
+
+        {{resources.header | default("")}}
+        {%- if resources.include_summary -%}{% include "a11y/components/nb-summary.html.j2" %}{%- endif -%}
+        {%- if resources.include_toc -%}{% include "a11y/components/toc.html.j2" %}{%- endif -%}
+        <dialog id="nb-metadata">
+            <form method="dialog">
+                <button formmethod="dialog">Close</button>
+                {{nb.metadata| json_dumps | escape_html_keep_quotes }}
+            </form>
+        </dialog>
+    </header>
+    <main>
+        {% endblock body_header %}
+
+        {% block body_footer scoped %}
+        {# dialogs need to be outside the form because we cant nest forms #}
+    </main>
+    {# a notebook begins as a static document that can progressively
+    add features like run time computation. #}
+    {# skip to top is needed for long notebooks.
+    it is difficult to access for keyboard users. #}
+    <footer>
+        {{resources.footer}}
+        {% include "a11y/components/nb-toolbar.html.j2" %}
+        {# make the individual settings discoverable before all the settings
+        when using shift+tab #}
+        {% if resources.include_visibility %}<button aria-controls="nb-visibility-dialog" onclick="openDialog()"
+            accesskey="-">show/hide</button>
+        {% endif %}
+        {% if resources.include_axe %}<button aria-controls="nb-audit" aria-describedby="nb-audit-desc"
+            onclick="openDialog()">audit</button>{% endif %}
+        {% if resources.include_help %}<button onclick="openDialog()" aria-controls="nb-help"
+            accesskey="?">help</button>{% endif %}
+        {% if resources.include_settings %}{% include "a11y/components/settings.html.j2" %}{% endif %}
+        {% if resources.include_visibility %}{% include "a11y/components/visibility.html.j2"%}{% endif %}
+        {% if resources.include_help %}{% include "a11y/components/help.html.j2" %}{% endif %}
+        {% if resources.include_axe %}{% include "a11y/components/audit.html.j2" %}{% endif %}
+        {{activity_log(id=True)}}
+        <a href="#TOP" accesskey="0">skip to top</a>
+    </footer>
+    {% if resources.include_upload %}{% block template_element %}{% endblock %}{% endif %}
+</body>
+{% endblock body_footer %}
+
+{% block footer_js %}
+{% if resources.include_settings %}
+<script>
+    {% include "a11y/static/settings.js" %}
+</script>{% endif %}
+{%- if resources.include_axe -%}
+<script src="{{resources.axe_url}}" onload="auditNotebook()"></script>
+{%- endif -%}
+{%- endblock footer_js -%}

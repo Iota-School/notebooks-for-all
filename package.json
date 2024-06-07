@@ -1,0 +1,8 @@
+{
+  "name": "@deathbeds/nbconvert-a11y",
+  "private": true,
+  "version": "0.0.1",
+  "dependencies": {
+    "axe-core": "^4.8.2"
+  }
+}

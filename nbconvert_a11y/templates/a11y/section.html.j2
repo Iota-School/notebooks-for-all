@@ -1,0 +1,6 @@
+{%- extends 'a11y/base.html.j2' -%}
+{% from "a11y/components/cell.html.j2" import cell_section with context%}
+
+{% block any_cell scoped %}
+{{cell_section(cell, loop)}}
+{% endblock any_cell %}

@@ -12,11 +12,11 @@ from os import environ
 from pathlib import Path
 from shutil import copyfile
 
-import nbconvert.nbconvertapp
+import jupyter_core.paths
 from pytest import mark, param
 
-import nbconvert_a11y
-import jupyter_core.paths
+import nbconvert.nbconvertapp
+from nbconvert_a11y.exporter import soupify
 
 SKIP_BASELINE = "baseline tests skipped locally"
 LOGGER = getLogger(__name__)
@@ -47,6 +47,8 @@ configs = mark.parametrize(
     "config",
     [
         param((CONFIGURATIONS / (id := "a11y")).with_suffix(".py"), id=id),
+        param((CONFIGURATIONS / (id := "section")).with_suffix(".py"), id=id),
+        param((CONFIGURATIONS / (id := "list")).with_suffix(".py"), id=id),
         param(
             (CONFIGURATIONS / (id := "default")).with_suffix(".py"),
             id=id,
@@ -78,7 +80,9 @@ def test_static_assets(asset):
     """This is a bad test. it won't fail, but needs to run to collect testing assets."""
     target = HTML / asset
     target.parent.mkdir(exist_ok=True, parents=True)
-    for path in map(Path, jupyter_core.paths.jupyter_path("nbconvert", "templates", "a11y", asset)):
+    for path in map(
+        Path, jupyter_core.paths.jupyter_path("nbconvert", "templates", "a11y", "static", asset)
+    ):
         if path.exists():
             copyfile(path, target)
             break
@@ -93,3 +97,12 @@ def test_export_notebooks(config, notebook):
     TARGET = get_target_html(config, notebook)
     TARGET.write_text(html)
     LOGGER.debug(f"writing html to {TARGET}")
+
+
+@mark.parametrize(
+    "target", [get_target_html(CONFIGURATIONS / "a11y.py", NOTEBOOKS / "lorenz-executed.ipynb")]
+)
+def test_a11y_template_content(target):
+    soup = soupify(target.read_text())
+
+    assert soup.select_one("#toc"), "toc does not exist"

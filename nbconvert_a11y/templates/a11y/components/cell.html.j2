@@ -1,0 +1,130 @@
+{% from "a11y/components/core.html.j2" import loc, hide %}
+{% from "a11y/components/displays.html.j2" import cell_display_priority with context %}
+
+{% macro cell_anchor(i, cell_type, execution_count=None, outputs=None, hidden=False)%}
+{% set CODE = cell_type==" code" .strip() %}
+{% set MD = cell_type==" markdown" .strip() %}
+{% set EXEC = execution_count %}
+<a class="nb-anchor{% if resources.hide_anchor_links%} visually-hidden{% endif %}" href="#{{i}}" id="{{i}}"
+    aria-labelledby="nb-cell-label {{i}}" {% if resources.accesskey_navigation and isinstance(i, int) and (i < 10)
+    %}accesskey="{{i}}" {% endif %}
+    aria-describedby="{% if CODE %}cell-{{i}}-executed {% endif %}nb-{{cell_type}}-label nb-cell-label{% if not MD %} cell-{{i}}-loc nb-loc-label{% endif %}{% if CODE%} cell-{{i}}-outputs-len{% endif %}"
+    {{hide(hidden or resources.hidden_anchor_links)}}>{{i}}</a>
+{% endmacro %}
+
+{% macro cell_form(i, cell_type, hidden=True) %}
+{# the cell form acts a formal reference for each cell. as a form, each cell can handle a submission process
+that would include talking to the kernel. #}
+<form class="nb-toolbar" id="cell-{{i}}" name="cell-{{i}}" aria-labelledby="cell-{{i}}-exec-label" {{hide(hidden)}}>
+    <fieldset>
+        <legend>actions</legend>
+        <button type="submit">Run Cell</button>
+    </fieldset>
+</form>
+{% endmacro %}
+
+{# {% macro cell_cell_type(i, cell_type, hidden=False) %}
+{% set selected = ' selected id="cell-{}-cell_type"'.format(i) %}
+<label class="nb-cell_type" id="nb-cell-{{i}}-select" {{hide(hidden)}}>cell type
+    <select name="cell_type" form="cell-{{i}}">
+        <option value="markdown" {%- if cell_type=="markdown" %}{{selected}}{% endif%}>markdown</option>
+        <option value="code" {%- if cell_type=="code" %}{{selected}}{% endif%}>code</option>
+        <option value="raw" {%- if cell_type=="raw" %}{{selected}}{% endif%}>raw</option>
+    </select>
+</label>
+{% endmacro %} #}
+
+{% macro cell_cell_type(i, cell_type, hidden=False) %}
+<label id="cell-{{i}}-cell_type" {{hide(hidden)}}>{{cell_type}}</label>
+{% endmacro %}
+
+{% macro cell_execution_count(i, execution_count, hidden=False) %}
+<label class="nb-execution_count" {{hide(hidden)}}>
+    <span hidden id="cell-{{i}}-executed">{% if not execution_count %}un{% endif %}executed</span>
+    <span id="cell-{{i}}-in-label">{{resources.prompt_in}}</span>
+    <span aria-hidden="true">{{resources.prompt_left}}</span>
+    <span id="cell-{{i}}-exec-label">{{execution_count}}</span>
+    <span aria-hidden="true">{{resources.prompt_right}}</span>
+</label>
+{% endmacro %}
+
+
+{% macro cell_source(i, source, cell_type, execution_count, hidden=False) %}
+<textarea class="nb-source" form="cell-{{i}}" id="cell-{{i}}-source" name="source"
+    rows="{{source.splitlines().__len__()}}" aria-labelledby="cell-{{i}}-in-label cell-{{i}}-exec-label nb-source-label"
+    readonly>{{source}}</textarea>
+{# should say something like highlight source #}
+<div role="group" aria-labelledby="cell-{{i}}-in-label cell-{{i}}-exec-label" aria-roledescription="highlighted">
+    {{highlight(source, cell_type)}}
+</div>
+{% endmacro %}
+
+{% macro cell_metadata(i, metadata, hidden=False) %}
+<button class="nb-metadata" name="metadata" form="cell-{{i}}" aria-describedby="nb-metadata-desc"
+    aria-controls="cell-{{i}}-metadata" onclick="openDialog()" {{hide(hidden)}}>metadata</button>
+<dialog id="cell-{{i}}-metadata">
+    <form>
+        <button formmethod="dialog">Close</button>
+        <pre><code>
+        {{metadata}}
+        </code></pre>
+    </form>
+</dialog>
+{% endmacro %}
+
+{%- macro cell_output(i, cell, source, outputs, cell_type, metadata, execution_count, hidden=False) -%}
+{% set CODE = cell_type == "code" %}
+{% if CODE %}
+{% if execution_count %}
+<span class="nb-outputs visually-hidden" id="cell-{{i}}-outputs-len">{{outputs.__len__()}} outputs.</span>
+{% endif %}
+{# the following span should get its own column in the table #}
+<fieldset
+    class="nb-outputs{% if metadata.get('scrolled')%} nb-scrolled{% endif %}{% if metadata.get('collapsed')%} nb-collapsed{% endif %}"
+    {{hide(hidden)}} data-outputs="{{outputs.__len__()}}">
+    <legend id="cell-{{i}}-outputs-label" aria-describedby="nb-outputs-desc" {{hide(not
+        resources.global_content_filter.include_output_prompt)}}>
+        <span>{{resources.prompt_out}}</span>
+        <span aria-hidden="true">{{resources.prompt_left}}</span>
+        <span>{{execution_count}}</span>
+        <span aria-hidden="true">{{resources.prompt_right}}</span>
+    </legend>
+    {% if outputs %}
+    {# the output description should mention the number of outputs
+    saying zero outputs should be an option. a cell without an output is probably a violation. #}
+    {{cell_display_priority(i, outputs, cell)}}
+    {% endif %}
+</fieldset>
+{%- else %}
+{# when there is markdown we show html output;
+it is the woven state of the input for raw source code. a monad for strings. #}
+{%- set html = metadata.get("data", {}).get("text/html") %}
+{%- if html -%}
+{# if there is a pre-computed data bundle in the metadata then we can use that
+instead of computing the markup #}
+{{html}}
+{%- else -%}
+{{ source | markdown2html | strip_files_prefix }}
+{%- endif -%}
+{%- endif -%}
+{%- endmacro -%}
+
+{% macro cell_loc(i, cell, tag="span") %}
+<{{tag}} role="none" class="nb-loc" id="cell-{{i}}-loc" hidden>{{loc(cell)}}</{{tag}}>
+{% endmacro %}
+
+{% macro cell_section(cell, loop, tag="section") %}
+<{{tag}} class="cell {{cell.cell_type}}" aria-labelledby="cell-{{loop.index}}-cell_type {{loop.index}}"
+    data-loc="{{cell.source.splitlines().__len__()}}" {% if cell.cell_type=="code" %}
+    data-outputs="{{cell.outputs.__len__()}}" {% endif %}>
+    {{cell_anchor(loop.index, cell.cell_type)}}
+    {{cell_form(loop.index, hidden=True)}}
+    {% set hide_exec_ct =cell.cell_type=="markdown" or cell.execution_count==None %}
+    {{cell_execution_count(loop.index, cell.execution_count, hidden=hide_exec_ct)}}
+    {{cell_cell_type(loop.index, cell.cell_type, hidden=True)}}
+    {{cell_source(loop.index, cell.source, cell.cell_type, cell.execution_count, hidden=cell.cell_type != "code")}}
+    {{cell_loc(loop.index, cell)}}
+    {{cell_output(loop.index, cell, cell.source, cell.outputs, cell.cell_type, cell.metadata, cell.execution_count)}}
+    {{cell_metadata(loop.index, cell.metadata, hidden=True)}}
+</{{tag}}>
+{% endmacro%}

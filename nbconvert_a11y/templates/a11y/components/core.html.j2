@@ -1,0 +1,119 @@
+{# # core accessible components
+
+this document provides collections of macros that can be used to provide tested accessible experiences.
+these core components use aria first principles to provide accessible components.
+a to do is individual testing of each of the components, but writing those tests means
+we've been success doing other things
+
+developers should be aware that this template should imported `with context`. for example,
+`"a11y/components/audit.html.j2"`
+
+```html
+{% from "a11y/components/core.html.j2" import dialog_close, multiselect with context%}
+```
+
+in this specific application that context really isn't necessary.
+at some point effort should be put into separating context dependent and independent macros.
+
+#}
+
+
+{% macro select(title, values={}, default=None, disabled=None, hide_label=False) %}
+{% set name="-".join(map(str.lower, title.split()))%}
+{% if default == None %}
+{% set default = next(iter(values), None)%}
+{% endif %}
+
+{% if isinstance(values, [].__class__) %}
+{% set values = dict(zip(values, values))%}
+{% endif %}
+{% if isinstance(disabled, [].__class__) %}
+{% set disabled = dict(zip(disabled, disabled))%}
+{% endif %}
+<label id="nb-{{name}}-select">{{title}}
+    <select name="{{name}}">
+        {% for k, v in values.items() %}
+        <option value="{{v}}" {% if k==default %} selected{% endif %}>{{k}}</option>
+        {% endfor %}
+        {% for k, v in (disabled or {}).items() %}
+        <option value="{{v}}" disabled>{{k}}</option>
+        {% endfor %}
+    </select>
+</label>
+{% endmacro %}
+
+
+{% macro activity_log(id=False) %}
+<details class="log">
+    <summary><span {% if id %}id="nb-activity-log-label" {% endif %}>activity log</span></summary>
+</details>
+<table aria-live="polite" aria-labelledby="nb-activity-log-label">
+    <tr>
+        <th hidden>time</th>
+        <td>message</td>
+        {# all forward behaviors should be reversible except code execution #}
+        {# <td>action</td> #}
+    </tr>
+</table>
+{% endmacro %}
+
+{% macro input_number(title, value, min=None, max=None, step=None, extra_title="")%}
+{% set name="-".join(map(str.lower, title.split()))%}
+<label>
+    {{title}}<input type="number" min="{{min | default('')}}" max="{{max | default('')}}" step="{{step | default('')}}"
+        name="{{name}}" value="{{value}}"/>{{extra_title}}
+</label>
+{% endmacro%}
+
+{% macro checkbox(title, value, form=None)%}
+{% set name="-".join(map(str.lower, title.split()))%}
+<label><input type="checkbox" name="{{name}}" {%- if value %} checked{% endif %}{% if form %} form="{{form}}" {% endif
+        %}/>{{title}}</label>
+{% endmacro%}
+
+{% macro dialog_close() %}
+<button formmethod="dialog">Close</button>
+{% endmacro %}
+
+{% macro dialog_close_form() %}
+<form>{{dialog_close()}}</form>
+{% endmacro %}
+
+
+{% macro h(level, title)%}
+{% set name="-".join(map(str.lower, title.split()))%}
+<h{{level}} id="nb-{{name}}-label">{{title}}</h{{level}}>
+{% endmacro%}
+
+{% macro hide(object) %}{% if object %} hidden{% endif %}{% endmacro %}
+
+{% macro multiselect(title, values={}, default=None) %}
+{% set name="-".join(map(str.lower, title.split()))%}
+{% if default == None %}
+{% set default = list(values) %}
+{% endif %}
+{% if isinstance(values, [].__class__) %}
+{% set values = dict(zip(values, values))%}
+{% endif %}
+<label>{{title}}
+    <select name="{{name}}" id="{{name}}-select" multiple>
+        {% for k, v in values.items() %}
+        <option value="{{v}}" {% if k in default %} selected{% endif %} label="{{k}}">{{v}}</option>
+        {% endfor %}
+    </select>
+</label>
+{% endmacro %}
+
+{% macro loc(cell) %}{{cell.source.splitlines().__len__()}}{% endmacro%}
+
+{% macro time(t) %}
+{% if t %}{% if t.endswith("Z") %}{% set t = t[:-1] + "+00:00" %}{% endif %}<time
+    datetime={{'"'}}{{datetime.fromisoformat(t).isoformat(timespec="milliseconds" )}}">{{t}}</time>{% endif %}
+{% endmacro %}
+
+{#
+
+[h25]: https://www.w3.org/WAI/WCAG21/Techniques/html/H25
+[2.4.2A]: https://www.w3.org/WAI/WCAG21/Understanding/page-titled
+
+#}

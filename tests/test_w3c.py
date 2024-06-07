@@ -1,75 +1,12 @@
 # requires node
 # requires jvm
-
-import collections
-import functools
-import itertools
-import json
-import operator
-import pathlib
-import re
-import shlex
-import subprocess
-
-import exceptiongroup
-
-from tests.test_smoke import CONFIGURATIONS, get_target_html
-
-EXCLUDE = re.compile(
-    """or with a “role” attribute whose value is “table”, “grid”, or “treegrid”.$"""
-    # https://github.com/validator/validator/issues/1125
-)
-
-
-@functools.lru_cache(1)
-def vnu_jar():
-    VNU_JAR = (
-        pathlib.Path(subprocess.check_output(shlex.split("npm root vnu-jar")).strip().decode())
-        / "vnu-jar/build/dist/vnu.jar"
-    )
-    assert VNU_JAR.exists()
-    return VNU_JAR
-
-
-def validate_html(*files: pathlib.Path) -> dict:
-    return json.loads(
-        subprocess.check_output(
-            shlex.split(f"java -jar {vnu_jar()} --stdout --format json --exit-zero-always")
-            + list(files)
-        ).decode()
-    )
-
-
-def organize_validator_results(results):
-    collect = collections.defaultdict(functools.partial(collections.defaultdict, list))
-    for (error, msg), group in itertools.groupby(
-        results["messages"], key=operator.itemgetter("type", "message")
-    ):
-        for item in group:
-            collect[error][msg].append(item)
-    return collect
-
-
-def raise_if_errors(results, exclude=EXCLUDE):
-    collect = organize_validator_results(results)
-    exceptions = []
-    for msg in collect["error"]:
-        if not exclude or not exclude.search(msg):
-            exceptions.append(
-                exceptiongroup.ExceptionGroup(
-                    msg, [Exception(x["extract"]) for x in collect["error"][msg]]
-                )
-            )
-    if exceptions:
-        raise exceptiongroup.ExceptionGroup("nu validator errors", exceptions)
-
-
-from json import dumps
 from logging import getLogger
 from pathlib import Path
 
-import exceptiongroup
-from pytest import mark, param
+import pytest
+
+from nbconvert_a11y.pytest_w3c import ValidatorViolation, raise_if_errors
+from tests.test_smoke import CONFIGURATIONS, get_target_html
 
 HERE = Path(__file__).parent
 NOTEBOOKS = HERE / "notebooks"
@@ -82,19 +19,34 @@ VALIDATOR = EXPORTS / "validator"
 # export the resting state document and pass them to the validator.
 # this would be better validate widgets.
 
-INVALID_MARKUP = mark.xfail(reason="invalid html markup")
+INVALID_MARKUP = pytest.mark.xfail(reason="invalid html markup")
 
-htmls = mark.parametrize(
+
+htmls = pytest.mark.parametrize(
     "html",
     [
-        param(
+        pytest.param(
             get_target_html(
                 (CONFIGURATIONS / (a := "a11y")).with_suffix(".py"),
                 (NOTEBOOKS / (b := "lorenz-executed")).with_suffix(".ipynb"),
             ),
             id="-".join((b, a)),
         ),
-        param(
+        pytest.param(
+            get_target_html(
+                (CONFIGURATIONS / (a := "section")).with_suffix(".py"),
+                (NOTEBOOKS / (b := "lorenz-executed")).with_suffix(".ipynb"),
+            ),
+            id="-".join((b, a)),
+        ),
+        pytest.param(
+            get_target_html(
+                (CONFIGURATIONS / (a := "list")).with_suffix(".py"),
+                (NOTEBOOKS / (b := "lorenz-executed")).with_suffix(".ipynb"),
+            ),
+            id="-".join((b, a)),
+        ),
+        pytest.param(
             get_target_html(
                 (CONFIGURATIONS / (a := "default")).with_suffix(".py"),
                 (NOTEBOOKS / (b := "lorenz-executed")).with_suffix(".ipynb"),
@@ -107,11 +59,68 @@ htmls = mark.parametrize(
 
 
 @htmls
-def test_baseline_w3c(page, html):
-    result = validate_html(html)
-    VALIDATOR.mkdir(parents=True, exist_ok=True)
-    audit = VALIDATOR / html.with_suffix(".json").name
-    LOGGER.info(f"""writing {audit} with {len(result.get("violations", ""))} violations""")
-    audit.write_text(dumps(result))
+def test_baseline_w3c_paths(html: Path, validate_html_path: "TVnuValidator") -> None:
+    exc = validate_html_path(html).run().exception()
+    try:
+        raise exc
+    except* ValidatorViolation["info"]:
+        ...
+    except* ValidatorViolation["error-Unrecognized at-rule “@layer”"]:
+        ...
+    except* ValidatorViolation["error-An “img” element must have an “alt” attribute, except under certain conditions. For details, consult guidance on providing text alternatives for images."]:
+        ...
 
-    raise_if_errors(result)
+def test_a11y_max(notebook, validate_html_url):
+    exc = (
+        validate_html_url(notebook("a11y", "lorenz-executed.ipynb", config="a11y.py"))
+        .run()
+        .exception()
+    )
+    try:
+        raise exc
+    except* ValidatorViolation["info"]:
+        ...
+    except* ValidatorViolation["error-Unrecognized at-rule “@layer”"]:
+        ...
+    except* ValidatorViolation["error-Bad value “none” for attribute “role” on element “table”."]:
+        ...
+
+
+def xfail_default(notebook, validate_html_url):
+    exc = validate_html_url(notebook("html", "lorenz-executed.ipynb")).run().exception()
+    try:
+        raise exc
+    except* ValidatorViolation["error-Unknown pseudo-element or pseudo-class “:horizontal”"]:
+        ...
+    except* ValidatorViolation["error-Unknown pseudo-element or pseudo-class “:vertical”"]:
+        ...
+    except* ValidatorViolation["error-box-shadow"]:
+        ...
+    except* ValidatorViolation["error-overflow"]:
+        ...
+    except* ValidatorViolation["error-Stray start tag “script”."]:
+        ...
+    except* ValidatorViolation["info"]:
+        ...
+    finally:
+        pytest.xfail("the default nbconvert template is non-conformant.")
+
+
+def xfail_a11y_min(notebook, validate_html_url):
+    exc = validate_html_url(notebook()).run().exception()
+    try:
+        raise exc
+    except* ValidatorViolation[
+        "error-The “aria-labelledby” attribute must point to an element in the same document."
+    ]:
+        ...
+    except* ValidatorViolation[
+        "error-The “aria-describedby” attribute must point to an element in the same document."
+    ]:
+        ...
+    except* ValidatorViolation["info"]:
+        ...
+    finally:
+        pytest.xfail(
+            "the minified a11y theme has superfluous idref's that need to conditionally removed."
+        )

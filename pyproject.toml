@@ -34,7 +34,7 @@ dependencies = [
   "markdown-it-py[linkify,plugins]",
   "nbconvert",
   "python-slugify",
-  "exceptiongroup; python_version < '3.12'"
+  "exceptiongroup; python_version < '3.12'",
 ]
 dynamic = ["version"]
 
@@ -66,11 +66,14 @@ build = "mkdocs build -v"
 serve = "mkdocs serve -v"
 
 [project.entry-points."nbconvert.exporters"]
-a11y = "nbconvert_a11y.form_exporter:A11yExporter"
-html5_test = "nbconvert_a11y.exporters:Html5Test"
+a11y = "nbconvert_a11y.exporter:A11yExporter"
+a11y-table = "nbconvert_a11y.exporter:A11yExporter"
+a11y-landmark = "nbconvert_a11y.exporter:SectionExporter"
+a11y-list = "nbconvert_a11y.exporter:ListExporter"
+
 [project.entry-points.pytest11]
-a11y = "nbconvert_a11y.form_exporter:A11yExporter"
 axe = "nbconvert_a11y.pytest_axe"
+vnu = "nbconvert_a11y.pytest_w3c"
 
 [tool.hatch.build.targets.wheel.shared-data]
 "nbconvert_a11y/templates" = "share/jupyter/nbconvert/templates"
@@ -95,7 +98,6 @@ minversion = "6.0"
 addopts = "-vvv -pno:importnb"
 testpaths = ["tests", "test_playwright.py"]
 norecursedirs = ["tests/exports", "tests/notebooks", "*checkpoints"]
-
 
 [tool.hatch.envs.test]
 features = ["test", "audit"]
@@ -163,8 +165,6 @@ process = 2
 notebooks = [
   "tests/notebooks/lorenz.ipynb",
   "tests/notebooks/lorenz-executed.ipynb",
-  "user-tests/1-navigation/stsci_example_notebook.ipynb",
-  "user-tests/2-content/Imaging_Sky_Background_Estimation.ipynb",
 ]
 configurations = [
   "tests/configurations/default.py",
@@ -201,7 +201,7 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-isort.known-first-party = ["importnb"]
+isort.known-first-party = ["importnb", "nbconvert_a11y", "tests"]
 ignore = ["D203", "D213", "COM812", "ISC001"]
 select = [
   "A",

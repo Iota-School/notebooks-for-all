@@ -1,0 +1,12 @@
+{% macro group(type, title, values={}) %}
+<fieldset id="nb-color-scheme-{{type}}">
+    <legend>color scheme</legend>
+    <span aria-hidden="true">color scheme</span>
+    <label>light mode<input value="light" name="color-scheme" type="radio" checked></label>
+    <label>dark mode<input value="dark" name="color-scheme" type="radio"></label>
+</fieldset>
+{% endgroup %}
+
+{% macro radiogroup(title, values={}) %}
+{{group("radio", title, values)}}
+{% endgroup %}

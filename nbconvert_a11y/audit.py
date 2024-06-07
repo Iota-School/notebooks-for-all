@@ -1,5 +1,6 @@
 """accessibility auditing tools."""
 import asyncio
+import os
 import traceback
 from contextlib import AsyncExitStack, asynccontextmanager
 from json import dumps
@@ -11,6 +12,9 @@ import playwright.async_api
 import requests
 
 logger = getLogger("a11y-tasks")
+
+ENV_CHROMIUM_CHANNEL = "NBA11Y_CHROMIUM_CHANNEL"
+DEFAULT_CHROMIUM_CHANNEL = "chrome-beta"
 
 
 async def _main(
@@ -32,7 +36,7 @@ async def _main(
             browser = await play.chromium.launch(
                 args=['--enable-blink-features="AccessibilityObjectModel"'],
                 headless=True,
-                channel="chrome-beta",
+                channel=get_chrome_channel(),
             )
 
             page = await browser.new_page()
@@ -41,13 +45,17 @@ async def _main(
                 await task(browser, page, output)
 
 
+def get_chrome_channel():
+    return os.environ.get(ENV_CHROMIUM_CHANNEL, DEFAULT_CHROMIUM_CHANNEL)
+
+
 @asynccontextmanager
 async def get_browser():
     async with playwright.async_api.async_playwright() as play:
         yield await play.chromium.launch(
             args=['--enable-blink-features="AccessibilityObjectModel"'],
             headless=True,
-            channel="chrome-beta",
+            channel=get_chrome_channel(),
         )
 
 

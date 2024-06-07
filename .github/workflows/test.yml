@@ -1,105 +1,98 @@
-name: pytest nbconvert-a11y, axe test exports, build docs.
+name: test with pixi
+
 on:
-  - push
+  push:
+    branches: [main]
+  pull_request:
+    branches: ["*"]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONUNBUFFERED: "1"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  USE_PIXI_VERSION: 0.22.0
+
 jobs:
-  format:
-    name: format
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.6.0
         with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v4
+          pixi-version: v${{ env.USE_PIXI_VERSION }}
+          cache: true
+          environments: build
+      - run: pixi run -ve build build
+      - uses: actions/upload-artifact@v4
         with:
-          python-version: "3.12"
-          cache: pip
-          cache-dependency-path: pyproject.toml
-      - name: install dev dependencies
-        run: python -m pip install --upgrade pip hatch
-      - name: run formatters
-        run: |
-          echo "~~~bash" > "${GITHUB_STEP_SUMMARY}"
-          hatch run format:code 2>&1 | tee --append "${GITHUB_STEP_SUMMARY}"
-          echo "~~~" >> "${GITHUB_STEP_SUMMARY}"
-      - name: print diff
-        run: |
-          echo "~~~diff" >> "${GITHUB_STEP_SUMMARY}"
-          git diff | tee --append "${GITHUB_STEP_SUMMARY}"
-          echo "~~~" >> "${GITHUB_STEP_SUMMARY}"
+          name: nbconvert-a11y-${{ github.run_number }}-dist
+          path: ./dist
+
   test:
-    name: test package and accessibility
-    defaults:
-      run:
-        shell: bash -el {0}
+    name: (${{ matrix.os }}) test
+    needs: [build]
+    runs-on: ${{ matrix.os }}-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version:
-          - "3.10"
-    runs-on: ubuntu-latest
+        os: ["ubuntu"]
+    # add matrix for browsers later on
     steps:
-      - name: fetch all history and tags
-        uses: actions/checkout@v2
+      - run: git config --global core.autocrlf false
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.6.0
         with:
-          fetch-depth: 0
-      - name: Cache conda
-        uses: actions/cache@v2
-        env:
-          # Increase this value to reset cache if etc/example-environment.yml has not changed
-          CACHE_NUMBER: 1
+          pixi-version: v${{ env.USE_PIXI_VERSION }}
+          cache: true
+          environments: test
+      - uses: actions/download-artifact@v4
         with:
-          path: ~/conda_pkgs_dir
-          key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
-            hashFiles('test-environment.yml') }}
-      - uses: mamba-org/setup-micromamba@v1
+          name: nbconvert-a11y-${{ github.run_number }}-dist
+          path: ./dist
+      # need to make this install from the wheel
+      - run: pixi run -ve test test
+      - if: always()
+        uses: actions/upload-artifact@v4
         with:
-          environment-file: test-environment.yml
-          cache-environment: true
-      - name: init plawright
-        run: |
-          playwright install --with-deps chromium
-      - name: init node & files
-        run: |
-          npm install vnu-jar axe-core
-          doit copy
-      - name: init dev module
-        run: |
-          pip install -e.
-      - name: smoke test
-        run: |
-          # the smoke generate html assets that are used in the accessibility testing.
-          # we run this script to generate assets and test the nbconvert-a11y module.
-          # failures here will stop any docs builds
-          pytest tests/test_smoke.py
-      - name: a11y tests
-        # always build the docs to see what the new versions look like.
-        continue-on-error: true
-        run: |
-          pytest --deselect tests/test_smoke.py  \
-          -n auto --self-contained-html --html=tests/exports/pytest/report.html
-      - name: build wheel and sdist
-        run: |
-          python -m build
-      - uses: actions/upload-artifact@v3
-        with:
-          name: dist
-          path: dist
-      - name: mkdocs
-        run: |
-          mkdocs build -v
-      - uses: actions/upload-artifact@v3
-        with:
-          name: site
-          path: site
-  publish:
-    name: publish the mkdocs build to github pages
+          name: |-
+            nbconvert-a11y-${{ github.run_number }}-${{ matrix.os }}-test
+          path: |
+            ./.pixi/task-cache-v0
+            ./build/reports
+  
+  docs:
+    name: docs
     needs: [test]
     runs-on: ubuntu-latest
     steps:
-      - name: checkout repo
-        uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
+      - run: git config --global core.autocrlf false
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.6.0
         with:
-          name: site
+          pixi-version: v${{ env.USE_PIXI_VERSION }}
+          cache: true
+          environments: docs
+      - run: pixi run -ve docs build
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nbconvert-a11y-${{ github.run_number }}-site
+          path: site
+
+  publish:
+    name: publish the mkdocs build to github pages
+    needs: [docs]
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: nbconvert-a11y-${{ github.run_number }}-site
           path: site
       - name: Deploy main 🚀
         uses: JamesIves/github-pages-deploy-action@v4
@@ -114,44 +107,3 @@ jobs:
           folder: site # The folder the action should deploy.
           single-commit: true
           target-folder: branch/${{ github.ref_name }}
-  release:
-    name: draft release when tagged
-    if: startsWith(github.ref, 'refs/tags/')
-    needs: [test]
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: write
-    steps:
-      - name: fetch contents
-        uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
-        with:
-          name: dist
-          path: dist
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-          cache: pip
-          cache-dependency-path: pyproject.toml
-      - name: install twine and pytest
-        run: |
-          pip install twine pytest
-      - name: Publish package distributions to TestPyPI
-        run: |
-          twine upload --repository testpypi \
-          --user __token__ --password ${{secrets.HATCH_TEST_INDEX_AUTH}} \
-          dist/*
-      - name: install nbconvert-a11y dependencies from test pip
-        run: |
-          pip install \
-          --index-url 'https://test.pypi.org/simple/' \
-          --extra-index-url 'https://pypi.org/simple/' \
-          nbconvert-a11y
-      - name: test test release
-        run: |
-          pytest tests/test_smoke.py
-      - uses: ncipollo/release-action@v1
-        with:
-          artifacts: "dist/.*"
-          draft: true # does not trigger a created event

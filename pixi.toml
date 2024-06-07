@@ -1,0 +1,113 @@
+# "$schema" = "https://pixi.sh/v0.21.1/schema/manifest/schema.json"
+
+[project]
+name = "test-nbconvert-a11y"
+version = "0.1.0"
+description = "Add a short description here"
+authors = ["tonyfast <tony.fast@gmail.com>"]
+channels = ["conda-forge", "microsoft", "nodefaults"]
+platforms = ["linux-64", "osx-64", "win-64", "osx-arm64"]
+
+
+[feature.test-python.tasks.test]
+depends-on = ["pip", "install-axe", "pw-install-ff"]
+inputs = [
+  "pyproject.toml",
+  "{tests,nbconvert-a11y}/*.py",
+  "{tests,nbconvert-a11y}/**/*.py",
+]
+cmd = """pip install -e. --no-deps --ignore-installed --disable-pip-version-check 
+  &&  PLAYWRIGHT_BROWSERS_PATH=.pixi/.local-browsers pytest --browser firefox"""
+
+
+[feature.test-axe.tasks.install-axe]
+outputs = ["node_modules/axe-core"]
+cmd = "npm install axe-core"
+
+[feature.test-axe.tasks.pw-install-ff]
+outputs = [".pixi/.local-browsers/firefox-*"]
+cmd = "PLAYWRIGHT_BROWSERS_PATH=.pixi/.local-browsers playwright install firefox"
+
+[feature.test-axe.dependencies]
+playwright = "*"
+pytest-playwright = "*"
+
+[feature.test-nu-validator.dependencies]
+openjdk = "*"
+vnu-validator = "*"
+
+[feature.docs.dependencies]
+mkdocs-material = ">=9.5.24,<9.6"
+mkdocstrings = ">=0.25.1,<0.26"
+
+[feature.docs.tasks.build]
+inputs = [
+  "mkdocs.yml",
+  "{tests,nbconvert-a11y}/*.{ipynb,md,py}",
+  "{tests,nbconvert-a11y}/**/*.{ipynb,md,py}",
+]
+outputs = ["site"]
+cmd = "mkdocs build -v"
+
+[dependencies]
+# run in CI with --with-deps
+python = ">=3.10,<3.13"
+pip = "*"
+accessible-pygments = "*"
+exceptiongroup = "*"
+html5lib = "*"
+nbconvert = "*"
+python-slugify = "*"
+mdit-py-plugins = "*"
+linkify-it-py = ">=1,<3"
+markdown-it-py = "*"
+beautifulsoup4 = "*"
+
+[feature.test-python.dependencies]
+doit = "*"
+ipywidgets = "*"
+matplotlib-base = "*"
+numpy = "*"
+pytest = "*"
+pytest-html = "*"
+pytest-sugar = "*"
+pytest-xdist = "*"
+pytest-flask = "*"
+requests-cache = "*"
+scipy = "*"
+pandas = "*"
+
+[environments]
+# lint = { features = ["lint"], solve-group = "default" }
+build = { features = ["build"], solve-group = "default" }
+test = { features = [
+  "test-python",
+  "test-axe",
+  "test-nu-validator",
+], solve-group = "default" }
+docs = { features = ["docs"], solve-group = "default" }
+
+
+[tasks.pip]
+inputs = ["pyproject.toml"]
+outputs = ["build/pip-freeze/*.txt"]
+cmd = """
+  python -m pip install -vv --no-deps --ignore-installed --disable-pip-version-check
+    -e .
+  && mkdir -p build/pip-freeze
+  && pip freeze > build/pip-freeze/$PIXI_ENVIRONMENT_NAME.txt"""
+
+
+[feature.build.dependencies]
+python-build = "*"
+
+[feature.build.tasks.build]
+inputs = [
+  "LICENSE",
+  "pyproject.toml",
+  "README.md",
+  "nbconvert_a11y/**/*.{py,j2}",
+  "nbconvert_a11y/*.{py,j2}",
+]
+outputs = ["dist/nbconvert_a11y-*.tar.gz", "dist/nbconvert_a11y-*.whl"]
+cmd = "rm -rf dist && pyproject-build . -vv"

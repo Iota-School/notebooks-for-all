@@ -1,0 +1,15 @@
+<section aria-labelledby="nb-toc">
+    {# a notebook will provide visual structural navigation for a document.
+    this is a feature of screen readers that is not common to sighted users.
+    the implementation here is very naive. users will need to know to collapse the heading
+    to skip the link tree. the best implementation is a tree that will consume a single tab stop
+    and allow arrow key navigation. #}
+    <details open>
+        {# if the label is on the summary then the bullet is announced as the label and it should not be
+        #}
+        <summary id="toc"><span id="nb-toc">table of contents</span></summary>
+        {# the table of contents is populated in python. #}
+        <a id="nb-toc-start"></a>
+        {{resources.toc|default("")}}
+    </details>
+</section>

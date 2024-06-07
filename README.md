@@ -1,19 +1,32 @@
-# Astronomy Notebooks for All
-Jupyter Notebooks play a central role in modern data science workflows. Despite their importance, these notebooks are inaccessible to people with disabilities, especially those who rely on assistive technology. Impacted users must find extreme workarounds or [give up using them entirely.](https://www.freelists.org/post/program-l/Accessability-of-Jupyter-notebooks) Students with disabilities have [reported leaving their field](https://github.com/jupyterlab/jupyterlab/issues/9399#issuecomment-740524422) once they learn their chosen career’s foundational tools are inaccessible to them. 
+# `nbconvert-a11y`
 
-This is a challenging problem to solve. The Notebooks for All project is taking the first steps, initially focusing on static notebooks: 
-- Running usability feedback sessions with impacted users who rely on a variety of assistive technology
-- Capturing what makes notebooks inaccessible with assistive technology, and compiling documents that describe the issues and feedback
-- Editing notebooks based on the feedback
-- Organizing events to spread awareness in the scientific community about this issue
+`nbconvert-a11y` contains templates for accessible notebook representations and accessibility tests for Jupyter notebook products.
 
-## Collaborators
-[Space Telescope Science Institute](https://www.stsci.edu/) produces extensive community resources and infrastructure in Jupyter. The Institute has committed to fostering an inclusive environment and has funded this project in 2022-2023 as part of the Director’s Discretionary Fund. Other collaborators include community contributions and work from STEM- and accessibility-focused organizations such as [Iota School](https://iotaschool.com/) and [Quansight Labs](https://www.quansight.com/labs).
+```bash
+pip install nbconvert-a11y
+```
 
-## Resources
-[A Curated List of STScI notebooks](https://github.com/spacetelescope/notebooks)  
-[Accessibility Analysis of Jupyter Notebook HTML Output](https://www.youtube.com/watch?v=KsUF_HjA97U&t=253s)  
-[Astronomy Notebooks For All full proposal](resources/proposal-astronomy-notebooks-for-all.md)
+`nbconvert-a11y` can be used with the [`nbconvert` command line tool](https://nbconvert.readthedocs.io/en/latest/usage.html).
+it provides the `a11y` exporter with several variants that can be used. the default theme uses a flexible table representation
+
+```bash
+jupyter nbconvert --to a11y Untitled.ipynb           # flexible table navigation
+jupyter nbconvert --to a11y-table Untitled.ipynb     # a11y is an alias for a11y-table
+jupyter nbconvert --to a11y-landmark Untitled.ipynb  # cells are section landmarks
+jupyter nbconvert --to a11y-list Untitled.ipynb      # cells are list items
+```
+
+```python
+from nbconvert_a11y.exporter import A11y, Table, Section, List
+```
+
+A an example of the canonical Lorenz differential differential equations can be viewed @ https://deathbeds.github.io/nbconvert-a11y/exports/html/lorenz-executed-a11y.html
+
+## History
+
+the `nbconvert-a11y` project is forked from initial development in the [`notebook-for-all`]() repository. 
+this collaboration between [Space Telescope Science Institute](https://www.stsci.edu/), [Iota School](https://iotaschool.com/) and [Quansight Labs](https://www.quansight.com/labs)
+brought input from blind and visual impaired notebook users as to what their most assistive experiences could be.
 
 ## License
-This repository hosts mixed content types. Suitable licenses apply to each type. All of the repository except the `[user-tests](user-tests)` directory are under a [3-Clause BSD license](LICENSE). All content in the `[user-tests](user-tests)` directory is under a [CC-BY license](https://creativecommons.org/licenses/by/4.0/).
+Licensed under a [3-Clause BSD license](LICENSE).

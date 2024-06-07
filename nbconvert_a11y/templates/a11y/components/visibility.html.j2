@@ -1,0 +1,66 @@
+{% from "a11y/components/core.html.j2" import activity_log, checkbox %}
+
+{% macro header_row(names) %}
+<tr>
+    <th></th>
+    {% for name in names.split() %}
+    {% set alias = name.lstrip("!") %}
+    <th>{{alias}}</th>
+    {% endfor %}
+</tr>
+{% endmacro%}
+
+
+{% macro checkbox_row(label, names) %}
+<tr class="{{label}}">
+    <td>{{label}}</td>
+    {% for name in names.split() %}
+    {% set alias = name.lstrip("!") %}
+    <td><input aria-labelledby="nb-{{label}}-label nb-{{alias}}-label" name="{{alias}}" type="checkbox" {% if not
+            name.startswith("!") %} checked{% endif %}>
+    </td>
+    {% endfor %}
+</tr>
+{% endmacro%}
+
+
+<dialog id="nb-visibility-dialog">
+    <form name="visibility">
+        <button formmethod="dialog">Close</button>
+        {{checkbox("visually hide", False)}}
+        {{checkbox("accessibility audit", False)}}
+        <fieldset disabled>
+            <legend>visibility</legend>
+            <table aria-label="notebook cell visibility" role="grid">
+                <tbody>
+                    {# the table head is used to provide controls #}
+                    {# it hints at a configurable pattern for showing different features. #}
+                    {# there should be controls for each cell type here, and cell types can be
+                    added. #}
+                    {% set labels = "index execution_count !cell_type source outputs !metadata !toolbar !loc" %}
+                    {{header_row(labels)}}
+                    {{checkbox_row("code", labels)}}
+                    {{checkbox_row("markdown", labels)}}
+                    {{checkbox_row("raw", labels)}}
+                </tbody>
+
+            </table>
+        </fieldset>
+    </form>
+    <form name="expanded">
+        <fieldset disabled>
+            <legend>expand/collapse</legend>
+            <table role="grid">
+                <tbody>
+                    {% set labels = "cell source outputs" %}
+                    {{header_row(labels)}}
+                    {{checkbox_row("code", labels)}}
+                    {{checkbox_row("markdown", labels)}}
+                    {{checkbox_row("raw", labels)}}
+                </tbody>
+            </table>
+        </fieldset>
+    </form>
+    {{activity_log()}}
+
+</dialog>

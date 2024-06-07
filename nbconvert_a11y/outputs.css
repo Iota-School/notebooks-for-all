@@ -1,0 +1,164 @@
+/* css to accompany the semantic outputs.py
+
+these styles make the semantic html appear like python styled reprs.
+prettifying python combines content and style, but with html
+we can seperate these concerns. */
+
+:root {
+    --quote: '"';
+}
+
+data[value],
+[itemscope]:not([itemtype$=DataFrame]),
+[itemscope]:not([itemtype$=Series]) {
+    font-family: monospace;
+}
+
+.jp-RenderedHTMLCommon kbd {
+    font-size: unset;
+}
+
+samp[itemscope]::before,
+samp[itemscope]::after {
+    content: var(--quote);
+}
+
+.jp-RenderedHTMLCommon [itemscope] {
+    color: var(--jp-mirror-editor-number-color);
+}
+
+.jp-RenderedHTMLCommon data[value] {
+    color: var(--jp-mirror-editor-keyword-color);
+    font-weight: bold;
+}
+
+.jp-RenderedHTMLCommon samp[itemscope] {
+    color: var(--jp-mirror-editor-string-color);
+}
+
+ol[itemscope],
+ul[itemscope] {
+    li {
+        display: inline;
+
+        &::after {
+            content: ", ";
+        }
+
+        &:first-child::before {
+            content: '[';
+            color: var(--jp-mirror-editor-bracket-color);
+        }
+
+        &:last-child::after {
+            content: ']';
+            color: var(--jp-mirror-editor-bracket-color);
+        }
+    }
+}
+
+ol[itemtype$=tuple] li {
+    &:first-child::before {
+        content: '(';
+    }
+
+    &:last-child::after {
+        content: ')';
+    }
+}
+
+ul[itemtype$=set] li {
+    &:first-child::before {
+        content: '{';
+    }
+
+    &:last-child::after {
+        content: '}';
+    }
+}
+
+.jp-OutputArea-output table caption,
+table caption {
+
+    dl,
+    dd,
+    dt {
+        padding-left: .5em;
+        padding-right: .5em;
+    }
+
+}
+
+
+.jp-OutputArea-output dd,
+.jp-OutputArea-output dt {
+    float: unset;
+    display: unset;
+}
+
+dl[itemscope] dd,
+dl[itemscope] dt {
+    display: inline;
+}
+
+dl[itemtype] {
+
+    dt:first-child::before {
+        content: "{";
+        color: var(--jp-mirror-editor-bracket-color);
+    }
+
+    dd:last-child::after {
+        content: "}";
+        color: var(--jp-mirror-editor-bracket-color);
+
+    }
+
+    dt::after {
+        content: ": ";
+    }
+
+    dd::after {
+        content: ", ";
+    }
+}
+
+.visually-hidden:not(:active):not(:focus-within),
+.non-visual,
+.nv {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+
+table[itemtype$=ndarray] {
+    text-align: right;
+
+    td:first-child::before {
+        content: "[";
+        float: left;
+    }
+
+    td::after {
+        content: ",";
+    }
+
+    td:last-child::after {
+        content: "]";
+    }
+}
+
+:not(.jp-RenderedMarkdown).jp-RenderedHTMLCommon td,
+:not(.jp-RenderedMarkdown).jp-RenderedHTMLCommon th,
+:not(.jp-RenderedMarkdown).jp-RenderedHTMLCommon tr {
+    vertical-align: unset;
+    text-align: unset;
+}
+
+.jp-RenderedHTMLCommon tr {
+    padding: unset;
+}

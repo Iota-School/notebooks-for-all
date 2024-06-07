@@ -1,0 +1,109 @@
+name: test with pixi
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: ["*"]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONUNBUFFERED: "1"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  USE_PIXI_VERSION: 0.22.0
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.6.0
+        with:
+          pixi-version: v${{ env.USE_PIXI_VERSION }}
+          cache: true
+          environments: build
+      - run: pixi run -ve build build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nbconvert-a11y-${{ github.run_number }}-dist
+          path: ./dist
+
+  test:
+    name: (${{ matrix.os }}) test
+    needs: [build]
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu"]
+    # add matrix for browsers later on
+    steps:
+      - run: git config --global core.autocrlf false
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.6.0
+        with:
+          pixi-version: v${{ env.USE_PIXI_VERSION }}
+          cache: true
+          environments: test
+      - uses: actions/download-artifact@v4
+        with:
+          name: nbconvert-a11y-${{ github.run_number }}-dist
+          path: ./dist
+      # need to make this install from the wheel
+      - run: pixi run -ve test test
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: |-
+            nbconvert-a11y-${{ github.run_number }}-${{ matrix.os }}-test
+          path: |
+            ./.pixi/task-cache-v0
+            ./build/reports
+  
+  docs:
+    name: docs
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - run: git config --global core.autocrlf false
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.6.0
+        with:
+          pixi-version: v${{ env.USE_PIXI_VERSION }}
+          cache: true
+          environments: docs
+      - run: pixi run -ve docs build
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nbconvert-a11y-${{ github.run_number }}-site
+          path: site
+
+  publish:
+    name: publish the mkdocs build to github pages
+    needs: [docs]
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: nbconvert-a11y-${{ github.run_number }}-site
+          path: site
+      - name: Deploy main 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        if: ${{ github.ref_name == 'main' }}
+        with:
+          folder: site # The folder the action should deploy.
+          single-commit: true
+      - name: Deploy non-main 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        if: ${{ github.ref_name != 'main' }}
+        with:
+          folder: site # The folder the action should deploy.
+          single-commit: true
+          target-folder: branch/${{ github.ref_name }}
